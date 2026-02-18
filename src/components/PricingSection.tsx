@@ -1,0 +1,97 @@
+import { motion } from "framer-motion";
+import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const plans = [
+  {
+    name: "Inscrição",
+    price: "15.000",
+    unit: "única",
+    features: ["Registo no programa", "Avaliação inicial", "Acesso ao plano personalizado"],
+    highlighted: false,
+  },
+  {
+    name: "1x por semana",
+    price: "25.000",
+    unit: "/ mês",
+    features: ["4 aulas por mês", "Acompanhamento profissional", "Acesso às instalações"],
+    highlighted: false,
+  },
+  {
+    name: "2x por semana",
+    price: "45.000",
+    unit: "/ mês",
+    features: ["8 aulas por mês", "Acompanhamento profissional", "Acesso às instalações", "Recomendado"],
+    highlighted: true,
+  },
+  {
+    name: "3x por semana",
+    price: "55.000",
+    unit: "/ mês",
+    features: ["12 aulas por mês", "Acompanhamento profissional", "Acesso às instalações", "Melhores resultados"],
+    highlighted: false,
+  },
+];
+
+const PricingSection = () => {
+  return (
+    <section id="pricing" className="section-padding bg-secondary">
+      <div className="container mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <p className="text-primary font-medium tracking-widest uppercase text-sm mb-3">Preços</p>
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground">Planos &amp; Valores</h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {plans.map((plan, i) => (
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className={`rounded-lg p-8 border flex flex-col ${
+                plan.highlighted
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-card text-foreground border-border"
+              }`}
+            >
+              <p className={`text-sm font-medium uppercase tracking-wide mb-4 ${plan.highlighted ? "text-primary" : "text-muted-foreground"}`}>
+                {plan.name}
+              </p>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">{plan.price}</span>
+                <span className={`text-sm ml-1 ${plan.highlighted ? "text-background/60" : "text-muted-foreground"}`}>
+                  Kz {plan.unit}
+                </span>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm">
+                    <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.highlighted ? "text-primary" : "text-primary"}`} />
+                    <span className={plan.highlighted ? "text-background/80" : "text-muted-foreground"}>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button
+                asChild
+                variant={plan.highlighted ? "default" : "outline"}
+                className={plan.highlighted ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}
+              >
+                <a href="#contact">Inscrever-se</a>
+              </Button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default PricingSection;
