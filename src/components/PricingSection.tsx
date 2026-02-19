@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const plans = [
   {
@@ -35,7 +36,7 @@ const plans = [
 
 const PricingSection = () => {
   return (
-    <section id="pricing" className="section-padding bg-secondary">
+    <section className="section-padding bg-secondary">
       <div className="container mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -44,7 +45,7 @@ const PricingSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-primary font-medium tracking-widest uppercase text-sm mb-3">Preços</p>
+          <p className="text-primary font-display font-bold tracking-widest uppercase text-sm mb-3">Preços</p>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground">Planos &amp; Valores</h2>
         </motion.div>
 
@@ -58,33 +59,33 @@ const PricingSection = () => {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className={`rounded-lg p-8 border flex flex-col ${
                 plan.highlighted
-                  ? "bg-foreground text-background border-foreground"
+                  ? "bg-foreground text-primary-foreground border-foreground"
                   : "bg-card text-foreground border-border"
               }`}
             >
-              <p className={`text-sm font-medium uppercase tracking-wide mb-4 ${plan.highlighted ? "text-primary" : "text-muted-foreground"}`}>
+              <p className={`text-sm font-display font-bold uppercase tracking-wide mb-4 ${plan.highlighted ? "text-primary" : "text-muted-foreground"}`}>
                 {plan.name}
               </p>
               <div className="mb-6">
-                <span className="text-4xl font-bold">{plan.price}</span>
-                <span className={`text-sm ml-1 ${plan.highlighted ? "text-background/60" : "text-muted-foreground"}`}>
+                <span className="text-4xl font-bold font-display">{plan.price}</span>
+                <span className={`text-sm ml-1 font-sans ${plan.highlighted ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
                   Kz {plan.unit}
                 </span>
               </div>
               <ul className="space-y-3 mb-8 flex-1">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm">
-                    <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.highlighted ? "text-primary" : "text-primary"}`} />
-                    <span className={plan.highlighted ? "text-background/80" : "text-muted-foreground"}>{f}</span>
+                  <li key={f} className="flex items-start gap-2 text-sm font-sans">
+                    <Check className="w-4 h-4 mt-0.5 flex-shrink-0 text-primary" />
+                    <span className={plan.highlighted ? "text-primary-foreground/80" : "text-muted-foreground"}>{f}</span>
                   </li>
                 ))}
               </ul>
               <Button
                 asChild
                 variant={plan.highlighted ? "default" : "outline"}
-                className={plan.highlighted ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}
+                className={`uppercase font-display font-bold tracking-wider ${plan.highlighted ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}`}
               >
-                <a href="#contact">Inscrever-se</a>
+                <Link to="/reservar">Inscrever-se</Link>
               </Button>
             </motion.div>
           ))}

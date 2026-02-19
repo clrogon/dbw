@@ -1,45 +1,62 @@
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "react-router-dom";
 
 const navLinks = [
-  { label: "Início", href: "#home" },
-  { label: "Sobre", href: "#about" },
-  { label: "Serviços", href: "#services" },
-  { label: "Preços", href: "#pricing" },
-  { label: "Horários", href: "#schedule" },
-  { label: "Contacto", href: "#contact" },
+  { label: "Início", href: "/" },
+  { label: "Sobre", href: "/sobre" },
+  { label: "Serviços", href: "/servicos" },
+  { label: "Galeria", href: "/galeria" },
+  { label: "Contacto", href: "/contacto" },
 ];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const navBg = scrolled || !isHome
+    ? "bg-foreground/95 backdrop-blur-md border-b border-muted/10"
+    : "bg-transparent";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${navBg}`}>
       <div className="container mx-auto flex items-center justify-between h-16 px-6">
-        <a href="#home" className="font-serif text-2xl font-bold text-foreground tracking-tight">
-          DBW <span className="text-primary">Saúde</span>
-        </a>
+        <Link to="/" className="font-display text-2xl font-bold text-primary-foreground tracking-tight uppercase">
+          DBW
+        </Link>
 
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              to={link.href}
+              className="text-sm font-medium text-primary-foreground/70 hover:text-primary-foreground transition-colors uppercase tracking-wide"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <Button asChild size="sm">
-            <a href="#contact">Inscrição</a>
+          <a href="tel:+244922569283" className="flex items-center gap-2 text-sm text-primary-foreground/70 hover:text-primary-foreground">
+            <Phone className="w-3.5 h-3.5" />
+            922 569 283
+          </a>
+          <Button asChild size="sm" className="uppercase font-display font-bold tracking-wider">
+            <Link to="/reservar">Reservar Vaga</Link>
           </Button>
         </div>
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden text-foreground"
+          className="lg:hidden text-primary-foreground"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -49,19 +66,23 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-background border-b border-border px-6 pb-6 space-y-4">
+        <div className="lg:hidden bg-foreground border-t border-muted/10 px-6 pb-6 space-y-4">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
-              href={link.href}
+              to={link.href}
               onClick={() => setOpen(false)}
-              className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="block text-sm font-medium text-primary-foreground/70 hover:text-primary-foreground transition-colors uppercase tracking-wide py-1"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <Button asChild size="sm" className="w-full">
-            <a href="#contact" onClick={() => setOpen(false)}>Inscrição</a>
+          <a href="tel:+244922569283" className="flex items-center gap-2 text-sm text-primary-foreground/70 py-1">
+            <Phone className="w-3.5 h-3.5" />
+            922 569 283
+          </a>
+          <Button asChild size="sm" className="w-full uppercase font-display font-bold tracking-wider">
+            <Link to="/reservar" onClick={() => setOpen(false)}>Reservar Vaga</Link>
           </Button>
         </div>
       )}
