@@ -18,7 +18,7 @@ const scheduleData = [
 
 const ScheduleSection = () => {
   return (
-    <section id="schedule" className="section-padding bg-background">
+    <section className="section-padding bg-background">
       <div className="container mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -27,7 +27,7 @@ const ScheduleSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-primary font-medium tracking-widest uppercase text-sm mb-3">Horários</p>
+          <p className="text-primary font-display font-bold tracking-widest uppercase text-sm mb-3">Horários</p>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground">Horários Disponíveis</h2>
         </motion.div>
 
@@ -43,13 +43,13 @@ const ScheduleSection = () => {
             >
               <div className="flex items-center gap-3 mb-6">
                 <Clock className="w-5 h-5 text-primary" />
-                <h3 className="font-sans font-semibold text-foreground">{block.period}</h3>
+                <h3 className="font-display font-bold text-foreground uppercase text-sm">{block.period}</h3>
               </div>
               <ul className="space-y-3">
                 {block.slots.map((slot) => (
                   <li
                     key={slot}
-                    className="text-muted-foreground text-sm bg-secondary rounded-md px-4 py-3 text-center font-medium"
+                    className="text-muted-foreground text-sm bg-secondary rounded-md px-4 py-3 text-center font-sans font-medium"
                   >
                     {slot}
                   </li>

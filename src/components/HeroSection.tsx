@@ -1,79 +1,72 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background image */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0">
-        <img
-          src={heroBg}
-          alt="DBW Saúde Services – Aquatic wellness"
-          className="w-full h-full object-cover"
-          loading="eager"
-        />
-        <div className="absolute inset-0 bg-dbw-charcoal/70" />
+        <img src={heroBg} alt="DBW Fitness Luanda — treino profissional" className="w-full h-full object-cover" loading="eager" />
+        <div className="absolute inset-0 bg-foreground/75" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-primary font-medium tracking-widest uppercase text-sm mb-4"
-        >
-          Saúde &amp; Bem-Estar
-        </motion.p>
-
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight max-w-4xl mx-auto"
+          transition={{ duration: 0.7 }}
+          className="text-5xl md:text-7xl lg:text-8xl font-bold text-primary-foreground leading-[0.95] max-w-5xl mx-auto"
         >
-          Mente Activa,{" "}
-          <span className="text-primary italic">Vida Saudável!</span>
+          TRANSFORME O SEU CORPO.{" "}
+          <span className="text-primary">LIBERTE A SUA MENTE.</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="mt-6 text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto"
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="mt-6 text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto font-sans"
         >
-          Actividades aquáticas e programas de bem-estar com acompanhamento profissional em Luanda.
+          Programas de fitness personalizados para quem quer resultados reais em Luanda.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Button asChild size="lg" className="text-base px-8">
-            <a href="#contact">Inscrição</a>
+          <Button asChild size="lg" className="text-base px-8 uppercase font-display font-bold tracking-wider">
+            <Link to="/reservar">Reservar a Minha Vaga →</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-            <a href="#contact">Contactar</a>
+          <Button asChild variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground uppercase font-display font-bold tracking-wider">
+            <Link to="/servicos">Ver Os Nossos Serviços</Link>
           </Button>
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Stats bar */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+        className="absolute bottom-0 left-0 right-0 bg-foreground/90 backdrop-blur-sm border-t border-muted/10"
       >
-        <div className="w-6 h-10 border-2 border-primary-foreground/30 rounded-full flex items-start justify-center p-1.5">
-          <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60"
-          />
+        <div className="container mx-auto px-6 py-5 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { value: "500+", label: "Clientes Satisfeitos" },
+            { value: "5+", label: "Anos de Experiência" },
+            { value: "4", label: "Modalidades Desportivas" },
+            { value: "3", label: "Profissionais Certificados" },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <p className="text-2xl md:text-3xl font-bold text-primary font-display">{stat.value}</p>
+              <p className="text-xs md:text-sm text-primary-foreground/60 font-sans mt-1">{stat.label}</p>
+            </div>
+          ))}
         </div>
       </motion.div>
     </section>
