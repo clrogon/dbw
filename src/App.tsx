@@ -16,6 +16,9 @@ import Instructors from "./pages/Instructors";
 import Contact from "./pages/Contact";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
+import ServerError from "./pages/ServerError";
+import Forbidden from "./pages/Forbidden";
+import Offline from "./pages/Offline";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -44,6 +47,9 @@ const App = () => {
             <Route path="/reservar" element={<Booking />} />
             <Route path="/contacto" element={<Contact />} />
             <Route path="/obrigado" element={<ThankYou />} />
+            <Route path="/erro-500" element={<ServerError />} />
+            <Route path="/acesso-negado" element={<Forbidden />} />
+            <Route path="/offline" element={<Offline />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
