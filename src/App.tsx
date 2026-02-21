@@ -12,6 +12,7 @@ import Services from "./pages/Services";
 import ServiceDetail from "./pages/ServiceDetail";
 import Gallery from "./pages/Gallery";
 import Booking from "./pages/Booking";
+import Instructors from "./pages/Instructors";
 import Contact from "./pages/Contact";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/servicos" element={<Services />} />
             <Route path="/servicos/:slug" element={<ServiceDetail />} />
             <Route path="/galeria" element={<Gallery />} />
+            <Route path="/instrutores" element={<Instructors />} />
             <Route path="/reservar" element={<Booking />} />
             <Route path="/contacto" element={<Contact />} />
             <Route path="/obrigado" element={<ThankYou />} />
