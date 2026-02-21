@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
+import dbwLogo from "@/assets/dbw-logo.jpeg";
 
 const navLinks = [
   { label: "Início", href: "/" },
   { label: "Sobre", href: "/sobre" },
   { label: "Serviços", href: "/servicos" },
+  { label: "Instrutores", href: "/instrutores" },
   { label: "Galeria", href: "/galeria" },
   { label: "Contacto", href: "/contacto" },
 ];
@@ -30,8 +32,8 @@ const Navbar = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${navBg}`}>
       <div className="container mx-auto flex items-center justify-between h-16 px-6">
-        <Link to="/" className="font-display text-2xl font-bold text-primary-foreground tracking-tight uppercase">
-          DBW
+        <Link to="/" className="flex items-center gap-2">
+          <img src={dbwLogo} alt="DBW — Mente Activa, Vida Saudável" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop */}

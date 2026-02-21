@@ -1,5 +1,6 @@
 import { Instagram, Phone, Mail, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+import dbwLogo from "@/assets/dbw-logo.jpeg";
 
 const quickLinks = [
   { label: "Início", href: "/" },
@@ -22,7 +23,7 @@ const Footer = () => {
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
         {/* Brand */}
         <div>
-          <p className="font-display text-2xl font-bold text-primary-foreground uppercase mb-3">DBW</p>
+          <img src={dbwLogo} alt="DBW — Mente Activa, Vida Saudável" className="h-12 w-auto mb-3 brightness-0 invert" />
           <p className="text-sm leading-relaxed mb-2 font-sans">Mente Activa, Vida Saudável!</p>
           <p className="text-xs text-primary-foreground/40 font-sans">NIF N° 5001683969</p>
         </div>

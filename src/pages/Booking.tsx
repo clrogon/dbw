@@ -66,8 +66,21 @@ const Booking = () => {
   };
 
   const onSubmit = (data: BookingForm) => {
-    // Build WhatsApp message with form data
-    const msg = `Olá! Gostaria de me inscrever:\n\nServiço: ${serviceLabels[data.servico]}\nNome: ${data.nome}\nEmail: ${data.email}\nTelefone: ${data.telefone}${data.empresa ? `\nEmpresa: ${data.empresa}` : ""}${data.mensagem ? `\nMensagem: ${data.mensagem}` : ""}`;
+    // Build WhatsApp message with all captured form data
+    const lines = [
+      `Olá! Gostaria de me inscrever:`,
+      ``,
+      `*Serviço:* ${serviceLabels[data.servico]}`,
+      `*Nome:* ${data.nome}`,
+      `*Email:* ${data.email}`,
+      `*Telefone:* ${data.telefone}`,
+    ];
+    if (data.empresa) lines.push(`*Empresa:* ${data.empresa}`);
+    if (data.numColaboradores) lines.push(`*Nº Colaboradores:* ${data.numColaboradores}`);
+    if (data.tipoCliente) lines.push(`*Tipo:* ${data.tipoCliente === "adulto" ? "Adulto" : "Criança"}`);
+    if (data.experienciaNatacao) lines.push(`*Experiência natação:* ${data.experienciaNatacao === "sim" ? "Sim" : "Não"}`);
+    if (data.mensagem) lines.push(`*Mensagem:* ${data.mensagem}`);
+    const msg = lines.join("\n");
 
     const whatsappUrl = `https://wa.me/244922569283?text=${encodeURIComponent(msg)}`;
     window.open(whatsappUrl, "_blank");
