@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, WifiOff, Lock, AlertTriangle, Search } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 interface ErrorPageProps {
   code: string;
@@ -15,31 +17,37 @@ interface ErrorPageProps {
 
 const ErrorPage = ({ code, title, description, icon, action }: ErrorPageProps) => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <div className="text-center">
-        <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary">
-          {icon}
-        </div>
-        <h1 className="mb-2 text-8xl font-bold tracking-tight text-primary/20">{code}</h1>
-        <h2 className="mb-4 text-2xl font-semibold">{title}</h2>
-        <p className="mb-8 max-w-md text-muted-foreground">{description}</p>
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Button asChild>
-            <Link to="/">
-              <Home className="mr-2 h-4 w-4" />
-              Voltar ao Início
-            </Link>
-          </Button>
-          {action && (
-            <Button variant="outline" asChild>
-              <Link to={action.href}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {action.label}
+    <div className="flex min-h-screen flex-col bg-background">
+      <Navbar />
+      <main className="flex flex-1 flex-col items-center justify-center px-4 py-24">
+        <div className="text-center">
+          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary">
+            {icon}
+          </div>
+          <h1 className="mb-2 font-heading text-8xl font-black uppercase tracking-tight text-primary/20">
+            {code}
+          </h1>
+          <h2 className="mb-4 font-heading text-2xl font-bold uppercase">{title}</h2>
+          <p className="mx-auto mb-8 max-w-md text-muted-foreground">{description}</p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Button asChild size="lg">
+              <Link to="/">
+                <Home className="mr-2 h-4 w-4" />
+                Voltar ao Início
               </Link>
             </Button>
-          )}
+            {action && (
+              <Button variant="outline" size="lg" asChild>
+                <Link to={action.href}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  {action.label}
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };
