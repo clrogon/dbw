@@ -83,6 +83,7 @@ const Booking = () => {
     const msg = lines.join("\n");
 
     const whatsappUrl = `https://wa.me/244922569283?text=${encodeURIComponent(msg)}`;
+    try { localStorage.setItem("dbw_whatsapp_url", whatsappUrl); } catch {}
     window.open(whatsappUrl, "_blank");
     navigate(`/obrigado?nome=${encodeURIComponent(data.nome)}`);
   };

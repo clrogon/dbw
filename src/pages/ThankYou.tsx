@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, MessageCircle } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -9,6 +10,9 @@ import Footer from "@/components/Footer";
 const ThankYou = () => {
   const [params] = useSearchParams();
   const nome = params.get("nome") || "Cliente";
+  const [whatsappUrl] = useState(() => {
+    try { return localStorage.getItem("dbw_whatsapp_url"); } catch { return null; }
+  });
 
   return (
     <>
@@ -53,7 +57,15 @@ const ThankYou = () => {
               transition={{ delay: 0.5 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <Button asChild size="lg" className="uppercase font-display font-bold tracking-wider">
+              {whatsappUrl && (
+                <Button asChild size="lg" className="bg-[#25D366] hover:bg-[#1da851] uppercase font-display font-bold tracking-wider">
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Reenviar no WhatsApp
+                  </a>
+                </Button>
+              )}
+              <Button asChild size="lg" variant={whatsappUrl ? "outline" : "default"} className="uppercase font-display font-bold tracking-wider">
                 <a href="https://www.instagram.com/dbwfitness" target="_blank" rel="noopener noreferrer">
                   Seguir @DBWFITNESS →
                 </a>
