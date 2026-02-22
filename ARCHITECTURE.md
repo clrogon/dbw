@@ -57,8 +57,10 @@ Responsible for UI rendering, styling, and user interactions.
 **Styling Approach**:
 - Tailwind CSS utility classes
 - CSS custom properties for theming (see `src/index.css`)
+- Semantic shadow tokens: `--shadow-card`, `--shadow-card-hover`, `--shadow-elevated`
+- Semantic color tokens: `--success` / `--success-foreground` for positive states
 - shadcn/ui component patterns
-- Framer Motion for animations
+- Framer Motion for animations (consistent across all pages including error states)
 
 ### 2. Application Layer
 
@@ -88,6 +90,9 @@ Handles application bootstrap, provider composition, and routing.
 | `/reservar` | `Booking` | Reservar Vaga |
 | `/contacto` | `Contact` | Contacto |
 | `/obrigado` | `ThankYou` | Obrigado |
+| `/erro-500` | `ServerError` | Erro do Servidor |
+| `/acesso-negado` | `Forbidden` | Acesso Negado |
+| `/offline` | `Offline` | Sem Conexão |
 | `*` | `NotFound` | 404 |
 
 ### 3. Data Layer

@@ -85,7 +85,7 @@ const ServiceDetail = () => {
             <h2 className="text-2xl font-bold text-foreground text-center mb-10">Outros Serviços</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
               {related.map((r) => (
-                <Link key={r.slug} to={`/servicos/${r.slug}`} className="group block rounded-lg border border-border bg-card p-6 hover:border-primary/30 transition-colors">
+                <Link key={r.slug} to={`/servicos/${r.slug}`} className="group block rounded-lg border border-border bg-card p-6 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:border-primary/30 transition-all duration-300">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">{r.icon}</span>
                     <h3 className="font-display font-bold text-foreground uppercase">{r.title}</h3>

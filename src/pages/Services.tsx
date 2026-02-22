@@ -40,7 +40,7 @@ const Services = () => {
                 >
                   <Link
                     to={`/servicos/${s.slug}`}
-                    className="group block rounded-lg overflow-hidden border border-border bg-card hover:border-primary/30 transition-colors h-full"
+                    className="group block rounded-lg overflow-hidden border border-border bg-card shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:border-primary/30 transition-all duration-300 h-full"
                   >
                     <div className="overflow-hidden h-64">
                       <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />

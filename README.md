@@ -70,17 +70,21 @@ src/
 │   ├── Booking.tsx      # Booking form
 │   ├── Instructors.tsx  # Team profiles
 │   ├── Contact.tsx      # Contact info
-│   ├── ThankYou.tsx     # Post-booking confirmation
-│   └── NotFound.tsx     # 404 page
+│   ├── ThankYou.tsx     # Post-booking confirmation (WhatsApp resilience)
+│   ├── NotFound.tsx     # 404 page
+│   ├── ServerError.tsx  # 500 page
+│   ├── Forbidden.tsx    # 403 page
+│   └── Offline.tsx      # Offline fallback
 ├── components/
 │   ├── Navbar.tsx       # Navigation bar
 │   ├── Footer.tsx       # Site footer
 │   ├── HeroSection.tsx  # Home hero
 │   ├── WhatsAppButton.tsx# Floating WhatsApp CTA
-│   ├── CTABanner.tsx    # Call-to-action banner
-│   ├── PricingSection.tsx# Pricing plans
+│   ├── CTABanner.tsx    # Dismissible call-to-action banner
+│   ├── ErrorPage.tsx    # Reusable error page component (404/500/403/Offline)
+│   ├── PricingSection.tsx# Pricing plans with elevated card
 │   ├── ScheduleSection.tsx# Schedule display
-│   ├── ServicesPreview.tsx# Services overview
+│   ├── ServicesPreview.tsx# Services overview with card shadows
 │   ├── TrustSection.tsx # Trust indicators
 │   └── ui/              # shadcn/ui components
 ├── hooks/
@@ -108,6 +112,9 @@ src/
 | `/reservar` | Booking | Multi-step booking form |
 | `/contacto` | Contact | Contact information |
 | `/obrigado` | ThankYou | Post-booking confirmation |
+| `/erro-500` | ServerError | 500 error page |
+| `/acesso-negado` | Forbidden | 403 error page |
+| `/offline` | Offline | No-connection fallback |
 | `*` | NotFound | 404 page |
 
 ## Configuration Files

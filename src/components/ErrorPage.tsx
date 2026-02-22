@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, WifiOff, Lock, AlertTriangle, Search } from "lucide-react";
+import { motion } from "framer-motion";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 interface ErrorPageProps {
   code: string;
@@ -15,31 +18,66 @@ interface ErrorPageProps {
 
 const ErrorPage = ({ code, title, description, icon, action }: ErrorPageProps) => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <div className="text-center">
-        <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary">
-          {icon}
-        </div>
-        <h1 className="mb-2 text-8xl font-bold tracking-tight text-primary/20">{code}</h1>
-        <h2 className="mb-4 text-2xl font-semibold">{title}</h2>
-        <p className="mb-8 max-w-md text-muted-foreground">{description}</p>
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Button asChild>
-            <Link to="/">
-              <Home className="mr-2 h-4 w-4" />
-              Voltar ao Início
-            </Link>
-          </Button>
-          {action && (
-            <Button variant="outline" asChild>
-              <Link to={action.href}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {action.label}
+    <div className="flex min-h-screen flex-col bg-background">
+      <Navbar />
+      <main className="flex flex-1 flex-col items-center justify-center px-4 py-24">
+        <div className="text-center">
+          <motion.div
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+            className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary"
+          >
+            {icon}
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mb-2 font-display text-8xl font-black uppercase tracking-tight text-primary/20"
+          >
+            {code}
+          </motion.h1>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.45 }}
+            className="mb-4 font-display text-2xl font-bold uppercase"
+          >
+            {title}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+            className="mx-auto mb-8 max-w-md text-muted-foreground"
+          >
+            {description}
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.75 }}
+            className="flex flex-col gap-3 sm:flex-row sm:justify-center"
+          >
+            <Button asChild size="lg">
+              <Link to="/">
+                <Home className="mr-2 h-4 w-4" />
+                Voltar ao Início
               </Link>
             </Button>
-          )}
+            {action && (
+              <Button variant="outline" size="lg" asChild>
+                <Link to={action.href}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  {action.label}
+                </Link>
+              </Button>
+            )}
+          </motion.div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };
