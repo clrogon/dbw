@@ -82,7 +82,7 @@ const Instructors = () => {
                       className="w-full aspect-[3/4] object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/90 to-transparent p-6">
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/95 via-foreground/60 to-transparent p-6 pt-16">
                       <h2 className="text-2xl font-bold text-primary-foreground font-display uppercase">{instructor.name}</h2>
                       <p className="text-primary text-sm font-sans font-medium">{instructor.role}</p>
                     </div>

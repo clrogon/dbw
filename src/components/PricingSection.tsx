@@ -57,10 +57,10 @@ const PricingSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className={`rounded-lg p-8 border flex flex-col ${
+              className={`rounded-lg p-8 border flex flex-col transition-all duration-300 ${
                 plan.highlighted
-                  ? "bg-foreground text-primary-foreground border-foreground"
-                  : "bg-card text-foreground border-border"
+                  ? "bg-foreground text-primary-foreground border-foreground shadow-[var(--shadow-elevated)] scale-[1.02]"
+                  : "bg-card text-foreground border-border shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
               }`}
             >
               <p className={`text-sm font-display font-bold uppercase tracking-wide mb-4 ${plan.highlighted ? "text-primary" : "text-muted-foreground"}`}>

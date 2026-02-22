@@ -34,7 +34,7 @@ const ErrorPage = ({ code, title, description, icon, action }: ErrorPageProps) =
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="mb-2 font-heading text-8xl font-black uppercase tracking-tight text-primary/20"
+            className="mb-2 font-display text-8xl font-black uppercase tracking-tight text-primary/20"
           >
             {code}
           </motion.h1>
@@ -42,7 +42,7 @@ const ErrorPage = ({ code, title, description, icon, action }: ErrorPageProps) =
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.45 }}
-            className="mb-4 font-heading text-2xl font-bold uppercase"
+            className="mb-4 font-display text-2xl font-bold uppercase"
           >
             {title}
           </motion.h2>
