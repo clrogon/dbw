@@ -30,7 +30,7 @@ const ThankYou = () => {
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
             >
-              <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
+              <CheckCircle className="w-20 h-20 text-success mx-auto mb-6" />
             </motion.div>
 
             <motion.h1

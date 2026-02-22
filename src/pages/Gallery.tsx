@@ -54,10 +54,10 @@ const Gallery = () => {
                 <button
                   key={cat}
                   onClick={() => setActive(cat)}
-                  className={`px-4 py-2 rounded-full text-sm font-sans font-medium transition-colors ${
+                  className={`px-5 py-2.5 rounded-full text-sm font-display font-bold uppercase tracking-wide transition-all duration-200 ${
                     active === cat
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-muted-foreground hover:text-foreground"
+                      ? "bg-primary text-primary-foreground shadow-[var(--shadow-card)]"
+                      : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-accent"
                   }`}
                 >
                   {cat}

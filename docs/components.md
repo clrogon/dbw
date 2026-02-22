@@ -149,12 +149,30 @@ Trust indicators: certifications, experience, testimonials.
 
 **File**: `src/components/CTABanner.tsx`
 
-Call-to-action banner for conversion.
+Dismissible call-to-action banner for time-sensitive promotions.
 
 **Features**:
-- Full-width background
-- Prominent heading and CTA button
-- Used between sections on pages
+- Full-width primary-coloured bar
+- Dismiss with X icon; state persisted in `sessionStorage`
+- CTA button linking to `/reservar`
+
+---
+
+### ErrorPage
+
+**File**: `src/components/ErrorPage.tsx`
+
+Reusable error page component with animated icon, error code, title, and description.
+
+**Exported Views**:
+| Export | Code | Icon | Description |
+|--------|------|------|-------------|
+| `NotFound` | 404 | Search | Missing route |
+| `ServerError` | 500 | AlertTriangle | Internal error |
+| `Forbidden` | 403 | Lock | Access denied, links to `/contacto` |
+| `Offline` | — | WifiOff | No internet, retries current path |
+
+**Animations**: Spring-based icon entrance, staggered text fade-up via Framer Motion.
 
 ---
 
@@ -199,30 +217,14 @@ Multi-step booking wizard.
 2. **Personal Info** - Name, email, phone, optional fields
 3. **Review** - Confirm details before submission
 
+**WhatsApp Resilience**:
+- `whatsappUrl` is saved to `localStorage` before opening WhatsApp
+- The ThankYou page shows a "Reenviar no WhatsApp" button if the URL is found, allowing re-send if the phone required PIN/biometric and the content was lost
+
 **Validation**:
 - Zod schema validation
 - Step-by-step validation triggers
 - Field-specific error messages
-
-**Schema**:
-```tsx
-const bookingSchema = z.object({
-  servico: z.enum(["aquaticas", "personalizado", "laboral", "grupo"]),
-  nome: z.string().min(3).max(100),
-  email: z.string().email().max(255),
-  telefone: z.string().min(9).max(20),
-  empresa: z.string().max(100).optional(),
-  tipoCliente: z.enum(["adulto", "crianca"]).optional(),
-  experienciaNatacao: z.enum(["sim", "nao"]).optional(),
-  numColaboradores: z.string().max(10).optional(),
-  mensagem: z.string().max(500).optional(),
-});
-```
-
-**Submission**:
-- Builds WhatsApp message with form data
-- Opens WhatsApp in new tab
-- Redirects to thank-you page
 
 ---
 

@@ -46,6 +46,13 @@
     --sidebar-accent-foreground: 0 0% 10%;
     --sidebar-border: 0 0% 90%;
     --sidebar-ring: 358 82% 50%;
+
+    --success: 152 69% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-card-hover: 0 10px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+    --shadow-elevated: 0 20px 40px -12px rgb(0 0 0 / 0.12);
   }
 
   .dark {
@@ -77,6 +84,13 @@
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 18%;
     --sidebar-ring: 358 82% 50%;
+
+    --success: 152 69% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.12), 0 1px 2px -1px rgb(0 0 0 / 0.12);
+    --shadow-card-hover: 0 10px 25px -5px rgb(0 0 0 / 0.25), 0 8px 10px -6px rgb(0 0 0 / 0.15);
+    --shadow-elevated: 0 20px 40px -12px rgb(0 0 0 / 0.35);
   }
 }
 
