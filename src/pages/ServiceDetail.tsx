@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { services } from "@/data/services";
+import { useCmsService, useCmsServices } from "@/hooks/useCms";
+import { services as fallbackServices } from "@/data/services";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -11,11 +12,61 @@ import CTABanner from "@/components/CTABanner";
 
 const ServiceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const service = services.find((s) => s.slug === slug);
+  const { data: cmsService, isLoading } = useCmsService(slug || "");
+  const { data: allServices } = useCmsServices();
+
+  // Fallback to hardcoded data
+  const fallback = fallbackServices.find((s) => s.slug === slug);
+  
+  const service = cmsService
+    ? {
+        title: cmsService.title,
+        icon: cmsService.icon,
+        shortDesc: cmsService.short_desc,
+        fullDesc: cmsService.full_desc,
+        subServices: cmsService.sub_services,
+        image: cmsService.image_url || "",
+        seoTitle: cmsService.seo_title,
+        seoDescription: cmsService.seo_description,
+        ctaText: cmsService.cta_text,
+        slug: cmsService.slug,
+      }
+    : fallback
+    ? {
+        title: fallback.title,
+        icon: fallback.icon,
+        shortDesc: fallback.shortDesc,
+        fullDesc: fallback.fullDesc,
+        subServices: fallback.subServices,
+        image: fallback.image,
+        seoTitle: fallback.seoTitle,
+        seoDescription: fallback.seoDescription,
+        ctaText: fallback.ctaText,
+        slug: fallback.slug,
+      }
+    : null;
+
+  if (isLoading) {
+    return (
+      <main>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      </main>
+    );
+  }
 
   if (!service) return <Navigate to="/servicos" replace />;
 
-  const related = services.filter((s) => s.slug !== slug).slice(0, 2);
+  const related = (allServices || fallbackServices)
+    .filter((s) => ('slug' in s ? s.slug : (s as any).slug) !== slug)
+    .slice(0, 2)
+    .map((s) =>
+      'short_desc' in s
+        ? { slug: s.slug, icon: s.icon, title: s.title, shortDesc: s.short_desc }
+        : { slug: (s as any).slug, icon: (s as any).icon, title: (s as any).title, shortDesc: (s as any).shortDesc }
+    );
 
   return (
     <>
@@ -26,12 +77,13 @@ const ServiceDetail = () => {
       <main>
         <Navbar />
 
-        {/* Hero */}
         <section className="relative pt-28 pb-20 px-6 overflow-hidden">
-          <div className="absolute inset-0">
-            <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-foreground/80" />
-          </div>
+          {service.image && (
+            <div className="absolute inset-0">
+              <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-foreground/80" />
+            </div>
+          )}
           <div className="relative container mx-auto text-primary-foreground">
             <Link to="/servicos" className="inline-flex items-center gap-2 text-primary-foreground/60 hover:text-primary-foreground text-sm font-sans mb-6">
               <ArrowLeft className="w-4 h-4" /> Voltar aos Serviços
@@ -47,7 +99,6 @@ const ServiceDetail = () => {
           </div>
         </section>
 
-        {/* Content */}
         <section className="section-padding bg-background">
           <div className="container mx-auto max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -70,7 +121,6 @@ const ServiceDetail = () => {
           </div>
         </section>
 
-        {/* CTA */}
         <section className="section-padding bg-primary text-primary-foreground text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Pronto para começar?</h2>
           <p className="text-primary-foreground/80 font-sans mb-8 max-w-md mx-auto">Reserve a sua vaga e comece a sua transformação hoje.</p>
@@ -79,7 +129,6 @@ const ServiceDetail = () => {
           </Button>
         </section>
 
-        {/* Related */}
         <section className="section-padding bg-secondary">
           <div className="container mx-auto">
             <h2 className="text-2xl font-bold text-foreground text-center mb-10">Outros Serviços</h2>

@@ -2,39 +2,20 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { usePricingPlans } from "@/hooks/useCms";
 
-const plans = [
-  {
-    name: "Inscrição",
-    price: "15.000",
-    unit: "única",
-    features: ["Registo no programa", "Avaliação inicial", "Acesso ao plano personalizado"],
-    highlighted: false,
-  },
-  {
-    name: "1x por semana",
-    price: "25.000",
-    unit: "/ mês",
-    features: ["4 aulas por mês", "Acompanhamento profissional", "Acesso às instalações"],
-    highlighted: false,
-  },
-  {
-    name: "2x por semana",
-    price: "45.000",
-    unit: "/ mês",
-    features: ["8 aulas por mês", "Acompanhamento profissional", "Acesso às instalações", "Recomendado"],
-    highlighted: true,
-  },
-  {
-    name: "3x por semana",
-    price: "55.000",
-    unit: "/ mês",
-    features: ["12 aulas por mês", "Acompanhamento profissional", "Acesso às instalações", "Melhores resultados"],
-    highlighted: false,
-  },
+const fallbackPlans = [
+  { name: "Inscrição", price: "15.000", unit: "única", features: ["Registo no programa", "Avaliação inicial", "Acesso ao plano personalizado"], highlighted: false },
+  { name: "1x por semana", price: "25.000", unit: "/ mês", features: ["4 aulas por mês", "Acompanhamento profissional", "Acesso às instalações"], highlighted: false },
+  { name: "2x por semana", price: "45.000", unit: "/ mês", features: ["8 aulas por mês", "Acompanhamento profissional", "Acesso às instalações", "Recomendado"], highlighted: true },
+  { name: "3x por semana", price: "55.000", unit: "/ mês", features: ["12 aulas por mês", "Acompanhamento profissional", "Acesso às instalações", "Melhores resultados"], highlighted: false },
 ];
 
 const PricingSection = () => {
+  const { data: cmsPlans } = usePricingPlans();
+
+  const plans = cmsPlans && cmsPlans.length > 0 ? cmsPlans : fallbackPlans;
+
   return (
     <section className="section-padding bg-secondary">
       <div className="container mx-auto">

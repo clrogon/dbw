@@ -2,13 +2,28 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { services } from "@/data/services";
+import { useCmsServices } from "@/hooks/useCms";
+import { services as fallbackServices } from "@/data/services";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
 
 const Services = () => {
+  const { data: cmsServices } = useCmsServices();
+
+  const services = cmsServices && cmsServices.length > 0
+    ? cmsServices.map((s) => ({
+        slug: s.slug, icon: s.icon, title: s.title,
+        shortDesc: s.short_desc, subServices: s.sub_services,
+        image: s.image_url || "", ctaText: s.cta_text,
+      }))
+    : fallbackServices.map((s) => ({
+        slug: s.slug, icon: s.icon, title: s.title,
+        shortDesc: s.shortDesc, subServices: s.subServices,
+        image: s.image, ctaText: s.ctaText,
+      }));
+
   return (
     <>
       <Helmet>
@@ -42,9 +57,11 @@ const Services = () => {
                     to={`/servicos/${s.slug}`}
                     className="group block rounded-lg overflow-hidden border border-border bg-card shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:border-primary/30 transition-all duration-300 h-full"
                   >
-                    <div className="overflow-hidden h-64">
-                      <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                    </div>
+                    {s.image && (
+                      <div className="overflow-hidden h-64">
+                        <img src={s.image} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                      </div>
+                    )}
                     <div className="p-8">
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-3xl">{s.icon}</span>
