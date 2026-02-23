@@ -1,10 +1,31 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { services } from "@/data/services";
+import { useCmsServices } from "@/hooks/useCms";
 import { ArrowRight } from "lucide-react";
+import { services as fallbackServices } from "@/data/services";
 
 const ServicesPreview = () => {
+  const { data: cmsServices } = useCmsServices();
+
+  const displayServices = cmsServices && cmsServices.length > 0
+    ? cmsServices.map((s) => ({
+        slug: s.slug,
+        icon: s.icon,
+        title: s.title,
+        shortDesc: s.short_desc,
+        ctaText: s.cta_text,
+        image: s.image_url || "",
+      }))
+    : fallbackServices.map((s) => ({
+        slug: s.slug,
+        icon: s.icon,
+        title: s.title,
+        shortDesc: s.shortDesc,
+        ctaText: s.ctaText,
+        image: s.image,
+      }));
+
   return (
     <section className="section-padding bg-background">
       <div className="container mx-auto">
@@ -20,7 +41,7 @@ const ServicesPreview = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {services.map((s, i) => (
+          {displayServices.map((s, i) => (
             <motion.div
               key={s.slug}
               initial={{ opacity: 0, y: 30 }}
@@ -32,14 +53,16 @@ const ServicesPreview = () => {
                 to={`/servicos/${s.slug}`}
                 className="group block rounded-lg overflow-hidden border border-border bg-card shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:border-primary/30 transition-all duration-300"
               >
-                <div className="overflow-hidden h-56">
-                  <img
-                    src={s.image}
-                    alt={s.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
+                {s.image && (
+                  <div className="overflow-hidden h-56">
+                    <img
+                      src={s.image}
+                      alt={s.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-2xl">{s.icon}</span>

@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useCmsGallery } from "@/hooks/useCms";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -10,9 +11,7 @@ import servicesAquatic from "@/assets/services-aquatic.jpg";
 import servicesWellness from "@/assets/services-wellness.jpg";
 import heroBg from "@/assets/hero-bg.jpg";
 
-const categories = ["Todas", "Actividades Aquáticas", "Treinos", "Ginástica Laboral", "Aulas em Grupo"] as const;
-
-const photos = [
+const fallbackPhotos = [
   { src: servicesSwim, alt: "Natação DBW Luanda", category: "Actividades Aquáticas" },
   { src: servicesAquatic, alt: "Actividades aquáticas DBW", category: "Actividades Aquáticas" },
   { src: servicesWellness, alt: "Bem-estar DBW", category: "Treinos" },
@@ -23,7 +22,13 @@ const photos = [
 
 const Gallery = () => {
   const [active, setActive] = useState<string>("Todas");
+  const { data: cmsGallery } = useCmsGallery();
 
+  const photos = cmsGallery && cmsGallery.length > 0
+    ? cmsGallery.map((img) => ({ src: img.image_url, alt: img.alt, category: img.category }))
+    : fallbackPhotos;
+
+  const allCategories = ["Todas", ...Array.from(new Set(photos.map((p) => p.category)))];
   const filtered = active === "Todas" ? photos : photos.filter((p) => p.category === active);
 
   return (
@@ -48,9 +53,8 @@ const Gallery = () => {
 
         <section className="section-padding bg-background">
           <div className="container mx-auto">
-            {/* Filter tabs */}
             <div className="flex flex-wrap gap-2 justify-center mb-12">
-              {categories.map((cat) => (
+              {allCategories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActive(cat)}
@@ -65,7 +69,6 @@ const Gallery = () => {
               ))}
             </div>
 
-            {/* Masonry-ish grid */}
             <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
               {filtered.map((photo, i) => (
                 <motion.div
