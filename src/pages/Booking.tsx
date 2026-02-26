@@ -83,7 +83,7 @@ const Booking = () => {
     const msg = lines.join("\n");
 
     const whatsappUrl = `https://wa.me/244922569283?text=${encodeURIComponent(msg)}`;
-    try { localStorage.setItem("dbw_whatsapp_url", whatsappUrl); } catch {}
+    try { localStorage.setItem("dbw_whatsapp_url", whatsappUrl); } catch (e) { /* ignore */ }
     window.open(whatsappUrl, "_blank");
     navigate(`/obrigado?nome=${encodeURIComponent(data.nome)}`);
   };
@@ -114,9 +114,8 @@ const Booking = () => {
             <div className="flex items-center justify-center gap-3 mb-12">
               {[1, 2, 3].map((s) => (
                 <div key={s} className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-display font-bold ${
-                    step >= s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-                  }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-display font-bold ${step >= s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                    }`}>
                     {s}
                   </div>
                   {s < 3 && <div className={`w-12 h-0.5 ${step > s ? "bg-primary" : "bg-border"}`} />}
@@ -136,11 +135,10 @@ const Booking = () => {
                           key={opt.value}
                           type="button"
                           onClick={() => form.setValue("servico", opt.value, { shouldValidate: true })}
-                          className={`p-6 rounded-lg border-2 text-left transition-colors ${
-                            servico === opt.value
+                          className={`p-6 rounded-lg border-2 text-left transition-colors ${servico === opt.value
                               ? "border-primary bg-primary/5"
                               : "border-border hover:border-primary/30"
-                          }`}
+                            }`}
                         >
                           <span className="text-3xl block mb-2">{opt.icon}</span>
                           <span className="font-display font-bold text-foreground uppercase text-lg">{opt.label}</span>
@@ -189,9 +187,8 @@ const Booking = () => {
                                   key={v}
                                   type="button"
                                   onClick={() => form.setValue("tipoCliente", v as "adulto" | "crianca")}
-                                  className={`px-4 py-2 rounded-lg border text-sm font-sans ${
-                                    form.watch("tipoCliente") === v ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground"
-                                  }`}
+                                  className={`px-4 py-2 rounded-lg border text-sm font-sans ${form.watch("tipoCliente") === v ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground"
+                                    }`}
                                 >
                                   {v === "adulto" ? "Adulto" : "Criança"}
                                 </button>
@@ -206,9 +203,8 @@ const Booking = () => {
                                   key={v}
                                   type="button"
                                   onClick={() => form.setValue("experienciaNatacao", v as "sim" | "nao")}
-                                  className={`px-4 py-2 rounded-lg border text-sm font-sans ${
-                                    form.watch("experienciaNatacao") === v ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground"
-                                  }`}
+                                  className={`px-4 py-2 rounded-lg border text-sm font-sans ${form.watch("experienciaNatacao") === v ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground"
+                                    }`}
                                 >
                                   {v === "sim" ? "Sim" : "Não"}
                                 </button>

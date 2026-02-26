@@ -63,7 +63,7 @@ const HeroSection = () => {
           <Button asChild size="lg" className="text-base px-8 uppercase font-display font-bold tracking-wider">
             <Link to={ctaPrimaryLink}>{ctaPrimaryText}</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground uppercase font-display font-bold tracking-wider">
+          <Button asChild variant="outline" size="lg" className="bg-transparent text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground uppercase font-display font-bold tracking-wider">
             <Link to={ctaSecondaryLink}>{ctaSecondaryText}</Link>
           </Button>
         </motion.div>
