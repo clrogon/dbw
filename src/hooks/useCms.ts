@@ -12,7 +12,7 @@ export const useHeroContent = () =>
   useQuery({
     queryKey: ["hero_content"],
     queryFn: async () => {
-      const { data } = await supabase.from("hero_content").select("*").limit(1).single();
+      const { data } = await supabase.from("hero_content").select("*").limit(1).maybeSingle();
       return data;
     },
   });

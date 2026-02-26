@@ -31,7 +31,11 @@ const AdminHero = () => {
   });
 
   useEffect(() => {
-    supabase.from("hero_content").select("*").limit(1).single().then(({ data }) => {
+    supabase.from("hero_content").select("*").limit(1).maybeSingle().then(({ data, error }) => {
+      if (error) {
+        console.error("Load hero error:", error);
+        toast({ title: "Erro", description: "Não foi possível carregar o conteúdo.", variant: "destructive" });
+      }
       if (data) {
         setHeroId(data.id);
         setForm({
@@ -53,13 +57,23 @@ const AdminHero = () => {
   const save = async () => {
     setSaving(true);
     const payload = { ...form, stats: form.stats as unknown as import("@/integrations/supabase/types").Json };
+    
+    let error;
     if (heroId) {
-      await supabase.from("hero_content").update(payload).eq("id", heroId);
+      const result = await supabase.from("hero_content").update(payload).eq("id", heroId);
+      error = result.error;
     } else {
-      const { data } = await supabase.from("hero_content").insert({ ...payload, title: payload.title }).select().single();
-      if (data) setHeroId(data.id);
+      const result = await supabase.from("hero_content").insert({ ...payload, title: payload.title }).select().single();
+      error = result.error;
+      if (result.data) setHeroId(result.data.id);
     }
-    toast({ title: "Guardado", description: "Hero actualizado com sucesso." });
+    
+    if (error) {
+      console.error("Save hero error:", error);
+      toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Guardado", description: "Hero actualizado com sucesso." });
+    }
     setSaving(false);
   };
 

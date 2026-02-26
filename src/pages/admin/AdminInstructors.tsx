@@ -14,14 +14,20 @@ type Instructor = Database["public"]["Tables"]["instructors"]["Row"];
 const AdminInstructors = () => {
   const { toast } = useToast();
   const [items, setItems] = useState<Instructor[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Instructor | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
   const [specInput, setSpecInput] = useState("");
 
   const load = async () => {
-    const { data } = await supabase.from("instructors").select("*").order("sort_order");
+    const { data, error } = await supabase.from("instructors").select("*").order("sort_order");
+    if (error) {
+      console.error("Load instructors error:", error);
+      toast({ title: "Erro", description: "Não foi possível carregar os instrutores.", variant: "destructive" });
+    }
     if (data) setItems(data);
+    setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
@@ -35,21 +41,36 @@ const AdminInstructors = () => {
     if (!editing) return;
     setSaving(true);
     const { id, created_at, updated_at, ...payload } = editing;
+    
+    let error;
     if (isNew) {
-      await supabase.from("instructors").insert(payload);
+      const result = await supabase.from("instructors").insert(payload);
+      error = result.error;
     } else {
-      await supabase.from("instructors").update(payload).eq("id", id);
+      const result = await supabase.from("instructors").update(payload).eq("id", id);
+      error = result.error;
     }
-    toast({ title: "Guardado" });
-    setEditing(null); setIsNew(false); setSaving(false);
-    load();
+    
+    if (error) {
+      console.error("Save instructor error:", error);
+      toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Guardado" });
+      setEditing(null); setIsNew(false);
+      load();
+    }
+    setSaving(false);
   };
 
   const remove = async (id: string) => {
     if (!confirm("Apagar este instrutor?")) return;
-    await supabase.from("instructors").delete().eq("id", id);
-    toast({ title: "Apagado" });
-    load();
+    const { error } = await supabase.from("instructors").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Apagado" });
+      load();
+    }
   };
 
   const addSpec = () => {
@@ -57,6 +78,8 @@ const AdminInstructors = () => {
     setEditing({ ...editing, specialties: [...editing.specialties, specInput.trim()] });
     setSpecInput("");
   };
+
+  if (loading) return <div className="animate-pulse h-8 w-48 bg-muted rounded" />;
 
   if (editing) {
     return (
@@ -113,23 +136,27 @@ const AdminInstructors = () => {
         <h1 className="text-3xl font-bold font-display uppercase">Instrutores</h1>
         <Button onClick={startNew} className="uppercase font-display font-bold tracking-wider"><Plus className="w-4 h-4 mr-2" /> Novo Instrutor</Button>
       </div>
-      <div className="space-y-3">
-        {items.map((item) => (
-          <div key={item.id} className="flex items-center justify-between border rounded-lg p-4 bg-card">
-            <div className="flex items-center gap-3">
-              {item.image_url && <img src={item.image_url} alt={item.name} className="w-10 h-10 rounded-full object-cover" />}
-              <div>
-                <p className="font-medium">{item.name}</p>
-                <p className="text-sm text-muted-foreground">{item.role}</p>
+      {items.length === 0 ? (
+        <p className="text-muted-foreground">Nenhum instrutor registado.</p>
+      ) : (
+        <div className="space-y-3">
+          {items.map((item) => (
+            <div key={item.id} className="flex items-center justify-between border rounded-lg p-4 bg-card">
+              <div className="flex items-center gap-3">
+                {item.image_url && <img src={item.image_url} alt={item.name} className="w-10 h-10 rounded-full object-cover" />}
+                <div>
+                  <p className="font-medium">{item.name}</p>
+                  <p className="text-sm text-muted-foreground">{item.role}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="icon" onClick={() => setEditing(item)}><Edit className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => remove(item.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="icon" onClick={() => setEditing(item)}><Edit className="w-4 h-4" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => remove(item.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
