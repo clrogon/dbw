@@ -16,13 +16,19 @@ const categories = ["Actividades Aquáticas", "Treinos", "Ginástica Laboral", "
 const AdminGallery = () => {
   const { toast } = useToast();
   const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<GalleryImage | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
-    const { data } = await supabase.from("gallery_images").select("*").order("sort_order");
+    const { data, error } = await supabase.from("gallery_images").select("*").order("sort_order");
+    if (error) {
+      console.error("Load gallery error:", error);
+      toast({ title: "Erro", description: "Não foi possível carregar a galeria.", variant: "destructive" });
+    }
     if (data) setImages(data);
+    setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
@@ -36,22 +42,39 @@ const AdminGallery = () => {
     if (!editing || !editing.image_url) return;
     setSaving(true);
     const { id, created_at, ...payload } = editing;
+    
+    let error;
     if (isNew) {
-      await supabase.from("gallery_images").insert(payload);
+      const result = await supabase.from("gallery_images").insert(payload);
+      error = result.error;
     } else {
-      await supabase.from("gallery_images").update(payload).eq("id", id);
+      const result = await supabase.from("gallery_images").update(payload).eq("id", id);
+      error = result.error;
     }
-    toast({ title: "Guardado" });
-    setEditing(null); setIsNew(false); setSaving(false);
-    load();
+    
+    if (error) {
+      console.error("Save gallery error:", error);
+      toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Guardado" });
+      setEditing(null); setIsNew(false);
+      load();
+    }
+    setSaving(false);
   };
 
   const remove = async (id: string) => {
     if (!confirm("Apagar esta imagem?")) return;
-    await supabase.from("gallery_images").delete().eq("id", id);
-    toast({ title: "Apagada" });
-    load();
+    const { error } = await supabase.from("gallery_images").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Apagada" });
+      load();
+    }
   };
+
+  if (loading) return <div className="animate-pulse h-8 w-48 bg-muted rounded" />;
 
   if (editing) {
     return (
@@ -98,20 +121,24 @@ const AdminGallery = () => {
         <h1 className="text-3xl font-bold font-display uppercase">Galeria</h1>
         <Button onClick={startNew} className="uppercase font-display font-bold tracking-wider"><Plus className="w-4 h-4 mr-2" /> Nova Imagem</Button>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {images.map((img) => (
-          <div key={img.id} className="relative group rounded-lg overflow-hidden border bg-card">
-            <img src={img.image_url} alt={img.alt} className="w-full aspect-square object-cover" />
-            <div className="absolute inset-0 bg-foreground/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              <Button variant="secondary" size="icon" onClick={() => setEditing(img)}><Edit className="w-4 h-4" /></Button>
-              <Button variant="destructive" size="icon" onClick={() => remove(img.id)}><Trash2 className="w-4 h-4" /></Button>
+      {images.length === 0 ? (
+        <p className="text-muted-foreground">Nenhuma imagem na galeria.</p>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {images.map((img) => (
+            <div key={img.id} className="relative group rounded-lg overflow-hidden border bg-card">
+              <img src={img.image_url} alt={img.alt} className="w-full aspect-square object-cover" />
+              <div className="absolute inset-0 bg-foreground/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <Button variant="secondary" size="icon" onClick={() => setEditing(img)}><Edit className="w-4 h-4" /></Button>
+                <Button variant="destructive" size="icon" onClick={() => remove(img.id)}><Trash2 className="w-4 h-4" /></Button>
+              </div>
+              <div className="p-2">
+                <p className="text-xs text-muted-foreground truncate">{img.category}</p>
+              </div>
             </div>
-            <div className="p-2">
-              <p className="text-xs text-muted-foreground truncate">{img.category}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

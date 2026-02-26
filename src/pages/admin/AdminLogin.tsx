@@ -19,13 +19,22 @@ const AdminLogin = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const { error } = await signIn(email, password);
+    
+    const { error, isAdmin } = await signIn(email, password);
+    
     if (error) {
       setError("Credenciais inválidas. Verifique o email e a password.");
-    } else {
-      navigate("/admin");
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    
+    if (!isAdmin) {
+      setError("Esta conta não tem permissões de administrador.");
+      setLoading(false);
+      return;
+    }
+    
+    navigate("/admin");
   };
 
   return (

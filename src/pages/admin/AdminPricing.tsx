@@ -13,14 +13,20 @@ type Plan = Database["public"]["Tables"]["pricing_plans"]["Row"];
 const AdminPricing = () => {
   const { toast } = useToast();
   const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Plan | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
   const [featureInput, setFeatureInput] = useState("");
 
   const load = async () => {
-    const { data } = await supabase.from("pricing_plans").select("*").order("sort_order");
+    const { data, error } = await supabase.from("pricing_plans").select("*").order("sort_order");
+    if (error) {
+      console.error("Load pricing error:", error);
+      toast({ title: "Erro", description: "Não foi possível carregar os planos.", variant: "destructive" });
+    }
     if (data) setPlans(data);
+    setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
@@ -34,21 +40,36 @@ const AdminPricing = () => {
     if (!editing) return;
     setSaving(true);
     const { id, created_at, updated_at, ...payload } = editing;
+    
+    let error;
     if (isNew) {
-      await supabase.from("pricing_plans").insert(payload);
+      const result = await supabase.from("pricing_plans").insert(payload);
+      error = result.error;
     } else {
-      await supabase.from("pricing_plans").update(payload).eq("id", id);
+      const result = await supabase.from("pricing_plans").update(payload).eq("id", id);
+      error = result.error;
     }
-    toast({ title: "Guardado" });
-    setEditing(null); setIsNew(false); setSaving(false);
-    load();
+    
+    if (error) {
+      console.error("Save pricing error:", error);
+      toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Guardado" });
+      setEditing(null); setIsNew(false);
+      load();
+    }
+    setSaving(false);
   };
 
   const remove = async (id: string) => {
     if (!confirm("Apagar este plano?")) return;
-    await supabase.from("pricing_plans").delete().eq("id", id);
-    toast({ title: "Apagado" });
-    load();
+    const { error } = await supabase.from("pricing_plans").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Apagado" });
+      load();
+    }
   };
 
   const addFeature = () => {
@@ -56,6 +77,8 @@ const AdminPricing = () => {
     setEditing({ ...editing, features: [...editing.features, featureInput.trim()] });
     setFeatureInput("");
   };
+
+  if (loading) return <div className="animate-pulse h-8 w-48 bg-muted rounded" />;
 
   if (editing) {
     return (
@@ -118,20 +141,24 @@ const AdminPricing = () => {
         <h1 className="text-3xl font-bold font-display uppercase">Planos de Preço</h1>
         <Button onClick={startNew} className="uppercase font-display font-bold tracking-wider"><Plus className="w-4 h-4 mr-2" /> Novo Plano</Button>
       </div>
-      <div className="space-y-3">
-        {plans.map((p) => (
-          <div key={p.id} className="flex items-center justify-between border rounded-lg p-4 bg-card">
-            <div>
-              <p className="font-medium">{p.name} {p.highlighted && <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full ml-2">Destaque</span>}</p>
-              <p className="text-sm text-muted-foreground">{p.price} Kz {p.unit}</p>
+      {plans.length === 0 ? (
+        <p className="text-muted-foreground">Nenhum plano registado.</p>
+      ) : (
+        <div className="space-y-3">
+          {plans.map((p) => (
+            <div key={p.id} className="flex items-center justify-between border rounded-lg p-4 bg-card">
+              <div>
+                <p className="font-medium">{p.name} {p.highlighted && <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full ml-2">Destaque</span>}</p>
+                <p className="text-sm text-muted-foreground">{p.price} Kz {p.unit}</p>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="icon" onClick={() => setEditing(p)}><Edit className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => remove(p.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="icon" onClick={() => setEditing(p)}><Edit className="w-4 h-4" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => remove(p.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

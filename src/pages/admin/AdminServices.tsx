@@ -14,14 +14,20 @@ type Service = Database["public"]["Tables"]["services"]["Row"];
 const AdminServices = () => {
   const { toast } = useToast();
   const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Service | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
   const [subInput, setSubInput] = useState("");
 
   const load = async () => {
-    const { data } = await supabase.from("services").select("*").order("sort_order");
+    const { data, error } = await supabase.from("services").select("*").order("sort_order");
+    if (error) {
+      console.error("Load services error:", error);
+      toast({ title: "Erro", description: "Não foi possível carregar os serviços.", variant: "destructive" });
+    }
     if (data) setServices(data);
+    setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
@@ -29,20 +35,9 @@ const AdminServices = () => {
   const startNew = () => {
     setIsNew(true);
     setEditing({
-      id: "",
-      slug: "",
-      icon: "🏋️",
-      title: "",
-      short_desc: "",
-      full_desc: "",
-      sub_services: [],
-      cta_text: "",
-      image_url: null,
-      seo_title: "",
-      seo_description: "",
-      sort_order: services.length,
-      created_at: "",
-      updated_at: "",
+      id: "", slug: "", icon: "🏋️", title: "", short_desc: "", full_desc: "",
+      sub_services: [], cta_text: "", image_url: null, seo_title: "", seo_description: "",
+      sort_order: services.length, created_at: "", updated_at: "",
     });
   };
 
@@ -51,23 +46,36 @@ const AdminServices = () => {
     setSaving(true);
     const { id, created_at, updated_at, ...payload } = editing;
 
+    let error;
     if (isNew) {
-      await supabase.from("services").insert(payload);
+      const result = await supabase.from("services").insert(payload);
+      error = result.error;
     } else {
-      await supabase.from("services").update(payload).eq("id", id);
+      const result = await supabase.from("services").update(payload).eq("id", id);
+      error = result.error;
     }
-    toast({ title: "Guardado" });
-    setEditing(null);
-    setIsNew(false);
+    
+    if (error) {
+      console.error("Save service error:", error);
+      toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Guardado" });
+      setEditing(null);
+      setIsNew(false);
+      load();
+    }
     setSaving(false);
-    load();
   };
 
   const remove = async (id: string) => {
     if (!confirm("Tem a certeza que quer apagar este serviço?")) return;
-    await supabase.from("services").delete().eq("id", id);
-    toast({ title: "Apagado" });
-    load();
+    const { error } = await supabase.from("services").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Apagado" });
+      load();
+    }
   };
 
   const addSub = () => {
@@ -75,6 +83,8 @@ const AdminServices = () => {
     setEditing({ ...editing, sub_services: [...editing.sub_services, subInput.trim()] });
     setSubInput("");
   };
+
+  if (loading) return <div className="animate-pulse h-8 w-48 bg-muted rounded" />;
 
   if (editing) {
     return (
@@ -115,8 +125,7 @@ const AdminServices = () => {
                 <div key={i} className="flex items-center gap-2">
                   <span className="text-sm flex-1 bg-secondary px-3 py-1.5 rounded">{s}</span>
                   <Button type="button" variant="ghost" size="icon" onClick={() => setEditing({
-                    ...editing,
-                    sub_services: editing.sub_services.filter((_, j) => j !== i),
+                    ...editing, sub_services: editing.sub_services.filter((_, j) => j !== i),
                   })}>
                     <Trash2 className="w-3 h-3 text-destructive" />
                   </Button>
@@ -125,9 +134,7 @@ const AdminServices = () => {
             </div>
             <div className="flex gap-2">
               <Input placeholder="Novo sub-serviço" value={subInput} onChange={(e) => setSubInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSub())} />
-              <Button type="button" variant="outline" size="sm" onClick={addSub}>
-                <Plus className="w-4 h-4" />
-              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={addSub}><Plus className="w-4 h-4" /></Button>
             </div>
           </div>
           <div>
@@ -136,11 +143,7 @@ const AdminServices = () => {
           </div>
           <div>
             <Label>Imagem</Label>
-            <ImageUpload
-              value={editing.image_url}
-              onChange={(url) => setEditing({ ...editing, image_url: url })}
-              folder="services"
-            />
+            <ImageUpload value={editing.image_url} onChange={(url) => setEditing({ ...editing, image_url: url })} folder="services" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -157,8 +160,7 @@ const AdminServices = () => {
             <Textarea value={editing.seo_description} onChange={(e) => setEditing({ ...editing, seo_description: e.target.value })} />
           </div>
           <Button onClick={save} disabled={saving} className="uppercase font-display font-bold tracking-wider">
-            <Save className="w-4 h-4 mr-2" />
-            {saving ? "A guardar..." : "Guardar"}
+            <Save className="w-4 h-4 mr-2" /> {saving ? "A guardar..." : "Guardar"}
           </Button>
         </div>
       </div>
@@ -173,27 +175,27 @@ const AdminServices = () => {
           <Plus className="w-4 h-4 mr-2" /> Novo Serviço
         </Button>
       </div>
-      <div className="space-y-3">
-        {services.map((s) => (
-          <div key={s.id} className="flex items-center justify-between border rounded-lg p-4 bg-card">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{s.icon}</span>
-              <div>
-                <p className="font-medium">{s.title}</p>
-                <p className="text-sm text-muted-foreground">{s.slug}</p>
+      {services.length === 0 ? (
+        <p className="text-muted-foreground">Nenhum serviço registado.</p>
+      ) : (
+        <div className="space-y-3">
+          {services.map((s) => (
+            <div key={s.id} className="flex items-center justify-between border rounded-lg p-4 bg-card">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{s.icon}</span>
+                <div>
+                  <p className="font-medium">{s.title}</p>
+                  <p className="text-sm text-muted-foreground">{s.slug}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="icon" onClick={() => setEditing(s)}><Edit className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => remove(s.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="icon" onClick={() => setEditing(s)}>
-                <Edit className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={() => remove(s.id)}>
-                <Trash2 className="w-4 h-4 text-destructive" />
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
