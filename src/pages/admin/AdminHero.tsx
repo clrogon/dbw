@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface Stat {
 }
 
 const AdminHero = () => {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -72,6 +74,7 @@ const AdminHero = () => {
       console.error("Save hero error:", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
+      await queryClient.invalidateQueries({ queryKey: ["hero_content"] });
       toast({ title: "Guardado", description: "Hero actualizado com sucesso." });
     }
     setSaving(false);

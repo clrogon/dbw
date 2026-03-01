@@ -24,9 +24,20 @@ const values = [
 ];
 
 const Instructors = () => {
-  const { data: cmsInstructors } = useCmsInstructors();
+  const { data: cmsInstructors, isLoading, isError } = useCmsInstructors();
 
-  const instructors = cmsInstructors && cmsInstructors.length > 0
+  if (isLoading) {
+    return (
+      <main>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      </main>
+    );
+  }
+
+  const instructors = !isError && cmsInstructors && cmsInstructors.length > 0
     ? cmsInstructors.map((i) => ({
         name: i.name, role: i.role, specialties: i.specialties,
         bio: i.bio, image: i.image_url || "",

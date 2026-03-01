@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ type GalleryImage = Database["public"]["Tables"]["gallery_images"]["Row"];
 const categories = ["Actividades Aquáticas", "Treinos", "Ginástica Laboral", "Aulas em Grupo"];
 
 const AdminGallery = () => {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +58,7 @@ const AdminGallery = () => {
       console.error("Save gallery error:", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
+      await queryClient.invalidateQueries({ queryKey: ["cms_gallery"] });
       toast({ title: "Guardado" });
       setEditing(null); setIsNew(false);
       load();

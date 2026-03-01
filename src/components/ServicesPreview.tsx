@@ -6,9 +6,19 @@ import { ArrowRight } from "lucide-react";
 import { services as fallbackServices } from "@/data/services";
 
 const ServicesPreview = () => {
-  const { data: cmsServices } = useCmsServices();
+  const { data: cmsServices, isLoading, isError } = useCmsServices();
 
-  const displayServices = cmsServices && cmsServices.length > 0
+  if (isLoading) {
+    return (
+      <section className="section-padding bg-background">
+        <div className="container mx-auto flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      </section>
+    );
+  }
+
+  const displayServices = !isError && cmsServices && cmsServices.length > 0
     ? cmsServices.map((s) => ({
         slug: s.slug,
         icon: s.icon,

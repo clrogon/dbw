@@ -10,7 +10,15 @@ interface Stat {
 }
 
 const HeroSection = () => {
-  const { data: hero } = useHeroContent();
+  const { data: hero, isLoading, isError } = useHeroContent();
+
+  if (isLoading) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-foreground">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </section>
+    );
+  }
 
   const title = hero?.title || "TRANSFORME O SEU CORPO.";
   const highlight = hero?.title_highlight || "LIBERTE A SUA MENTE.";
@@ -19,13 +27,15 @@ const HeroSection = () => {
   const ctaPrimaryLink = hero?.cta_primary_link || "/reservar";
   const ctaSecondaryText = hero?.cta_secondary_text || "Ver Os Nossos Serviços";
   const ctaSecondaryLink = hero?.cta_secondary_link || "/servicos";
-  const bgImage = hero?.background_image_url || heroBg;
-  const stats = (hero?.stats as unknown as Stat[]) || [
-    { value: "500+", label: "Clientes Satisfeitos" },
-    { value: "5+", label: "Anos de Experiência" },
-    { value: "4", label: "Modalidades Desportivas" },
-    { value: "3", label: "Profissionais Certificados" },
-  ];
+  const bgImage = !isError && hero?.background_image_url ? hero.background_image_url : heroBg;
+  const stats = !isError && hero?.stats
+    ? (hero.stats as unknown as Stat[])
+    : [
+        { value: "500+", label: "Clientes Satisfeitos" },
+        { value: "5+", label: "Anos de Experiência" },
+        { value: "4", label: "Modalidades Desportivas" },
+        { value: "3", label: "Profissionais Certificados" },
+      ];
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
