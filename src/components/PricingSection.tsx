@@ -12,9 +12,19 @@ const fallbackPlans = [
 ];
 
 const PricingSection = () => {
-  const { data: cmsPlans } = usePricingPlans();
+  const { data: cmsPlans, isLoading, isError } = usePricingPlans();
 
-  const plans = cmsPlans && cmsPlans.length > 0 ? cmsPlans : fallbackPlans;
+  if (isLoading) {
+    return (
+      <section className="section-padding bg-secondary">
+        <div className="container mx-auto flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      </section>
+    );
+  }
+
+  const plans = !isError && cmsPlans && cmsPlans.length > 0 ? cmsPlans : fallbackPlans;
 
   return (
     <section className="section-padding bg-secondary">

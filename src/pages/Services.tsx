@@ -10,9 +10,20 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
 
 const Services = () => {
-  const { data: cmsServices } = useCmsServices();
+  const { data: cmsServices, isLoading, isError } = useCmsServices();
 
-  const services = cmsServices && cmsServices.length > 0
+  if (isLoading) {
+    return (
+      <main>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      </main>
+    );
+  }
+
+  const services = !isError && cmsServices && cmsServices.length > 0
     ? cmsServices.map((s) => ({
         slug: s.slug, icon: s.icon, title: s.title,
         shortDesc: s.short_desc, subServices: s.sub_services,

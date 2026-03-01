@@ -22,9 +22,20 @@ const fallbackPhotos = [
 
 const Gallery = () => {
   const [active, setActive] = useState<string>("Todas");
-  const { data: cmsGallery } = useCmsGallery();
+  const { data: cmsGallery, isLoading, isError } = useCmsGallery();
 
-  const photos = cmsGallery && cmsGallery.length > 0
+  if (isLoading) {
+    return (
+      <main>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      </main>
+    );
+  }
+
+  const photos = !isError && cmsGallery && cmsGallery.length > 0
     ? cmsGallery.map((img) => ({ src: img.image_url, alt: img.alt, category: img.category }))
     : fallbackPhotos;
 

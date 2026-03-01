@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
 const AdminServices = () => {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,6 +61,10 @@ const AdminServices = () => {
       console.error("Save service error:", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["cms_services"] }),
+        queryClient.invalidateQueries({ queryKey: ["cms_service"] }),
+      ]);
       toast({ title: "Guardado" });
       setEditing(null);
       setIsNew(false);

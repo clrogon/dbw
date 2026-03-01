@@ -12,7 +12,7 @@ This document covers deployment strategies and configurations for the DBW Fitnes
 - [Post-Deployment](#post-deployment)
 - [Troubleshooting](#troubleshooting)
 
----
+> cPanel-specific guide: see `docs/cpanel-deployment-wizard.md` for a full migration checklist from Vercel/GitHub to cPanel.
 
 ## Prerequisites
 

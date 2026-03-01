@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Instructor = Database["public"]["Tables"]["instructors"]["Row"];
 
 const AdminInstructors = () => {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [items, setItems] = useState<Instructor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,7 @@ const AdminInstructors = () => {
       console.error("Save instructor error:", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
+      await queryClient.invalidateQueries({ queryKey: ["cms_instructors"] });
       toast({ title: "Guardado" });
       setEditing(null); setIsNew(false);
       load();
