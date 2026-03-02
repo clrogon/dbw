@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, MessageCircle } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,8 +10,11 @@ import Footer from "@/components/Footer";
 const ThankYou = () => {
   const [params] = useSearchParams();
   const nome = params.get("nome") || "Cliente";
-  const [whatsappUrl] = useState(() => {
-    try { return localStorage.getItem("dbw_whatsapp_url"); } catch { return null; }
+  const location = useLocation();
+  const stateWhatsappUrl = (location.state as any)?.whatsappUrl;
+  const [whatsappUrl] = useState<string | null>(() => {
+    if (stateWhatsappUrl) return stateWhatsappUrl;
+    try { const url = localStorage.getItem("dbw_whatsapp_url"); if (url) localStorage.removeItem("dbw_whatsapp_url"); return url; } catch { return null; }
   });
 
   return (
