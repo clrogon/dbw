@@ -67,7 +67,7 @@ const Contact = () => {
                 <div className="rounded-lg overflow-hidden border border-border h-48">
                   <iframe
                     title="DBW Location"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15770.69!2d13.23!3d-8.92!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOMKwNTUnMTIuMCJTIDEzwrAxNycwMC4wIkU!5e0!3m2!1spt!2sao!4v1700000000000"
+                    src="https://www.google.com/maps?q=-8.8368,13.2343&z=15&output=embed"
                     className="w-full h-full border-0"
                     allowFullScreen
                     loading="lazy"
