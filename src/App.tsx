@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import ServerError from "./pages/ServerError";
 import Forbidden from "./pages/Forbidden";
 import Offline from "./pages/Offline";
+import Install from "./pages/Install";
 
 // Admin
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -66,6 +67,7 @@ const App = () => {
               <Route path="/erro-500" element={<ServerError />} />
               <Route path="/acesso-negado" element={<Forbidden />} />
               <Route path="/offline" element={<Offline />} />
+              <Route path="/instalar" element={<Install />} />
 
               {/* Admin */}
               <Route path="/admin/login" element={<AdminLogin />} />
