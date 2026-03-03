@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useCmsGallery } from "@/hooks/useCms";
+import { normaliseGalleryImage } from "@/utils/normaliseCms";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -36,7 +37,7 @@ const Gallery = () => {
   }
 
   const photos = !isError && cmsGallery && cmsGallery.length > 0
-    ? cmsGallery.map((img) => ({ src: img.image_url, alt: img.alt, category: img.category }))
+    ? cmsGallery.map((img) => normaliseGalleryImage(img))
     : fallbackPhotos;
 
   const allCategories = ["Todas", ...Array.from(new Set(photos.map((p) => p.category)))];

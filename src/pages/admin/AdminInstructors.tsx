@@ -9,6 +9,7 @@ import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Plus, Trash2, Edit, ArrowLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import { normaliseInstructorRow } from "@/utils/normaliseCms";
 
 type Instructor = Database["public"]["Tables"]["instructors"]["Row"];
 
@@ -28,7 +29,10 @@ const AdminInstructors = () => {
       console.error("Load instructors error:", error);
       toast({ title: "Erro", description: "Não foi possível carregar os instrutores.", variant: "destructive" });
     }
-    if (data) setItems(data);
+    if (data) {
+      const normalized = (data as any).map((it: any) => normaliseInstructorRow(it)) as unknown as Instructor[];
+      setItems(normalized);
+    }
     setLoading(false);
   };
 

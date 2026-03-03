@@ -12,11 +12,19 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  // Simple client-side brute-force protection for admin login
+  const [blockedUntil, setBlockedUntil] = useState<number>(0);
+  const [attempts, setAttempts] = useState<number>(0);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // If user is temporarily blocked due to too many attempts, show a friendly message
+    if (Date.now() < blockedUntil) {
+      setError("Demasiadas tentativas. Tente novamente mais tarde.");
+      return;
+    }
     setError("");
     setLoading(true);
     
@@ -30,16 +38,27 @@ const AdminLogin = () => {
       } else {
         setError("Credenciais inválidas. Verifique o email e a password.");
       }
+      // Increment attempt counter and apply cooldown if limit reached
+      const nextAttempts = attempts + 1;
+      setAttempts(nextAttempts);
+      if (nextAttempts >= 5) {
+        // Block for 5 minutes
+        setBlockedUntil(Date.now() + 5 * 60 * 1000);
+      }
       setLoading(false);
       return;
     }
-    
+    // Reset counters on successful login attempt
+    setAttempts(0);
+    setBlockedUntil(0);
+
+    // Check admin status after a successful sign-in
     if (!isAdmin) {
       setError("Esta conta não tem permissões de administrador.");
       setLoading(false);
       return;
     }
-    
+
     navigate("/admin");
   };
 
