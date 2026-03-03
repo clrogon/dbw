@@ -4,6 +4,7 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCmsService, useCmsServices } from "@/hooks/useCms";
+import { normaliseServiceRow, type NormalisedService } from "@/utils/normaliseCms";
 import { services as fallbackServices } from "@/data/services";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -59,14 +60,7 @@ const ServiceDetail = () => {
 
   if (!service) return <Navigate to="/servicos" replace />;
 
-  type NormalisedService = { slug: string; icon: string; title: string; shortDesc: string };
-  const normalise = (s: any): NormalisedService => {
-    if ('short_desc' in s) {
-      return { slug: s.slug, icon: s.icon, title: s.title, shortDesc: s.short_desc };
-    }
-    return { slug: s.slug, icon: s.icon, title: s.title, shortDesc: s.shortDesc };
-  };
-  const pool: NormalisedService[] = (allServices || fallbackServices).map((s) => normalise(s));
+  const pool: NormalisedService[] = (allServices || fallbackServices).map((s) => normaliseServiceRow(s));
   const related = pool
     .filter((s) => s.slug !== slug)
     .slice(0, 2);
