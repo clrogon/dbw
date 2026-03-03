@@ -81,21 +81,21 @@ const Gallery = () => {
             </div>
 
             <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
-              {filtered.map((photo, i) => (
+            {filtered.map((photo, i) => (
                 <motion.div
-                  key={`${photo.alt}-${i}`}
+                  key={`${photo.src}-${photo.alt}`}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.05 }}
                   className="break-inside-avoid rounded-lg overflow-hidden"
                 >
-                  <img
-                    src={photo.src}
-                    alt={photo.alt}
-                    className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                </motion.div>
+                    <img
+                      src={photo.src}
+                      alt={photo.alt}
+                      className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  </motion.div>
               ))}
             </div>
 

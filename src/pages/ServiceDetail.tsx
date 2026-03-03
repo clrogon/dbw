@@ -59,14 +59,17 @@ const ServiceDetail = () => {
 
   if (!service) return <Navigate to="/servicos" replace />;
 
-  const related = (allServices || fallbackServices)
-    .filter((s) => ('slug' in s ? s.slug : (s as any).slug) !== slug)
-    .slice(0, 2)
-    .map((s) =>
-      'short_desc' in s
-        ? { slug: s.slug, icon: s.icon, title: s.title, shortDesc: s.short_desc }
-        : { slug: (s as any).slug, icon: (s as any).icon, title: (s as any).title, shortDesc: (s as any).shortDesc }
-    );
+  type NormalisedService = { slug: string; icon: string; title: string; shortDesc: string };
+  const normalise = (s: any): NormalisedService => {
+    if ('short_desc' in s) {
+      return { slug: s.slug, icon: s.icon, title: s.title, shortDesc: s.short_desc };
+    }
+    return { slug: s.slug, icon: s.icon, title: s.title, shortDesc: s.shortDesc };
+  };
+  const pool: NormalisedService[] = (allServices || fallbackServices).map((s) => normalise(s));
+  const related = pool
+    .filter((s) => s.slug !== slug)
+    .slice(0, 2);
 
   return (
     <>

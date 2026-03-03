@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, WifiOff, Lock, AlertTriangle, Search } from "lucide-react";
 import { motion } from "framer-motion";
@@ -110,14 +110,18 @@ export const Forbidden = () => (
   />
 );
 
-export const Offline = () => (
-  <ErrorPage
-    code="Offline"
-    title="Sem Conexão"
-    description="Parece que está sem conexão à internet. Verifique a sua ligação e tente novamente."
-    icon={<WifiOff className="h-12 w-12" />}
-    action={{ label: "Tentar Novamente", href: window.location.pathname }}
-  />
-);
+export const Offline = () => {
+  const location = useLocation();
+  const href = location?.pathname ?? "/";
+  return (
+    <ErrorPage
+      code="Offline"
+      title="Sem Conexão"
+      description="Parece que está sem conexão à internet. Verifique a sua ligação e tente novamente."
+      icon={<WifiOff className="h-12 w-12" />}
+      action={{ label: "Tentar Novamente", href }}
+    />
+  );
+};
 
 export default ErrorPage;

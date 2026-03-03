@@ -23,7 +23,13 @@ const AdminLogin = () => {
     const { error, isAdmin } = await signIn(email, password);
     
     if (error) {
-      setError("Credenciais inválidas. Verifique o email e a password.");
+      // Improve UX for rate-limiting / brute-force scenarios
+      const msg = (error as any)?.message?.toLowerCase?.() ?? "";
+      if (msg.includes("rate") || msg.includes("too many") || msg.includes("tentativas")) {
+        setError("Demasiadas tentativas. Tente novamente mais tarde.");
+      } else {
+        setError("Credenciais inválidas. Verifique o email e a password.");
+      }
       setLoading(false);
       return;
     }
