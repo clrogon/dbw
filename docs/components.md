@@ -6,414 +6,172 @@ This document provides detailed documentation for all custom components in the D
 
 - [Layout Components](#layout-components)
 - [Page Sections](#page-sections)
+- [CMS-Driven Components](#cms-driven-components)
+- [Admin Components](#admin-components)
 - [Interactive Components](#interactive-components)
-- [UI Primitives](#ui-primitives)
 - [Hooks](#hooks)
+- [UI Primitives](#ui-primitives)
 
 ---
 
 ## Layout Components
 
 ### Navbar
-
 **File**: `src/components/Navbar.tsx`
 
-Main navigation component with responsive mobile menu.
-
-**Features**:
-- Fixed position with scroll-aware background
-- Responsive desktop/mobile layouts
-- Active route highlighting
-- CTA button for booking
-
-**Props**: None (uses React Router's `useLocation`)
-
-**Usage**:
-```tsx
-import Navbar from "@/components/Navbar";
-
-// In page component
-<Navbar />
-```
-
-**Styling**:
-- Transparent on home page when at top
-- Solid background when scrolled or on other pages
-- Mobile hamburger menu transforms to X
-
----
+Main navigation with responsive mobile menu, scroll-aware background, active route highlighting, and CTA booking button.
 
 ### Footer
-
 **File**: `src/components/Footer.tsx`
 
-Site footer with navigation links, contact info, and branding.
-
-**Sections**:
-- Brand with logo and tagline
-- Quick navigation links
-- Service links
-- Contact information
-
-**Props**: None
-
-**Usage**:
-```tsx
-import Footer from "@/components/Footer";
-
-<Footer />
-```
+Site footer with navigation links, service links, contact info, and branding.
 
 ---
 
 ## Page Sections
 
 ### HeroSection
-
 **File**: `src/components/HeroSection.tsx`
 
-Full-screen hero section for the home page.
+Full-viewport hero with CMS-driven content (title, subtitle, CTAs, stats). Falls back gracefully during loading. Uses Framer Motion animations.
 
-**Features**:
-- Full-viewport height with centered content
-- Background image with overlay
-- Animated text with Framer Motion
-- Dual CTA buttons
-- Stats bar at bottom
-
-**Props**: None
-
-**Animations**:
-- Headline: fade up with 0.7s duration
-- Subtitle: fade up with 0.25s delay
-- Buttons: fade up with 0.45s delay
-- Stats: fade up with 0.7s delay
-
----
+**Data source**: `useHeroContent()` from `useCms.ts`
 
 ### ServicesPreview
-
 **File**: `src/components/ServicesPreview.tsx`
 
-Grid display of service cards for the home page.
+Grid display of service cards on the home page. CMS-driven with loading skeleton states.
 
-**Features**:
-- 4-column responsive grid
-- Service icons and descriptions
-- Hover animations
-- Link to service details
-
-**Data Source**: `src/data/services.ts`
-
----
+**Data source**: `useCmsServices()` from `useCms.ts`
 
 ### PricingSection
-
 **File**: `src/components/PricingSection.tsx`
 
-Pricing plans display with highlighted recommendation.
+Pricing plans display with highlighted recommendation. CMS-driven.
 
-**Features**:
-- 4 pricing tiers
-- Highlighted "recommended" plan
-- Feature lists with checkmarks
-- CTA buttons
-
-**Plans**:
-| Name | Price | Features |
-|------|-------|----------|
-| Inscrição | 15.000 Kz (one-time) | Registration, initial assessment |
-| 1x/week | 25.000 Kz/month | 4 classes, professional support |
-| 2x/week | 45.000 Kz/month | 8 classes, recommended |
-| 3x/week | 55.000 Kz/month | 12 classes, best results |
-
----
+**Data source**: `usePricingPlans()` from `useCms.ts`
 
 ### ScheduleSection
-
 **File**: `src/components/ScheduleSection.tsx`
 
-Operating hours and schedule information.
-
----
+Operating hours and schedule information (static).
 
 ### TrustSection
-
 **File**: `src/components/TrustSection.tsx`
 
 Trust indicators: certifications, experience, testimonials.
 
----
-
 ### CTABanner
-
 **File**: `src/components/CTABanner.tsx`
 
-Dismissible call-to-action banner for time-sensitive promotions.
+Dismissible call-to-action banner. State persisted in `sessionStorage`.
 
-**Features**:
-- Full-width primary-coloured bar
-- Dismiss with X icon; state persisted in `sessionStorage`
-- CTA button linking to `/reservar`
+### ErrorPage
+**File**: `src/components/ErrorPage.tsx`
+
+Reusable error page component for 404, 500, 403, and offline states with animated icons.
 
 ---
 
-### ErrorPage
+## CMS-Driven Components
 
-**File**: `src/components/ErrorPage.tsx`
+All CMS components use TanStack Query hooks from `src/hooks/useCms.ts`:
 
-Reusable error page component with animated icon, error code, title, and description.
+| Hook | Table | Used by |
+|------|-------|---------|
+| `useHeroContent()` | `hero_content` | `HeroSection.tsx` |
+| `useCmsServices()` | `services` | `ServicesPreview.tsx`, `Services.tsx` |
+| `useCmsService(slug)` | `services` | `ServiceDetail.tsx` |
+| `usePricingPlans()` | `pricing_plans` | `PricingSection.tsx` |
+| `useCmsInstructors()` | `instructors` | `Instructors.tsx` |
+| `useCmsGallery()` | `gallery_images` | `Gallery.tsx` |
 
-**Exported Views**:
-| Export | Code | Icon | Description |
-|--------|------|------|-------------|
-| `NotFound` | 404 | Search | Missing route |
-| `ServerError` | 500 | AlertTriangle | Internal error |
-| `Forbidden` | 403 | Lock | Access denied, links to `/contacto` |
-| `Offline` | — | WifiOff | No internet, retries current path |
+**Query options**: 30s stale time, 5min GC time, 1 retry, refetch on window focus.
 
-**Animations**: Spring-based icon entrance, staggered text fade-up via Framer Motion.
+---
+
+## Admin Components
+
+### AdminLayout
+**File**: `src/components/admin/AdminLayout.tsx`
+
+Dashboard layout wrapper with sidebar navigation to all CMS sections.
+
+### ProtectedRoute
+**File**: `src/components/admin/ProtectedRoute.tsx`
+
+Route guard that checks `useAuth().isAdmin`. Redirects to `/admin/login` if not authenticated or not admin.
+
+### ImageUpload
+**File**: `src/components/admin/ImageUpload.tsx`
+
+Image upload component that uploads to `cms-images` storage bucket via Supabase Storage SDK.
+
+### Admin Pages
+
+| Page | File | CMS Table |
+|------|------|-----------|
+| Dashboard | `AdminDashboard.tsx` | Overview |
+| Hero | `AdminHero.tsx` | `hero_content` |
+| Services | `AdminServices.tsx` | `services` |
+| Pricing | `AdminPricing.tsx` | `pricing_plans` |
+| Instructors | `AdminInstructors.tsx` | `instructors` |
+| Gallery | `AdminGallery.tsx` | `gallery_images` |
+
+All admin pages call `queryClient.invalidateQueries()` on save for instant public-site refresh.
 
 ---
 
 ## Interactive Components
 
 ### WhatsAppButton
-
 **File**: `src/components/WhatsAppButton.tsx`
 
-Floating WhatsApp contact button.
+Floating WhatsApp contact button (bottom-right) with pulse animation and pre-filled message.
 
-**Features**:
-- Fixed position (bottom-right)
-- Pulse animation
-- Pre-filled message
-
-**Props**: None
-
-**Configuration**:
-```tsx
-const phoneNumber = "244922569283";
-const message = "Olá! Tenho interesse nos serviços da DBW.";
-```
-
-**Usage**:
-```tsx
-import WhatsAppButton from "@/components/WhatsAppButton";
-
-<WhatsAppButton />
-```
-
----
-
-### Booking Form (in Booking.tsx)
-
+### Booking Form
 **File**: `src/pages/Booking.tsx`
 
-Multi-step booking wizard.
-
-**Steps**:
-1. **Service Selection** - Choose from 4 service types
-2. **Personal Info** - Name, email, phone, optional fields
-3. **Review** - Confirm details before submission
-
-**WhatsApp Resilience**:
-- `whatsappUrl` is saved to `localStorage` before opening WhatsApp
-- The ThankYou page shows a "Reenviar no WhatsApp" button if the URL is found, allowing re-send if the phone required PIN/biometric and the content was lost
-
-**Validation**:
-- Zod schema validation
-- Step-by-step validation triggers
-- Field-specific error messages
-
----
-
-## UI Primitives
-
-UI primitives are located in `src/components/ui/` and follow the shadcn/ui pattern.
-
-### Button
-
-**File**: `src/components/ui/button.tsx`
-
-**Variants**:
-- `default` — Primary filled button
-- `outline` — Bordered button
-- `secondary` — Secondary filled
-- `ghost` — Transparent background
-- `link` — Text link style
-- `destructive` — Red/danger style
-
-**Sizes**:
-- `default` — Standard size
-- `sm` — Small
-- `lg` — Large
-- `icon` — Square icon button
-
-**Usage**:
-```tsx
-import { Button } from "@/components/ui/button";
-
-<Button variant="default" size="lg">Click me</Button>
-<Button asChild><Link to="/page">Link Button</Link></Button>
-```
-
-### Input
-
-**File**: `src/components/ui/input.tsx`
-
-Styled text input with focus states.
-
-### Textarea
-
-**File**: `src/components/ui/textarea.tsx`
-
-Multi-line text input.
-
-### Label
-
-**File**: `src/components/ui/label.tsx`
-
-Form label with accessibility support.
-
-### Dialog
-
-**File**: `src/components/ui/dialog.tsx`
-
-Modal dialog component using Radix UI.
-
-### Toast / Toaster
-
-**File**: `src/components/ui/toast.tsx`, `src/components/ui/toaster.tsx`
-
-Toast notification system.
-
-### Other Components
-
-| Component | File | Purpose |
-|-----------|------|---------|
-| Accordion | `accordion.tsx` | Collapsible content |
-| Alert | `alert.tsx` | Alert messages |
-| Avatar | `avatar.tsx` | User avatars |
-| Badge | `badge.tsx` | Status badges |
-| Card | `card.tsx` | Card container |
-| Checkbox | `checkbox.tsx` | Checkbox input |
-| Dropdown Menu | `dropdown-menu.tsx` | Dropdown menus |
-| Form | `form.tsx` | Form wrapper with validation |
-| Popover | `popover.tsx` | Popover content |
-| Progress | `progress.tsx` | Progress bar |
-| Select | `select.tsx` | Select dropdown |
-| Separator | `separator.tsx` | Horizontal/vertical divider |
-| Sheet | `sheet.tsx` | Side panel/drawer |
-| Skeleton | `skeleton.tsx` | Loading placeholder |
-| Slider | `slider.tsx` | Range slider |
-| Switch | `switch.tsx` | Toggle switch |
-| Tabs | `tabs.tsx` | Tabbed interface |
-| Tooltip | `tooltip.tsx` | Hover tooltips |
+Multi-step wizard: Service Selection → Personal Info → Review → WhatsApp redirect.
+Zod validation. WhatsApp URL saved to `localStorage` for resilience.
 
 ---
 
 ## Hooks
 
-### useToast
+### useAuth
+**File**: `src/hooks/useAuth.tsx`
 
+Authentication context providing `user`, `session`, `isAdmin`, `loading`, `signIn()`, `signOut()`. Admin check uses database `user_roles` table (never client-side storage).
+
+### useCms
+**File**: `src/hooks/useCms.ts`
+
+TanStack Query hooks for all CMS tables. See [CMS-Driven Components](#cms-driven-components).
+
+### useToast
 **File**: `src/hooks/use-toast.ts`
 
-Global toast notification system.
-
-**Usage**:
-```tsx
-import { useToast } from "@/hooks/use-toast";
-
-const MyComponent = () => {
-  const { toast } = useToast();
-  
-  const handleClick = () => {
-    toast({
-      title: "Success",
-      description: "Operation completed",
-    });
-  };
-  
-  return <Button onClick={handleClick}>Click</Button>;
-};
-```
-
-**Toast Options**:
-```tsx
-toast({
-  title: string,
-  description?: string,
-  variant?: "default" | "destructive",
-  action?: ToastActionElement,
-});
-```
+Global toast notification system with `title`, `description`, and `variant` options.
 
 ### useIsMobile
-
 **File**: `src/hooks/use-mobile.tsx`
 
-Responsive breakpoint detection hook.
-
-**Usage**:
-```tsx
-import { useIsMobile } from "@/hooks/use-mobile";
-
-const MyComponent = () => {
-  const isMobile = useIsMobile();
-  
-  return (
-    <div>
-      {isMobile ? <MobileLayout /> : <DesktopLayout />}
-    </div>
-  );
-};
-```
-
-**Breakpoint**: 768px (Tailwind `md` breakpoint)
+Responsive breakpoint detection (768px threshold).
 
 ---
 
-## Component Best Practices
+## UI Primitives
 
-1. **Keep components small** — Aim for < 200 lines
-2. **Extract reusable logic** — Create custom hooks
-3. **Use TypeScript strictly** — No `any` types
-4. **Follow naming conventions** — PascalCase for components
-5. **Document complex props** — Use JSDoc comments
-6. **Test critical paths** — Especially forms and navigation
+Located in `src/components/ui/`, following the shadcn/ui pattern with Radix primitives and `class-variance-authority`.
+
+Key components: Button (6 variants, 4 sizes), Input, Textarea, Label, Dialog, Toast, Card, Tabs, Select, Badge, Skeleton, Accordion, Sheet, Dropdown Menu, Form.
 
 ---
 
 ## Adding New Components
 
-1. Create file in appropriate directory:
-   - `src/components/` for shared components
-   - `src/components/ui/` for UI primitives
-
-2. Follow the established patterns:
-   ```tsx
-   import { cn } from "@/lib/utils";
-   
-   interface MyComponentProps {
-     className?: string;
-     // other props
-   }
-   
-   const MyComponent: React.FC<MyComponentProps> = ({
-     className,
-     ...props
-   }) => {
-     return (
-       <div className={cn("base-classes", className)}>
-         {/* content */}
-       </div>
-     );
-   };
-   
-   export default MyComponent;
-   ```
-
-3. Export from index if needed
-
+1. Create in `src/components/` (shared) or `src/components/ui/` (primitives)
+2. Use `cn()` from `@/lib/utils` for class merging
+3. Use semantic Tailwind tokens (never raw colours)
 4. Add documentation to this file
