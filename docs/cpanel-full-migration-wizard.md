@@ -232,7 +232,7 @@ CREATE TRIGGER update_instructors_updated_at
 
 ## Step 5: Create RLS Policies ☐
 
-⚠️ **CRITICAL**: These MUST be **PERMISSIVE** (the default). Run in **SQL Editor**:
+⚠️ **CRITICAL**: These MUST be **PERMISSIVE** (the default) and write policies MUST target `TO authenticated`. Run in **SQL Editor**:
 
 ```sql
 -- ============================================================
@@ -252,38 +252,38 @@ CREATE POLICY "user_roles_select" ON public.user_roles
   FOR SELECT TO authenticated USING (auth.uid() = user_id);
 
 -- ============================================================
--- CMS tables: public read, admin write
+-- CMS tables: public read, admin write (TO authenticated)
 -- ============================================================
 
 -- hero_content
 CREATE POLICY "hero_select" ON public.hero_content FOR SELECT USING (true);
-CREATE POLICY "hero_insert" ON public.hero_content FOR INSERT WITH CHECK (public.is_admin());
-CREATE POLICY "hero_update" ON public.hero_content FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "hero_delete" ON public.hero_content FOR DELETE USING (public.is_admin());
+CREATE POLICY "hero_insert" ON public.hero_content FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+CREATE POLICY "hero_update" ON public.hero_content FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "hero_delete" ON public.hero_content FOR DELETE TO authenticated USING (public.is_admin());
 
 -- services
 CREATE POLICY "services_select" ON public.services FOR SELECT USING (true);
-CREATE POLICY "services_insert" ON public.services FOR INSERT WITH CHECK (public.is_admin());
-CREATE POLICY "services_update" ON public.services FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "services_delete" ON public.services FOR DELETE USING (public.is_admin());
+CREATE POLICY "services_insert" ON public.services FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+CREATE POLICY "services_update" ON public.services FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "services_delete" ON public.services FOR DELETE TO authenticated USING (public.is_admin());
 
 -- pricing_plans
 CREATE POLICY "pricing_select" ON public.pricing_plans FOR SELECT USING (true);
-CREATE POLICY "pricing_insert" ON public.pricing_plans FOR INSERT WITH CHECK (public.is_admin());
-CREATE POLICY "pricing_update" ON public.pricing_plans FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "pricing_delete" ON public.pricing_plans FOR DELETE USING (public.is_admin());
+CREATE POLICY "pricing_insert" ON public.pricing_plans FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+CREATE POLICY "pricing_update" ON public.pricing_plans FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "pricing_delete" ON public.pricing_plans FOR DELETE TO authenticated USING (public.is_admin());
 
 -- instructors
 CREATE POLICY "instructors_select" ON public.instructors FOR SELECT USING (true);
-CREATE POLICY "instructors_insert" ON public.instructors FOR INSERT WITH CHECK (public.is_admin());
-CREATE POLICY "instructors_update" ON public.instructors FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "instructors_delete" ON public.instructors FOR DELETE USING (public.is_admin());
+CREATE POLICY "instructors_insert" ON public.instructors FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+CREATE POLICY "instructors_update" ON public.instructors FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "instructors_delete" ON public.instructors FOR DELETE TO authenticated USING (public.is_admin());
 
 -- gallery_images
 CREATE POLICY "gallery_select" ON public.gallery_images FOR SELECT USING (true);
-CREATE POLICY "gallery_insert" ON public.gallery_images FOR INSERT WITH CHECK (public.is_admin());
-CREATE POLICY "gallery_update" ON public.gallery_images FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "gallery_delete" ON public.gallery_images FOR DELETE USING (public.is_admin());
+CREATE POLICY "gallery_insert" ON public.gallery_images FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+CREATE POLICY "gallery_update" ON public.gallery_images FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "gallery_delete" ON public.gallery_images FOR DELETE TO authenticated USING (public.is_admin());
 ```
 
 ### ✅ Double-check:

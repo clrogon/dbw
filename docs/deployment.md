@@ -12,7 +12,7 @@ This document covers deployment strategies and configurations for the DBW Fitnes
 - [Post-Deployment](#post-deployment)
 - [Troubleshooting](#troubleshooting)
 
-> cPanel-specific guide: see `docs/cpanel-deployment-wizard.md` for a full migration checklist from Vercel/GitHub to cPanel.
+> **cPanel full migration**: see [`docs/cpanel-full-migration-wizard.md`](./cpanel-full-migration-wizard.md) for a 14-step wizard covering database, auth, storage, and hosting setup from scratch.
 
 ## Prerequisites
 
@@ -22,6 +22,7 @@ Before deploying:
 - [ ] Linting clean (`npm run lint`)
 - [ ] TypeScript compiles (`npx tsc --noEmit`)
 - [ ] Production build succeeds (`npm run build`)
+- [ ] Environment variables configured (see [Environment Configuration](#environment-configuration))
 
 ---
 
@@ -33,140 +34,64 @@ Before deploying:
 npm run build
 ```
 
-This creates a `dist/` directory with optimized assets:
+Creates a `dist/` directory with optimised assets including PWA service worker:
 
 ```
 dist/
 ├── index.html
+├── sw.js                 # Service worker (Workbox)
+├── workbox-*.js          # Workbox runtime
+├── manifest.webmanifest  # PWA manifest
 ├── assets/
-│   ├── index-[hash].js      # Bundled JavaScript
-│   ├── index-[hash].css     # Bundled CSS
-│   └── [hash].jpg/png       # Optimized images
+│   ├── index-[hash].js   # Bundled JavaScript
+│   ├── index-[hash].css  # Bundled CSS
+│   └── [hash].jpg/png    # Optimised images
+├── pwa-192x192.png
+├── pwa-512x512.png
 └── favicon.ico
-```
-
-### Build Output Analysis
-
-```bash
-# Preview build locally
-npm run preview
-
-# Analyze bundle size (if needed)
-npx vite-bundle-visualizer
 ```
 
 ### Build Environment
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NODE_ENV` | Environment mode | `production` |
-| `VITE_*` | Custom environment variables | — |
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `VITE_SUPABASE_URL` | Backend API URL | Yes |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Backend anon key | Yes |
+| `VITE_SUPABASE_PROJECT_ID` | Backend project ID | Yes |
 
 ---
 
 ## Deployment Targets
 
-### Vercel (Recommended)
+### Lovable Cloud (Development)
 
-**Setup**:
+Automatic — preview URL is generated on every push.
+
+### Vercel
 
 1. Connect repository to Vercel
-2. Configure project settings:
+2. Configure:
    - Framework Preset: Vite
    - Build Command: `npm run build`
    - Output Directory: `dist`
-   - Install Command: `npm install`
+3. SPA routing is handled by `vercel.json`:
+   ```json
+   { "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
+   ```
+4. Add environment variables in Vercel dashboard.
 
-3. Configure redirects for SPA routing:
+### cPanel
 
-Create `vercel.json`:
-```json
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ]
-}
-```
+See the **[Full Migration Wizard](./cpanel-full-migration-wizard.md)** for a complete 14-step procedure including:
+- Database schema creation
+- Auth functions and triggers
+- PERMISSIVE RLS policies
+- Storage bucket setup
+- Admin user provisioning
+- `.htaccess` configuration
+- Post-deploy validation checklist
 
-**Environment Variables** (if needed):
-- Add in Vercel dashboard → Settings → Environment Variables
-
----
-
-### Netlify
-
-**Setup**:
-
-1. Connect repository to Netlify
-2. Configure build settings:
-   - Build Command: `npm run build`
-   - Publish Directory: `dist`
-
-3. Configure redirects for SPA routing:
-
-Create `public/_redirects`:
-```
-/*    /index.html   200
-```
-
-Or add to `netlify.toml`:
-```toml
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-```
-
----
-
-### Cloudflare Pages
-
-**Setup**:
-
-1. Connect repository in Cloudflare dashboard
-2. Configure:
-   - Framework preset: None
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-
-3. Add redirect rule in `_redirects` file (same as Netlify)
-
----
-
-### Static Hosting (Generic)
-
-**Requirements**:
-- Serve `dist/` directory as static files
-- Configure SPA fallback: all routes → `index.html`
-- Enable gzip/brotli compression
-- Set cache headers
-
-**Nginx Example**:
-```nginx
-server {
-    listen 80;
-    server_name dbwfitness.ao;
-    root /var/www/dbw/dist;
-    index index.html;
-
-    # SPA fallback
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # Cache static assets
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-
-    # Gzip compression
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
-}
-```
-
-**Apache Example**:
+Quick `.htaccess` for SPA routing:
 ```apache
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -178,13 +103,16 @@ server {
 </IfModule>
 ```
 
----
+### Netlify
+
+Create `public/_redirects`:
+```
+/*    /index.html   200
+```
 
 ### Docker
 
-**Dockerfile**:
 ```dockerfile
-# Build stage
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
@@ -192,7 +120,6 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Production stage
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
@@ -200,38 +127,23 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-**Build and Run**:
-```bash
-docker build -t dbw-fitness .
-docker run -p 80:80 dbw-fitness
-```
-
 ---
 
 ## Environment Configuration
 
-### Environment Variables
-
-Create `.env.production` for production builds:
+Create `.env.production` for production builds (NOT committed to Git):
 
 ```env
-VITE_API_URL=https://api.dbwfitness.ao
-VITE_GA_ID=G-XXXXXXXXXX
+VITE_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_ANON_KEY
+VITE_SUPABASE_PROJECT_ID=YOUR_PROJECT_ID
 ```
-
-**Accessing in code**:
-```tsx
-const apiUrl = import.meta.env.VITE_API_URL;
-```
-
-### Environment Files
 
 | File | Purpose |
 |------|---------|
-| `.env` | Default (committed if no secrets) |
+| `.env` | Default (auto-managed by Lovable Cloud) |
 | `.env.local` | Local overrides (git-ignored) |
-| `.env.production` | Production build |
-| `.env.development` | Development build |
+| `.env.production` | Production build overrides |
 
 ---
 
@@ -239,11 +151,8 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 ### GitHub Actions
 
-Create `.github/workflows/deploy.yml`:
-
 ```yaml
 name: Deploy
-
 on:
   push:
     branches: [main]
@@ -251,50 +160,22 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Lint
-        run: npm run lint
-      
-      - name: Type check
-        run: npx tsc --noEmit
-      
-      - name: Test
-        run: npm test
-      
-      - name: Build
-        run: npm run build
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-      
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
 ```
-
-### Required Secrets
-
-| Secret | Description |
-|--------|-------------|
-| `VERCEL_TOKEN` | Vercel API token |
-| `VERCEL_ORG_ID` | Organization ID |
-| `VERCEL_PROJECT_ID` | Project ID |
-| `VITE_API_URL` | API URL (if applicable) |
 
 ---
 
@@ -302,110 +183,38 @@ jobs:
 
 ### Checklist
 
-- [ ] All routes work (test navigation)
-- [ ] 404 page works for unknown routes
-- [ ] Images load correctly
+- [ ] All routes work (test navigation + hard refresh)
+- [ ] CMS data loads on public pages (Hero, Services, Pricing, Instructors, Gallery)
+- [ ] Admin login works at `/admin/login`
+- [ ] Admin can edit and save content
+- [ ] CMS changes reflect on public pages after save
+- [ ] Image upload works in admin
+- [ ] PWA install prompt appears (or `/instalar` page works)
 - [ ] WhatsApp links work
-- [ ] Forms submit correctly
+- [ ] Booking form submits correctly
 - [ ] Mobile responsive
-- [ ] SEO meta tags present (view source)
-- [ ] Performance acceptable (Lighthouse)
-
-### Performance Testing
-
-```bash
-# Run Lighthouse
-npx lighthouse https://dbwfitness.ao --view
-```
-
-**Target Scores**:
-- Performance: > 90
-- Accessibility: > 90
-- Best Practices: > 90
-- SEO: > 90
+- [ ] HTTPS enforced
 
 ---
 
 ## Troubleshooting
 
-### Common Issues
+### Blank page after deployment
+**Cause**: SPA routing not configured.
+**Fix**: Add platform-specific redirect rules (see above).
 
-#### Blank page after deployment
+### 404 on page refresh
+**Cause**: Server looking for physical files.
+**Fix**: Configure SPA fallback to `index.html`.
 
-**Cause**: SPA routing not configured
+### CMS data not loading
+**Cause**: Wrong environment variables or RLS issues.
+**Fix**: Verify `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Check RLS policies are PERMISSIVE.
 
-**Solution**: Ensure server redirects all routes to `index.html`
+### Admin login hangs
+**Cause**: RESTRICTIVE RLS policies on `user_roles`.
+**Fix**: Ensure `user_roles` SELECT policy is PERMISSIVE with `auth.uid() = user_id`.
 
----
-
-#### 404 on page refresh
-
-**Cause**: Server looking for physical files
-
-**Solution**: Configure server-side redirects (see platform-specific configs above)
-
----
-
-#### Assets not loading
-
-**Cause**: Incorrect base path
-
-**Solution**: Set `base` in `vite.config.ts`:
-```ts
-export default defineConfig({
-  base: '/',  // or '/subdirectory/' if not at root
-  // ...
-});
-```
-
----
-
-#### Environment variables not working
-
-**Cause**: Variables not prefixed with `VITE_`
-
-**Solution**: Only `VITE_*` variables are exposed to client code
-
----
-
-#### Build fails with memory error
-
-**Cause**: Node memory limit
-
-**Solution**: Increase memory:
-```bash
-NODE_OPTIONS="--max-old-space-size=4096" npm run build
-```
-
----
-
-### Monitoring
-
-Consider adding:
-- Error tracking (Sentry)
-- Analytics (Google Analytics, Plausible)
-- Uptime monitoring (UptimeRobot)
-- Performance monitoring (Vercel Analytics)
-
----
-
-## Rollback
-
-### Vercel
-
-```bash
-vercel rollback
-```
-
-Or use dashboard → Deployments → Promote previous deployment
-
-### Netlify
-
-Dashboard → Deploys → Rollback to previous deploy
-
-### Manual
-
-Keep previous build artifacts and switch symlinks:
-```bash
-ln -sfn dist-v1.2.3 current
-```
+### Assets not loading
+**Cause**: Incorrect base path.
+**Fix**: Set `base: '/'` in `vite.config.ts`.
