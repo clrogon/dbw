@@ -40,6 +40,7 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE** (Postg
 
 - `cms-images` bucket: public read, admin-only write
 - Storage policies enforce `is_admin()` for upload/update/delete
+- **Upload validation**: Client-side enforcement of 5 MB max size, MIME-type whitelist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`, `image/svg+xml`), and extension whitelist
 
 ### Frontend Security
 
@@ -51,6 +52,11 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE** (Postg
 | Secrets | Only `anon` (publishable) key in frontend code |
 | CSRF | Supabase JWT-based auth (no cookies) |
 | PII in logs | No email/phone/user IDs logged to console |
+| File uploads | Size, MIME, and extension validation before upload |
+
+### Admin Authorization — Security Note
+
+The admin check in the frontend (`useAuth.tsx`) queries the `user_roles` table client-side. This is **acceptable only because RLS policies enforce authorization server-side** via the `is_admin()` SECURITY DEFINER function. If RLS policies were ever removed or disabled on CMS tables, admin-only operations would become publicly writable. **Never disable RLS on CMS tables.**
 
 ### Environment Variables
 
@@ -62,7 +68,8 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE** (Postg
 
 ### Recommendations
 
-- Enable **leaked password protection** in your Supabase Auth settings
+- ⚠️ Enable **leaked password protection** in your backend auth settings (Cloud → Authentication → Settings)
 - Use HTTPS in production (enforced via `.htaccess` on cPanel)
 - Regularly review RLS policies after schema changes
 - Never store `service_role` key in frontend code or Git
+- Keep dependencies up to date — run `npm audit` regularly
