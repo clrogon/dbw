@@ -13,8 +13,10 @@ const ThankYou = () => {
   const location = useLocation();
   const stateWhatsappUrl = (location.state as any)?.whatsappUrl;
   const [whatsappUrl] = useState<string | null>(() => {
-    if (stateWhatsappUrl) return stateWhatsappUrl;
-    try { const url = localStorage.getItem("dbw_whatsapp_url"); if (url) localStorage.removeItem("dbw_whatsapp_url"); return url; } catch { return null; }
+    if (typeof stateWhatsappUrl === "string" && stateWhatsappUrl.startsWith("https://wa.me/")) {
+      return stateWhatsappUrl;
+    }
+    return null;
   });
 
   return (
