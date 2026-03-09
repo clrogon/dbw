@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Image, Dumbbell, DollarSign, Users, Images } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Counts {
   services: number;
@@ -11,9 +12,11 @@ interface Counts {
 }
 
 const AdminDashboard = () => {
+  const { user, loading: authLoading } = useAuth();
   const [counts, setCounts] = useState<Counts>({ services: 0, pricing: 0, instructors: 0, gallery: 0 });
 
   useEffect(() => {
+    if (authLoading || !user) return;
     const load = async () => {
       const [s, p, i, g] = await Promise.all([
         supabase.from("services").select("id", { count: "exact", head: true }),
@@ -29,7 +32,7 @@ const AdminDashboard = () => {
       });
     };
     load();
-  }, []);
+  }, [authLoading, user]);
 
   const cards = [
     { label: "Hero", href: "/admin/hero", icon: Image, count: null, desc: "Secção principal" },

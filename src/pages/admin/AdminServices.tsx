@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
 const AdminServices = () => {
+  const { user, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [services, setServices] = useState<Service[]>([]);
@@ -32,7 +34,7 @@ const AdminServices = () => {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
 
   const startNew = () => {
     setIsNew(true);

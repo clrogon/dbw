@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ interface Stat {
 }
 
 const AdminHero = () => {
+  const { user, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -33,6 +35,7 @@ const AdminHero = () => {
   });
 
   useEffect(() => {
+    if (authLoading || !user) return;
     supabase.from("hero_content").select("*").limit(1).maybeSingle().then(({ data, error }) => {
       if (error) {
         console.error("Load hero error:", error);
@@ -54,7 +57,7 @@ const AdminHero = () => {
       }
       setLoading(false);
     });
-  }, []);
+  }, [authLoading, user]);
 
   const save = async () => {
     setSaving(true);
