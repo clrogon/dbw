@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Image, Dumbbell, DollarSign, Users, Images } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Counts {
   services: number;
