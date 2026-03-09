@@ -13,6 +13,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Plan = Database["public"]["Tables"]["pricing_plans"]["Row"];
 
 const AdminPricing = () => {
+  const { user, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -32,7 +33,7 @@ const AdminPricing = () => {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
 
   const startNew = () => {
     setIsNew(true);

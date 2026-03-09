@@ -14,6 +14,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
 const AdminServices = () => {
+  const { user, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [services, setServices] = useState<Service[]>([]);
@@ -33,7 +34,7 @@ const AdminServices = () => {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
 
   const startNew = () => {
     setIsNew(true);

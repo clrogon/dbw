@@ -16,6 +16,7 @@ type GalleryImage = Database["public"]["Tables"]["gallery_images"]["Row"];
 const categories = ["Actividades Aquáticas", "Treinos", "Ginástica Laboral", "Aulas em Grupo"];
 
 const AdminGallery = () => {
+  const { user, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -31,14 +32,13 @@ const AdminGallery = () => {
       toast({ title: "Erro", description: "Não foi possível carregar a galeria.", variant: "destructive" });
     }
     if (data) {
-      // Normalize for CMS surface while preserving editing fields
       const mapped = (data as any[]).map((img) => ({ ...img, src: img.image_url }));
       setImages(mapped as unknown as GalleryImage[]);
     }
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
 
   const startNew = () => {
     setIsNew(true);

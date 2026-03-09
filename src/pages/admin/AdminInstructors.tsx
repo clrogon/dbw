@@ -15,6 +15,7 @@ import { normaliseInstructorRow } from "@/utils/normaliseCms";
 type Instructor = Database["public"]["Tables"]["instructors"]["Row"];
 
 const AdminInstructors = () => {
+  const { user, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [items, setItems] = useState<Instructor[]>([]);
@@ -37,7 +38,7 @@ const AdminInstructors = () => {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
 
   const startNew = () => {
     setIsNew(true);
