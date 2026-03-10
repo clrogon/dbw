@@ -73,7 +73,6 @@ const AdminGallery = () => {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Apagar esta imagem?")) return;
     const { error } = await supabase.from("gallery_images").delete().eq("id", id);
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
