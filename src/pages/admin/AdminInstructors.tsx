@@ -29,20 +29,22 @@ const AdminInstructors = () => {
   const [saving, setSaving] = useState(false);
   const [specInput, setSpecInput] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data, error } = await supabase.from("instructors").select("*").order("sort_order");
     if (error) {
       console.error("Load instructors error:", error);
       toast({ title: "Erro", description: "Não foi possível carregar os instrutores.", variant: "destructive" });
     }
     if (data) {
-      const normalized = (data as any).map((it: any) => normaliseInstructorRow(it)) as unknown as Instructor[];
+      // Cast needed: supabase-js returns JSON columns as `Json`, not `string[]`.
+      // normaliseInstructorRow remaps these to typed arrays.
+      const normalized = (data as unknown as Parameters<typeof normaliseInstructorRow>[0][]).map(normaliseInstructorRow) as unknown as Instructor[];
       setItems(normalized);
     }
     setLoading(false);
-  };
+  }, [toast]);
 
-  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user, load]);
 
   const startNew = () => {
     setIsNew(true);
