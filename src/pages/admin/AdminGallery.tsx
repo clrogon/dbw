@@ -29,20 +29,17 @@ const AdminGallery = () => {
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data, error } = await supabase.from("gallery_images").select("*").order("sort_order");
     if (error) {
       console.error("Load gallery error:", error);
       toast({ title: "Erro", description: "Não foi possível carregar a galeria.", variant: "destructive" });
     }
-    if (data) {
-      const mapped = (data as any[]).map((img) => ({ ...img, src: img.image_url }));
-      setImages(mapped as unknown as GalleryImage[]);
-    }
+    if (data) setImages(data);
     setLoading(false);
-  };
+  }, [toast]);
 
-  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user, load]);
 
   const startNew = () => {
     setIsNew(true);
