@@ -81,7 +81,7 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
           <label className="cursor-pointer">
             <Upload className="w-4 h-4 mr-2" />
             {uploading ? "A carregar..." : "Carregar imagem"}
-            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onChange={handleUpload} className="hidden" />
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleUpload} className="hidden" />
           </label>
         </Button>
         <p className="text-xs text-muted-foreground mt-1">Máx. 5 MB · JPG, PNG, WebP, GIF, SVG</p>
