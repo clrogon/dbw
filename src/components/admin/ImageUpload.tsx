@@ -35,7 +35,7 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
 
     // Validate MIME type
     if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-      toast({ title: "Tipo de ficheiro inválido", description: "Apenas JPG, PNG, WebP, GIF e SVG são permitidos.", variant: "destructive" });
+      toast({ title: "Tipo de ficheiro inválido", description: "Apenas JPG, PNG, WebP e GIF são permitidos.", variant: "destructive" });
       return;
     }
 
