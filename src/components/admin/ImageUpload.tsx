@@ -84,7 +84,7 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
             <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleUpload} className="hidden" />
           </label>
         </Button>
-        <p className="text-xs text-muted-foreground mt-1">Máx. 5 MB · JPG, PNG, WebP, GIF, SVG</p>
+        <p className="text-xs text-muted-foreground mt-1">Máx. 5 MB · JPG, PNG, WebP, GIF</p>
       </div>
     </div>
   );

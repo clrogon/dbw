@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,6 +10,10 @@ import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Plus, Trash2, Edit, ArrowLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
@@ -24,7 +28,7 @@ const AdminServices = () => {
   const [saving, setSaving] = useState(false);
   const [subInput, setSubInput] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data, error } = await supabase.from("services").select("*").order("sort_order");
     if (error) {
       console.error("Load services error:", error);
@@ -32,9 +36,9 @@ const AdminServices = () => {
     }
     if (data) setServices(data);
     setLoading(false);
-  };
+  }, [toast]);
 
-  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user, load]);
 
   const startNew = () => {
     setIsNew(true);
@@ -76,7 +80,6 @@ const AdminServices = () => {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Tem a certeza que quer apagar este serviço?")) return;
     const { error } = await supabase.from("services").delete().eq("id", id);
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
@@ -198,7 +201,21 @@ const AdminServices = () => {
               </div>
               <div className="flex gap-2">
                 <Button variant="ghost" size="icon" onClick={() => setEditing(s)}><Edit className="w-4 h-4" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => remove(s.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar eliminação</AlertDialogTitle>
+                      <AlertDialogDescription>Esta acção é irreversível. Apagar o serviço "{s.title}"?</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => remove(s.id)}>Apagar</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           ))}

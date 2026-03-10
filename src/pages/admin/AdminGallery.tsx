@@ -135,10 +135,24 @@ const AdminGallery = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {images.map((img) => (
               <div key={img.id} className="relative group rounded-lg overflow-hidden border bg-card">
-              <img src={img.image_url ?? (img as any).src} alt={img.alt} className="w-full aspect-square object-cover" />
+              <img src={img.image_url} alt={img.alt} className="w-full aspect-square object-cover" />
               <div className="absolute inset-0 bg-foreground/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                 <Button variant="secondary" size="icon" onClick={() => setEditing(img)}><Edit className="w-4 h-4" /></Button>
-                <Button variant="destructive" size="icon" onClick={() => remove(img.id)}><Trash2 className="w-4 h-4" /></Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="icon"><Trash2 className="w-4 h-4" /></Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar eliminação</AlertDialogTitle>
+                      <AlertDialogDescription>Esta acção é irreversível. Apagar esta imagem?</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => remove(img.id)}>Apagar</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
               <div className="p-2">
                 <p className="text-xs text-muted-foreground truncate">{img.category}</p>

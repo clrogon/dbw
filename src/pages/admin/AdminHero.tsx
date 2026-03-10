@@ -58,7 +58,7 @@ const AdminHero = () => {
       }
       setLoading(false);
     });
-  }, [authLoading, user]);
+  }, [authLoading, user, toast]);
 
   const save = async () => {
     setSaving(true);

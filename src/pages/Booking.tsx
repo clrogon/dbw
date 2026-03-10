@@ -82,9 +82,10 @@ const Booking = () => {
     if (data.mensagem) lines.push(`*Mensagem:* ${data.mensagem}`);
     const msg = lines.join("\n");
 
-    const whatsappUrl = `https://wa.me/244922569283?text=${encodeURIComponent(msg)}`;
+    const phone = import.meta.env.VITE_WHATSAPP_NUMBER || "244922569283";
+    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
     // Do not persist URL in localStorage; pass via router state
-    window.open(whatsappUrl, "_blank");
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     navigate(`/obrigado?nome=${encodeURIComponent(data.nome)}`, { state: { whatsappUrl } });
   };
 
