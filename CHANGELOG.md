@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deployment guide with Vercel, Netlify, Cloudflare, Docker, and cPanel configs.
 - Component documentation (`docs/components.md`).
 - Error pages (404, 500, 403, Offline) with Framer Motion animations.
-- WhatsApp booking resilience (URL saved to localStorage for re-send).
+- WhatsApp booking redirect URL passed via React Router state (not persisted to storage).
 
 ### Changed
 - HeroSection, ServicesPreview, PricingSection, Services, Instructors, and Gallery pages now fetch from CMS database instead of static data.

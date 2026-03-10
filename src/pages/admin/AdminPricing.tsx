@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +9,10 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Plus, Trash2, Edit, ArrowLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Plan = Database["public"]["Tables"]["pricing_plans"]["Row"];
 
@@ -23,7 +27,7 @@ const AdminPricing = () => {
   const [saving, setSaving] = useState(false);
   const [featureInput, setFeatureInput] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data, error } = await supabase.from("pricing_plans").select("*").order("sort_order");
     if (error) {
       console.error("Load pricing error:", error);
@@ -31,9 +35,9 @@ const AdminPricing = () => {
     }
     if (data) setPlans(data);
     setLoading(false);
-  };
+  }, [toast]);
 
-  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user, load]);
 
   const startNew = () => {
     setIsNew(true);
@@ -67,7 +71,6 @@ const AdminPricing = () => {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Apagar este plano?")) return;
     const { error } = await supabase.from("pricing_plans").delete().eq("id", id);
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
@@ -158,7 +161,21 @@ const AdminPricing = () => {
               </div>
               <div className="flex gap-2">
                 <Button variant="ghost" size="icon" onClick={() => setEditing(p)}><Edit className="w-4 h-4" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => remove(p.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar eliminação</AlertDialogTitle>
+                      <AlertDialogDescription>Esta acção é irreversível. Apagar o plano "{p.name}"?</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => remove(p.id)}>Apagar</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           ))}

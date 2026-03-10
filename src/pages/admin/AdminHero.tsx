@@ -41,6 +41,7 @@ const AdminHero = () => {
         console.error("Load hero error:", error);
         toast({ title: "Erro", description: "Não foi possível carregar o conteúdo.", variant: "destructive" });
       }
+
       if (data) {
         setHeroId(data.id);
         setForm({
@@ -57,7 +58,7 @@ const AdminHero = () => {
       }
       setLoading(false);
     });
-  }, [authLoading, user]);
+  }, [authLoading, user, toast]);
 
   const save = async () => {
     setSaving(true);

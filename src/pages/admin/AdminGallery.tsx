@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit, ArrowLeft, Save } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
 
 type GalleryImage = Database["public"]["Tables"]["gallery_images"]["Row"];
@@ -25,20 +29,17 @@ const AdminGallery = () => {
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data, error } = await supabase.from("gallery_images").select("*").order("sort_order");
     if (error) {
       console.error("Load gallery error:", error);
       toast({ title: "Erro", description: "Não foi possível carregar a galeria.", variant: "destructive" });
     }
-    if (data) {
-      const mapped = (data as any[]).map((img) => ({ ...img, src: img.image_url }));
-      setImages(mapped as unknown as GalleryImage[]);
-    }
+    if (data) setImages(data);
     setLoading(false);
-  };
+  }, [toast]);
 
-  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user, load]);
 
   const startNew = () => {
     setIsNew(true);
@@ -72,7 +73,6 @@ const AdminGallery = () => {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Apagar esta imagem?")) return;
     const { error } = await supabase.from("gallery_images").delete().eq("id", id);
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
@@ -135,10 +135,24 @@ const AdminGallery = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {images.map((img) => (
               <div key={img.id} className="relative group rounded-lg overflow-hidden border bg-card">
-              <img src={img.image_url ?? (img as any).src} alt={img.alt} className="w-full aspect-square object-cover" />
+              <img src={img.image_url} alt={img.alt} className="w-full aspect-square object-cover" />
               <div className="absolute inset-0 bg-foreground/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                 <Button variant="secondary" size="icon" onClick={() => setEditing(img)}><Edit className="w-4 h-4" /></Button>
-                <Button variant="destructive" size="icon" onClick={() => remove(img.id)}><Trash2 className="w-4 h-4" /></Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="icon"><Trash2 className="w-4 h-4" /></Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar eliminação</AlertDialogTitle>
+                      <AlertDialogDescription>Esta acção é irreversível. Apagar esta imagem?</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => remove(img.id)}>Apagar</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
               <div className="p-2">
                 <p className="text-xs text-muted-foreground truncate">{img.category}</p>

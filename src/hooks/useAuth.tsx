@@ -39,29 +39,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // Get initial session first
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const admin = await checkAdmin(session.user.id);
-        setIsAdmin(admin);
+    // Single source of truth: onAuthStateChange handles both initial session
+    // restoration and subsequent auth events, avoiding the race condition
+    // between getSession() and INITIAL_SESSION event (F-10).
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          const admin = await checkAdmin(session.user.id);
+          setIsAdmin(admin);
+        } else {
+          setIsAdmin(false);
+        }
+        setLoading(false);
       }
-      setLoading(false);
-    });
-
-    // Then listen for changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const admin = await checkAdmin(session.user.id);
-        setIsAdmin(admin);
-      } else {
-        setIsAdmin(false);
-      }
-      setLoading(false);
-    });
+    );
 
     return () => subscription.unsubscribe();
   }, [checkAdmin]);

@@ -5,13 +5,12 @@ import { Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif", "svg"];
+const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"];
 const ALLOWED_MIME_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/gif",
-  "image/svg+xml",
 ];
 
 interface ImageUploadProps {
@@ -36,7 +35,7 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
 
     // Validate MIME type
     if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-      toast({ title: "Tipo de ficheiro inválido", description: "Apenas JPG, PNG, WebP, GIF e SVG são permitidos.", variant: "destructive" });
+      toast({ title: "Tipo de ficheiro inválido", description: "Apenas JPG, PNG, WebP e GIF são permitidos.", variant: "destructive" });
       return;
     }
 
@@ -82,10 +81,10 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
           <label className="cursor-pointer">
             <Upload className="w-4 h-4 mr-2" />
             {uploading ? "A carregar..." : "Carregar imagem"}
-            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onChange={handleUpload} className="hidden" />
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleUpload} className="hidden" />
           </label>
         </Button>
-        <p className="text-xs text-muted-foreground mt-1">Máx. 5 MB · JPG, PNG, WebP, GIF, SVG</p>
+        <p className="text-xs text-muted-foreground mt-1">Máx. 5 MB · JPG, PNG, WebP, GIF</p>
       </div>
     </div>
   );

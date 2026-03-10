@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +11,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Save, Plus, Trash2, Edit, ArrowLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { normaliseInstructorRow } from "@/utils/normaliseCms";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Instructor = Database["public"]["Tables"]["instructors"]["Row"];
 
@@ -25,20 +29,22 @@ const AdminInstructors = () => {
   const [saving, setSaving] = useState(false);
   const [specInput, setSpecInput] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data, error } = await supabase.from("instructors").select("*").order("sort_order");
     if (error) {
       console.error("Load instructors error:", error);
       toast({ title: "Erro", description: "Não foi possível carregar os instrutores.", variant: "destructive" });
     }
     if (data) {
-      const normalized = (data as any).map((it: any) => normaliseInstructorRow(it)) as unknown as Instructor[];
+      // Cast needed: supabase-js returns JSON columns as `Json`, not `string[]`.
+      // normaliseInstructorRow remaps these to typed arrays.
+      const normalized = (data as unknown as Parameters<typeof normaliseInstructorRow>[0][]).map(normaliseInstructorRow) as unknown as Instructor[];
       setItems(normalized);
     }
     setLoading(false);
-  };
+  }, [toast]);
 
-  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user]);
+  useEffect(() => { if (!authLoading && user) load(); }, [authLoading, user, load]);
 
   const startNew = () => {
     setIsNew(true);
@@ -72,7 +78,6 @@ const AdminInstructors = () => {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Apagar este instrutor?")) return;
     const { error } = await supabase.from("instructors").delete().eq("id", id);
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
@@ -160,7 +165,21 @@ const AdminInstructors = () => {
               </div>
               <div className="flex gap-2">
                 <Button variant="ghost" size="icon" onClick={() => setEditing(item)}><Edit className="w-4 h-4" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => remove(item.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar eliminação</AlertDialogTitle>
+                      <AlertDialogDescription>Esta acção é irreversível. Apagar o instrutor "{item.name}"?</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => remove(item.id)}>Apagar</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           ))}
