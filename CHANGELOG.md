@@ -32,9 +32,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - RLS policies changed from RESTRICTIVE to PERMISSIVE to fix CMS read/write operations.
 - Added `TO authenticated` target on all admin write policies.
-- `useAuth` hook avoids race conditions by checking admin status immediately after `signInWithPassword`.
+- `useAuth` hook refactored to use `onAuthStateChange` as single source of truth, eliminating race condition between `getSession()` and `INITIAL_SESSION` event (F-10).
+- `checkAdmin` wrapped in `useCallback` to prevent infinite render loops in auth effect.
+- Admin pages gate data loading on auth readiness (`!authLoading && user`) to prevent queries firing before session restoration.
+- Replaced native `confirm()` dialogs with `AlertDialog` components in all admin CRUD pages (F-09).
+- `window.open` calls in Booking page use `noopener,noreferrer` to prevent tab-nabbing (F-03).
 
 ### Security
+- (F-01, HIGH) Removed SVG/`image/svg+xml` from upload whitelist to prevent stored XSS via malicious SVG.
+- (F-02, HIGH) Admin login form no longer leaks timing information; generic error message on invalid credentials.
+- (F-11, MEDIUM) Added `Content-Security-Policy` meta tag: `default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'`.
+- (F-05, MEDIUM) `useAuth` uses `onAuthStateChange` exclusively — no parallel `getSession()` call that could desync state.
+- (Gap 2) Updated `vite-plugin-pwa` from 0.21.1 to 0.19.8 to resolve high-severity vulnerabilities in `workbox-build`, `serialize-javascript`, and `@rollup/plugin-terser` (OWASP A06:2021).
+- (F-08) Verified `useCallback` dependency arrays in all admin `load()` functions — `[toast]` is correct since `supabase` is module-level and state setters are stable.
 - All RLS policies verified as PERMISSIVE with `is_admin()` checks on write operations.
 - Session tokens stored in `sessionStorage` instead of `localStorage`.
 - Admin roles stored in separate `user_roles` table (not on profile).
