@@ -78,7 +78,6 @@ const AdminInstructors = () => {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Apagar este instrutor?")) return;
     const { error } = await supabase.from("instructors").delete().eq("id", id);
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
