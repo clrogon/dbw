@@ -51,7 +51,7 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
 
     const { error } = await supabase.storage.from("cms-images").upload(path, file);
     if (error) {
-      console.error("Upload error:", error);
+      console.error("Upload error");
       toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
       setUploading(false);
       return;

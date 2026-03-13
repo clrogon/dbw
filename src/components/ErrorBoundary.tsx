@@ -11,9 +11,9 @@ class ErrorBoundary extends React.Component<Props, State> {
   static getDerivedStateFromError(_error: any): State {
     return { hasError: true };
   }
-  componentDidCatch(error: any, info: React.ErrorInfo) {
+  componentDidCatch(_error: any, _info: React.ErrorInfo) {
     // Log error for debugging; avoid surfacing raw errors to users
-    console.error("Unhandled error in DBW app:", error, info);
+    console.error("Unhandled error in DBW app");
   }
   render() {
     if (this.state.hasError) {

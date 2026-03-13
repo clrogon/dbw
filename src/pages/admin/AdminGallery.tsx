@@ -32,7 +32,7 @@ const AdminGallery = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("gallery_images").select("*").order("sort_order");
     if (error) {
-      console.error("Load gallery error:", error);
+      console.error("Load gallery error");
       toast({ title: "Erro", description: "Não foi possível carregar a galeria.", variant: "destructive" });
     }
     if (data) setImages(data);
@@ -61,7 +61,7 @@ const AdminGallery = () => {
     }
     
     if (error) {
-      console.error("Save gallery error:", error);
+      console.error("Save gallery error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["cms_gallery"] });
