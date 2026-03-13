@@ -40,7 +40,7 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE** (Postg
 
 - `cms-images` bucket: public read, admin-only write
 - Storage policies enforce `is_admin()` for upload/update/delete
-- **Upload validation**: Client-side enforcement of 5 MB max size, MIME-type whitelist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`, `image/svg+xml`), and extension whitelist
+- **Upload validation**: Client-side enforcement of 5 MB max size, MIME-type whitelist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`) and extension whitelist
 
 ### Frontend Security
 
@@ -51,7 +51,7 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE** (Postg
 | External links | `rel="noopener noreferrer"` on all external anchors |
 | Secrets | Only `anon` (publishable) key in frontend code |
 | CSRF | Supabase JWT-based auth (no cookies) |
-| PII in logs | No email/phone/user IDs logged to console |
+| PII in logs | Client logs only emit safe metadata (`code`, `status`, `name`) with no raw error payloads |
 | File uploads | Size, MIME, and extension validation before upload |
 
 ### Admin Authorization — Security Note

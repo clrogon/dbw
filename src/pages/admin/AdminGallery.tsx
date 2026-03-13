@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
+import { logClientError } from "@/lib/error-logging";
 import { Plus, Trash2, Edit, ArrowLeft, Save } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -32,7 +33,7 @@ const AdminGallery = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("gallery_images").select("*").order("sort_order");
     if (error) {
-      console.error("Load gallery error:", error);
+      logClientError("Load gallery error", error);
       toast({ title: "Erro", description: "Não foi possível carregar a galeria.", variant: "destructive" });
     }
     if (data) setImages(data);
@@ -61,7 +62,7 @@ const AdminGallery = () => {
     }
     
     if (error) {
-      console.error("Save gallery error:", error);
+      logClientError("Save gallery error", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["cms_gallery"] });

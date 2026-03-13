@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { logClientError } from "@/lib/error-logging";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"];
@@ -51,7 +52,7 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
 
     const { error } = await supabase.storage.from("cms-images").upload(path, file);
     if (error) {
-      console.error("Upload error:", error);
+      logClientError("Upload error", error);
       toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
       setUploading(false);
       return;

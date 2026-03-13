@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import { logClientError } from "@/lib/error-logging";
 
 interface AuthContext {
   user: User | null;
@@ -28,12 +29,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq("role", "admin")
         .maybeSingle();
       if (error) {
-        console.error("checkAdmin error:", error);
+        logClientError("checkAdmin error", error);
         return false;
       }
       return !!data;
-    } catch (e) {
-      console.error("checkAdmin exception:", e);
+    } catch (error) {
+      logClientError("checkAdmin exception", error);
       return false;
     }
   }, []);

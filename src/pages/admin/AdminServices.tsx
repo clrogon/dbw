@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
+import { logClientError } from "@/lib/error-logging";
 import { Save, Plus, Trash2, Edit, ArrowLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import {
@@ -31,7 +32,7 @@ const AdminServices = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("services").select("*").order("sort_order");
     if (error) {
-      console.error("Load services error:", error);
+      logClientError("Load services error", error);
       toast({ title: "Erro", description: "Não foi possível carregar os serviços.", variant: "destructive" });
     }
     if (data) setServices(data);
@@ -64,7 +65,7 @@ const AdminServices = () => {
     }
     
     if (error) {
-      console.error("Save service error:", error);
+      logClientError("Save service error", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await Promise.all([

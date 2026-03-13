@@ -24,7 +24,7 @@ const AdminLogin = () => {
     const { error, isAdmin } = await signIn(email, password);
 
     if (error) {
-      const msg = (error as any)?.message?.toLowerCase?.() ?? "";
+      const msg = typeof error.message === "string" ? error.message.toLowerCase() : "";
       if (msg.includes("rate") || msg.includes("too many") || msg.includes("tentativas")) {
         setError("Demasiadas tentativas. Tente novamente mais tarde.");
       } else {

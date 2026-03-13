@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
+import { logClientError } from "@/lib/error-logging";
 import { Save, Plus, Trash2, Edit, ArrowLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { normaliseInstructorRow } from "@/utils/normaliseCms";
@@ -32,7 +33,7 @@ const AdminInstructors = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("instructors").select("*").order("sort_order");
     if (error) {
-      console.error("Load instructors error:", error);
+      logClientError("Load instructors error", error);
       toast({ title: "Erro", description: "Não foi possível carregar os instrutores.", variant: "destructive" });
     }
     if (data) {
@@ -66,7 +67,7 @@ const AdminInstructors = () => {
     }
     
     if (error) {
-      console.error("Save instructor error:", error);
+      logClientError("Save instructor error", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["cms_instructors"] });

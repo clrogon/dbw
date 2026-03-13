@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
+import { logClientError } from "@/lib/error-logging";
 import { Save, Plus, Trash2 } from "lucide-react";
 
 interface Stat {
@@ -38,7 +39,7 @@ const AdminHero = () => {
     if (authLoading || !user) return;
     supabase.from("hero_content").select("*").limit(1).maybeSingle().then(({ data, error }) => {
       if (error) {
-        console.error("Load hero error:", error);
+        logClientError("Load hero error", error);
         toast({ title: "Erro", description: "Não foi possível carregar o conteúdo.", variant: "destructive" });
       }
 
@@ -75,7 +76,7 @@ const AdminHero = () => {
     }
     
     if (error) {
-      console.error("Save hero error:", error);
+      logClientError("Save hero error", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["hero_content"] });

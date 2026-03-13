@@ -1,4 +1,5 @@
 import React from "react";
+import { logClientError } from "@/lib/error-logging";
 
 type Props = { children: React.ReactNode };
 type State = { hasError: boolean };
@@ -11,9 +12,9 @@ class ErrorBoundary extends React.Component<Props, State> {
   static getDerivedStateFromError(_error: any): State {
     return { hasError: true };
   }
-  componentDidCatch(error: any, info: React.ErrorInfo) {
+  componentDidCatch(_error: any, _info: React.ErrorInfo) {
     // Log error for debugging; avoid surfacing raw errors to users
-    console.error("Unhandled error in DBW app:", error, info);
+    logClientError("Unhandled error in DBW app", _error);
   }
   render() {
     if (this.state.hasError) {

@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Admin pages invalidate TanStack Query cache on save for instant public-site updates.
 
 ### Fixed
+- Removed `as any` error parsing in admin login when deriving rate-limit messaging from Supabase auth responses.
 - RLS policies changed from RESTRICTIVE to PERMISSIVE to fix CMS read/write operations.
 - Added `TO authenticated` target on all admin write policies.
 - `useAuth` hook refactored to use `onAuthStateChange` as single source of truth, eliminating race condition between `getSession()` and `INITIAL_SESSION` event (F-10).
@@ -39,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `window.open` calls in Booking page use `noopener,noreferrer` to prevent tab-nabbing (F-03).
 
 ### Security
+- (Audit) CMS/admin logging now uses a safe logger that records only non-sensitive metadata (`code`, `status`, `name`) instead of raw error objects.
 - (F-01, HIGH) Removed SVG/`image/svg+xml` from upload whitelist to prevent stored XSS via malicious SVG.
 - (F-02, HIGH) Admin login form no longer leaks timing information; generic error message on invalid credentials.
 - (F-11, MEDIUM) Added `Content-Security-Policy` meta tag: `default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'`.

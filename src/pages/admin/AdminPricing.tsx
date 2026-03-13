@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import { logClientError } from "@/lib/error-logging";
 import { Save, Plus, Trash2, Edit, ArrowLeft } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import {
@@ -30,7 +31,7 @@ const AdminPricing = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("pricing_plans").select("*").order("sort_order");
     if (error) {
-      console.error("Load pricing error:", error);
+      logClientError("Load pricing error", error);
       toast({ title: "Erro", description: "Não foi possível carregar os planos.", variant: "destructive" });
     }
     if (data) setPlans(data);
@@ -59,7 +60,7 @@ const AdminPricing = () => {
     }
     
     if (error) {
-      console.error("Save pricing error:", error);
+      logClientError("Save pricing error", error);
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["pricing_plans"] });
