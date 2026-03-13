@@ -31,7 +31,7 @@ const AdminServices = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("services").select("*").order("sort_order");
     if (error) {
-      console.error("Load services error:", error);
+      console.error("Load services error");
       toast({ title: "Erro", description: "Não foi possível carregar os serviços.", variant: "destructive" });
     }
     if (data) setServices(data);
@@ -64,7 +64,7 @@ const AdminServices = () => {
     }
     
     if (error) {
-      console.error("Save service error:", error);
+      console.error("Save service error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await Promise.all([

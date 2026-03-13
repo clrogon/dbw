@@ -30,7 +30,7 @@ const AdminPricing = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("pricing_plans").select("*").order("sort_order");
     if (error) {
-      console.error("Load pricing error:", error);
+      console.error("Load pricing error");
       toast({ title: "Erro", description: "Não foi possível carregar os planos.", variant: "destructive" });
     }
     if (data) setPlans(data);
@@ -59,7 +59,7 @@ const AdminPricing = () => {
     }
     
     if (error) {
-      console.error("Save pricing error:", error);
+      console.error("Save pricing error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["pricing_plans"] });

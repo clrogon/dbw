@@ -32,7 +32,7 @@ const AdminInstructors = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("instructors").select("*").order("sort_order");
     if (error) {
-      console.error("Load instructors error:", error);
+      console.error("Load instructors error");
       toast({ title: "Erro", description: "Não foi possível carregar os instrutores.", variant: "destructive" });
     }
     if (data) {
@@ -66,7 +66,7 @@ const AdminInstructors = () => {
     }
     
     if (error) {
-      console.error("Save instructor error:", error);
+      console.error("Save instructor error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["cms_instructors"] });

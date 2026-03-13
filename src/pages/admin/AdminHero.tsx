@@ -38,7 +38,7 @@ const AdminHero = () => {
     if (authLoading || !user) return;
     supabase.from("hero_content").select("*").limit(1).maybeSingle().then(({ data, error }) => {
       if (error) {
-        console.error("Load hero error:", error);
+        console.error("Load hero error");
         toast({ title: "Erro", description: "Não foi possível carregar o conteúdo.", variant: "destructive" });
       }
 
@@ -75,7 +75,7 @@ const AdminHero = () => {
     }
     
     if (error) {
-      console.error("Save hero error:", error);
+      console.error("Save hero error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["hero_content"] });

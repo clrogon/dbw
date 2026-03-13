@@ -28,12 +28,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq("role", "admin")
         .maybeSingle();
       if (error) {
-        console.error("checkAdmin error:", error);
+        console.error("checkAdmin error");
         return false;
       }
       return !!data;
-    } catch (e) {
-      console.error("checkAdmin exception:", e);
+    } catch {
+      console.error("checkAdmin exception");
       return false;
     }
   }, []);

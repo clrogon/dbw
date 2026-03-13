@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `window.open` calls in Booking page use `noopener,noreferrer` to prevent tab-nabbing (F-03).
 
 ### Security
+- (Audit) Removed detailed error object logging in admin/auth/runtime flows to avoid exposing potentially sensitive identifiers in browser console output.
 - (F-01, HIGH) Removed SVG/`image/svg+xml` from upload whitelist to prevent stored XSS via malicious SVG.
 - (F-02, HIGH) Admin login form no longer leaks timing information; generic error message on invalid credentials.
 - (F-11, MEDIUM) Added `Content-Security-Policy` meta tag: `default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'`.
