@@ -40,7 +40,7 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE** (Postg
 
 - `cms-images` bucket: public read, admin-only write
 - Storage policies enforce `is_admin()` for upload/update/delete
-- **Upload validation**: Client-side enforcement of 5 MB max size, MIME-type whitelist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`, `image/svg+xml`), and extension whitelist
+- **Upload validation**: Client-side enforcement of 5 MB max size, MIME-type whitelist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`), and extension whitelist (SVG intentionally excluded to prevent stored XSS)
 
 ### Frontend Security
 
