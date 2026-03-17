@@ -19,16 +19,16 @@ If you discover a security vulnerability within this project, please do not open
 
 ### Row Level Security (RLS)
 
-All database tables have RLS **enabled**. All policies are **PERMISSIVE** (Postgres default).
+All database tables have RLS **enabled**. All policies are **PERMISSIVE**. Write policies (INSERT/UPDATE/DELETE) target `TO authenticated` with `public.is_admin()` checks.
 
 | Table | SELECT | INSERT | UPDATE | DELETE |
 |-------|--------|--------|--------|--------|
 | `user_roles` | Own row (`auth.uid() = user_id`) | — | — | — |
-| `hero_content` | Public (`true`) | `is_admin()` | `is_admin()` | `is_admin()` |
-| `services` | Public (`true`) | `is_admin()` | `is_admin()` | `is_admin()` |
-| `pricing_plans` | Public (`true`) | `is_admin()` | `is_admin()` | `is_admin()` |
-| `instructors` | Public (`true`) | `is_admin()` | `is_admin()` | `is_admin()` |
-| `gallery_images` | Public (`true`) | `is_admin()` | `is_admin()` | `is_admin()` |
+| `hero_content` | Public (`true`) | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` |
+| `services` | Public (`true`) | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` |
+| `pricing_plans` | Public (`true`) | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` |
+| `instructors` | Public (`true`) | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` |
+| `gallery_images` | Public (`true`) | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` | `TO authenticated` + `public.is_admin()` |
 
 ### Role Management
 
@@ -40,7 +40,7 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE** (Postg
 
 - `cms-images` bucket: public read, admin-only write
 - Storage policies enforce `is_admin()` for upload/update/delete
-- **Upload validation**: Client-side enforcement of 5 MB max size, MIME-type whitelist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`, `image/svg+xml`), and extension whitelist
+- **Upload validation**: Client-side enforcement of 5 MB max size, MIME-type whitelist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`), and extension whitelist (SVG intentionally excluded to prevent stored XSS)
 
 ### Frontend Security
 
