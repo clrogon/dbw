@@ -18,6 +18,7 @@ import Booking from "./pages/Booking";
 import Instructors from "./pages/Instructors";
 import Contact from "./pages/Contact";
 import ThankYou from "./pages/ThankYou";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import ServerError from "./pages/ServerError";
 import Forbidden from "./pages/Forbidden";
@@ -70,6 +71,7 @@ const App = () => {
               <Route path="/acesso-negado" element={<Forbidden />} />
               <Route path="/offline" element={<Offline />} />
               <Route path="/instalar" element={<Install />} />
+              <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
 
               {/* Admin */}
               <Route path="/admin/login" element={<AdminLogin />} />

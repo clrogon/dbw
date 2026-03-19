@@ -4,27 +4,36 @@ import { Cookie, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const COOKIE_KEY = "dbw_cookie_consent";
+const CONSENT_DURATION_MS = 180 * 24 * 60 * 60 * 1000; // 6 months
+
+const isConsentValid = (): boolean => {
+  const raw = localStorage.getItem(COOKIE_KEY);
+  if (!raw) return false;
+  try {
+    const { timestamp } = JSON.parse(raw);
+    return Date.now() - timestamp < CONSENT_DURATION_MS;
+  } catch {
+    return false;
+  }
+};
 
 const CookieConsent = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem(COOKIE_KEY);
-    if (!consent) {
+    if (!isConsentValid()) {
       const timer = setTimeout(() => setVisible(true), 1500);
       return () => clearTimeout(timer);
     }
   }, []);
 
-  const accept = () => {
-    localStorage.setItem(COOKIE_KEY, "accepted");
+  const saveConsent = (choice: string) => {
+    localStorage.setItem(COOKIE_KEY, JSON.stringify({ choice, timestamp: Date.now() }));
     setVisible(false);
   };
 
-  const dismiss = () => {
-    localStorage.setItem(COOKIE_KEY, "dismissed");
-    setVisible(false);
-  };
+  const accept = () => saveConsent("accepted");
+  const dismiss = () => saveConsent("dismissed");
 
   return (
     <AnimatePresence>
