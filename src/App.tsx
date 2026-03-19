@@ -71,6 +71,7 @@ const App = () => {
               <Route path="/acesso-negado" element={<Forbidden />} />
               <Route path="/offline" element={<Offline />} />
               <Route path="/instalar" element={<Install />} />
+              <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
 
               {/* Admin */}
               <Route path="/admin/login" element={<AdminLogin />} />
