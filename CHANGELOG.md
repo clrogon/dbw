@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Admin pages invalidate TanStack Query cache on save for instant public-site updates.
 
 ### Fixed
+- Removed `as any` error parsing in admin login when deriving rate-limit messaging from Supabase auth responses.
 - RLS policies changed from RESTRICTIVE to PERMISSIVE to fix CMS read/write operations.
 - Added `TO authenticated` target on all admin write policies.
 - `useAuth` hook refactored to use `onAuthStateChange` as single source of truth, eliminating race condition between `getSession()` and `INITIAL_SESSION` event (F-10).

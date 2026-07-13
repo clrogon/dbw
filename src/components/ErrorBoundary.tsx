@@ -1,4 +1,5 @@
 import React from "react";
+import { logClientError } from "@/lib/error-logging";
 
 type Props = { children: React.ReactNode };
 type State = { hasError: boolean };

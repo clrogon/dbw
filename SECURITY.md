@@ -51,7 +51,7 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE**. Write
 | External links | `rel="noopener noreferrer"` on all external anchors |
 | Secrets | Only `anon` (publishable) key in frontend code |
 | CSRF | Supabase JWT-based auth (no cookies) |
-| PII in logs | No email/phone/user IDs logged to console |
+| PII in logs | Client logs only emit safe metadata (`code`, `status`, `name`) with no raw error payloads |
 | File uploads | Size, MIME, and extension validation before upload |
 
 ### Admin Authorization — Security Note
