@@ -10,6 +10,7 @@ import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { logClientError } from "@/lib/error-logging";
 import { Save, Plus, Trash2 } from "lucide-react";
+import { firstZodError, heroContentSchema } from "@/lib/cmsValidation";
 
 interface Stat {
   value: string;
@@ -39,7 +40,7 @@ const AdminHero = () => {
     if (authLoading || !user) return;
     supabase.from("hero_content").select("*").limit(1).maybeSingle().then(({ data, error }) => {
       if (error) {
-        logClientError("Load hero error", error);
+        console.error("Load hero error");
         toast({ title: "Erro", description: "Não foi possível carregar o conteúdo.", variant: "destructive" });
       }
 
@@ -62,8 +63,16 @@ const AdminHero = () => {
   }, [authLoading, user, toast]);
 
   const save = async () => {
+    const parsed = heroContentSchema.safeParse(form);
+    if (!parsed.success) {
+      toast({ title: "Validação", description: firstZodError(parsed.error), variant: "destructive" });
+      return;
+    }
     setSaving(true);
-    const payload = { ...form, stats: form.stats as unknown as import("@/integrations/supabase/types").Json };
+    const payload = {
+      ...parsed.data,
+      stats: parsed.data.stats as unknown as import("@/integrations/supabase/types").Json,
+    };
     
     let error;
     if (heroId) {
@@ -76,7 +85,7 @@ const AdminHero = () => {
     }
     
     if (error) {
-      logClientError("Save hero error", error);
+      console.error("Save hero error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["hero_content"] });

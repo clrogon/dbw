@@ -11,7 +11,10 @@ const ThankYou = () => {
   const [params] = useSearchParams();
   const nome = params.get("nome") || "Cliente";
   const location = useLocation();
-  const stateWhatsappUrl = (location.state as any)?.whatsappUrl;
+  const stateWhatsappUrl =
+    location.state && typeof location.state === "object" && "whatsappUrl" in location.state
+      ? (location.state as { whatsappUrl?: unknown }).whatsappUrl
+      : undefined;
   const [whatsappUrl] = useState<string | null>(() => {
     if (typeof stateWhatsappUrl === "string" && stateWhatsappUrl.startsWith("https://wa.me/")) {
       return stateWhatsappUrl;

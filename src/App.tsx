@@ -8,6 +8,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import CookieConsent from "@/components/CookieConsent";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -17,6 +18,7 @@ import Booking from "./pages/Booking";
 import Instructors from "./pages/Instructors";
 import Contact from "./pages/Contact";
 import ThankYou from "./pages/ThankYou";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import ServerError from "./pages/ServerError";
 import Forbidden from "./pages/Forbidden";
@@ -51,6 +53,7 @@ const App = () => {
           <AuthProvider>
             <Toaster />
             <Sonner />
+            <CookieConsent />
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
@@ -68,6 +71,7 @@ const App = () => {
               <Route path="/acesso-negado" element={<Forbidden />} />
               <Route path="/offline" element={<Offline />} />
               <Route path="/instalar" element={<Install />} />
+              <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
 
               {/* Admin */}
               <Route path="/admin/login" element={<AdminLogin />} />

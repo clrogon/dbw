@@ -14,6 +14,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { firstZodError, pricingPlanSchema } from "@/lib/cmsValidation";
 
 type Plan = Database["public"]["Tables"]["pricing_plans"]["Row"];
 
@@ -31,7 +32,7 @@ const AdminPricing = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("pricing_plans").select("*").order("sort_order");
     if (error) {
-      logClientError("Load pricing error", error);
+      console.error("Load pricing error");
       toast({ title: "Erro", description: "Não foi possível carregar os planos.", variant: "destructive" });
     }
     if (data) setPlans(data);
@@ -47,8 +48,14 @@ const AdminPricing = () => {
 
   const save = async () => {
     if (!editing) return;
+    const { id, created_at, updated_at, ...raw } = editing;
+    const parsed = pricingPlanSchema.safeParse(raw);
+    if (!parsed.success) {
+      toast({ title: "Validação", description: firstZodError(parsed.error), variant: "destructive" });
+      return;
+    }
     setSaving(true);
-    const { id, created_at, updated_at, ...payload } = editing;
+    const payload = parsed.data;
     
     let error;
     if (isNew) {
@@ -60,7 +67,7 @@ const AdminPricing = () => {
     }
     
     if (error) {
-      logClientError("Save pricing error", error);
+      console.error("Save pricing error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["pricing_plans"] });

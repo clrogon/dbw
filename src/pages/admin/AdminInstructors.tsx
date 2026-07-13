@@ -16,6 +16,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { firstZodError, instructorSchema } from "@/lib/cmsValidation";
 
 type Instructor = Database["public"]["Tables"]["instructors"]["Row"];
 
@@ -33,7 +34,7 @@ const AdminInstructors = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("instructors").select("*").order("sort_order");
     if (error) {
-      logClientError("Load instructors error", error);
+      console.error("Load instructors error");
       toast({ title: "Erro", description: "Não foi possível carregar os instrutores.", variant: "destructive" });
     }
     if (data) {
@@ -54,8 +55,14 @@ const AdminInstructors = () => {
 
   const save = async () => {
     if (!editing) return;
+    const { id, created_at, updated_at, ...raw } = editing;
+    const parsed = instructorSchema.safeParse(raw);
+    if (!parsed.success) {
+      toast({ title: "Validação", description: firstZodError(parsed.error), variant: "destructive" });
+      return;
+    }
     setSaving(true);
-    const { id, created_at, updated_at, ...payload } = editing;
+    const payload = parsed.data;
     
     let error;
     if (isNew) {
@@ -67,7 +74,7 @@ const AdminInstructors = () => {
     }
     
     if (error) {
-      logClientError("Save instructor error", error);
+      console.error("Save instructor error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["cms_instructors"] });

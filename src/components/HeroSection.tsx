@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useHeroContent } from "@/hooks/useCms";
+import { sanitizeInternalPath } from "@/lib/cmsValidation";
 import heroBg from "@/assets/hero-bg.jpg";
 
 interface Stat {
@@ -24,9 +25,9 @@ const HeroSection = () => {
   const highlight = hero?.title_highlight || "LIBERTE A SUA MENTE.";
   const subtitle = hero?.subtitle || "Programas de fitness personalizados para quem quer resultados reais em Luanda.";
   const ctaPrimaryText = hero?.cta_primary_text || "Reservar a Minha Vaga →";
-  const ctaPrimaryLink = hero?.cta_primary_link || "/reservar";
+  const ctaPrimaryLink = sanitizeInternalPath(hero?.cta_primary_link, "/reservar");
   const ctaSecondaryText = hero?.cta_secondary_text || "Ver Os Nossos Serviços";
-  const ctaSecondaryLink = hero?.cta_secondary_link || "/servicos";
+  const ctaSecondaryLink = sanitizeInternalPath(hero?.cta_secondary_link, "/servicos");
   const bgImage = !isError && hero?.background_image_url ? hero.background_image_url : heroBg;
   function isStatArray(val: unknown): val is Stat[] {
     return Array.isArray(val) && val.every((s) => typeof s === 'object' && s !== null && 'value' in s && 'label' in s);

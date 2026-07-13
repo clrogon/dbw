@@ -9,12 +9,12 @@ class ErrorBoundary extends React.Component<Props, State> {
     super(props);
     this.state = { hasError: false };
   }
-  static getDerivedStateFromError(_error: any): State {
+  static getDerivedStateFromError(_error: unknown): State {
     return { hasError: true };
   }
-  componentDidCatch(_error: any, _info: React.ErrorInfo) {
+  componentDidCatch(_error: unknown, _info: React.ErrorInfo) {
     // Log error for debugging; avoid surfacing raw errors to users
-    logClientError("Unhandled error in DBW app", _error);
+    console.error("Unhandled error in DBW app");
   }
   render() {
     if (this.state.hasError) {

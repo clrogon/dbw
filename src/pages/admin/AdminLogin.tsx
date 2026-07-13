@@ -12,7 +12,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,7 +24,7 @@ const AdminLogin = () => {
     const { error, isAdmin } = await signIn(email, password);
 
     if (error) {
-      const msg = typeof error.message === "string" ? error.message.toLowerCase() : "";
+      const msg = (error.message ?? "").toLowerCase();
       if (msg.includes("rate") || msg.includes("too many") || msg.includes("tentativas")) {
         setError("Demasiadas tentativas. Tente novamente mais tarde.");
       } else {
@@ -35,6 +35,8 @@ const AdminLogin = () => {
     }
 
     if (!isAdmin) {
+      // Do not leave a non-admin JWT in sessionStorage
+      await signOut();
       setError("Esta conta não tem permissões de administrador.");
       setLoading(false);
       return;

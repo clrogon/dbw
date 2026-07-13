@@ -1,1 +1,2 @@
-project_id = "ikwotysmjlqqurucxepf"
+# Local Supabase CLI config. Project ref must come from env / CLI link — never commit live IDs.
+# Link with: supabase link --project-ref <your-project-ref>

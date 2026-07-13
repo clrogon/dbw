@@ -29,12 +29,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq("role", "admin")
         .maybeSingle();
       if (error) {
-        logClientError("checkAdmin error", error);
+        console.error("checkAdmin error");
         return false;
       }
       return !!data;
-    } catch (error) {
-      logClientError("checkAdmin exception", error);
+    } catch {
+      console.error("checkAdmin exception");
       return false;
     }
   }, []);
@@ -76,10 +76,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setIsAdmin(false);
-    setUser(null);
-    setSession(null);
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // API call may fail due to network/proxy issues — clear state regardless
+    } finally {
+      setIsAdmin(false);
+      setUser(null);
+      setSession(null);
+    }
   };
 
   return (

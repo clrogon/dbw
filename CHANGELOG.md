@@ -7,7 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- Stop tracking `.env`; expand `.gitignore` for env files (keep `.env.example` only).
+- Remove committed project id from `supabase/config.toml`.
+- Vercel security headers (CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy).
+- Sign out non-admin users immediately after a successful password auth.
+- CMS CTA links sanitized to internal relative paths (`sanitizeInternalPath`).
+- Zod validation on all admin CMS write forms.
+- Image upload folder allowlist + explicit contentType; storage extension + bucket MIME/size limits in new migration.
+- Canonical RLS + storage policy consolidation migration (`20260713000000_rls_and_storage_hardening.sql`).
+- Dependency upgrades: vitest 3.2.6, react-router-dom 6.30.4, vite 6.4.3, vite-plugin-pwa 1.0.3 — `npm audit` clean.
+
+### Fixed
+- Vitest include path so `test/**` suites actually run (9 tests).
+- ESLint `no-explicit-any` errors blocking CI.
+- Docs: booking WhatsApp URL uses router state (not localStorage).
+- License wording aligned with MIT `LICENSE` file; package renamed to `dbw-fitness`.
+- Drop dual Bun lockfiles; standardise on npm `package-lock.json`.
+
 ### Added
+- `src/lib/cmsValidation.ts` shared Zod schemas + path sanitizer.
+- `test/cmsValidation.test.ts` path/schema security tests.
 - Initial repository documentation and agent configurations.
 - CMS admin dashboard with full CRUD for Hero, Services, Pricing, Instructors, and Gallery.
 - Role-based authentication using `user_roles` table and `is_admin()` SECURITY DEFINER function.
@@ -40,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `window.open` calls in Booking page use `noopener,noreferrer` to prevent tab-nabbing (F-03).
 
 ### Security
-- (Audit) CMS/admin logging now uses a safe logger that records only non-sensitive metadata (`code`, `status`, `name`) instead of raw error objects.
+- (Audit) Removed detailed error object logging in admin/auth/runtime flows to avoid exposing potentially sensitive identifiers in browser console output.
 - (F-01, HIGH) Removed SVG/`image/svg+xml` from upload whitelist to prevent stored XSS via malicious SVG.
 - (F-02, HIGH) Admin login form no longer leaks timing information; generic error message on invalid credentials.
 - (F-11, MEDIUM) Added `Content-Security-Policy` meta tag: `default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'`.

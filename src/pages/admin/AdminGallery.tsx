@@ -15,6 +15,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
+import { firstZodError, galleryImageSchema } from "@/lib/cmsValidation";
 
 type GalleryImage = Database["public"]["Tables"]["gallery_images"]["Row"];
 
@@ -33,7 +34,7 @@ const AdminGallery = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("gallery_images").select("*").order("sort_order");
     if (error) {
-      logClientError("Load gallery error", error);
+      console.error("Load gallery error");
       toast({ title: "Erro", description: "Não foi possível carregar a galeria.", variant: "destructive" });
     }
     if (data) setImages(data);
@@ -48,9 +49,15 @@ const AdminGallery = () => {
   };
 
   const save = async () => {
-    if (!editing || !editing.image_url) return;
+    if (!editing) return;
+    const { id, created_at, ...raw } = editing;
+    const parsed = galleryImageSchema.safeParse(raw);
+    if (!parsed.success) {
+      toast({ title: "Validação", description: firstZodError(parsed.error), variant: "destructive" });
+      return;
+    }
     setSaving(true);
-    const { id, created_at, ...payload } = editing;
+    const payload = parsed.data;
     
     let error;
     if (isNew) {
@@ -62,7 +69,7 @@ const AdminGallery = () => {
     }
     
     if (error) {
-      logClientError("Save gallery error", error);
+      console.error("Save gallery error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await queryClient.invalidateQueries({ queryKey: ["cms_gallery"] });

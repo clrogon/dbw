@@ -15,6 +15,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { firstZodError, serviceSchema } from "@/lib/cmsValidation";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
@@ -32,7 +33,7 @@ const AdminServices = () => {
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("services").select("*").order("sort_order");
     if (error) {
-      logClientError("Load services error", error);
+      console.error("Load services error");
       toast({ title: "Erro", description: "Não foi possível carregar os serviços.", variant: "destructive" });
     }
     if (data) setServices(data);
@@ -52,8 +53,14 @@ const AdminServices = () => {
 
   const save = async () => {
     if (!editing) return;
+    const { id, created_at, updated_at, ...raw } = editing;
+    const parsed = serviceSchema.safeParse(raw);
+    if (!parsed.success) {
+      toast({ title: "Validação", description: firstZodError(parsed.error), variant: "destructive" });
+      return;
+    }
     setSaving(true);
-    const { id, created_at, updated_at, ...payload } = editing;
+    const payload = parsed.data;
 
     let error;
     if (isNew) {
@@ -65,7 +72,7 @@ const AdminServices = () => {
     }
     
     if (error) {
-      logClientError("Save service error", error);
+      console.error("Save service error");
       toast({ title: "Erro ao guardar", description: error.message, variant: "destructive" });
     } else {
       await Promise.all([
