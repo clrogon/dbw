@@ -69,6 +69,12 @@ The admin check in the frontend (`useAuth.tsx`) queries the `user_roles` table c
 
 Use `.env.example` as the committed template. `.env` is gitignored.
 
+**Vercel / CI:** set `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and
+`VITE_SUPABASE_PROJECT_ID` on the project (Production + Preview). Vite inlines
+these at **build** time — missing vars produce a blank page. Public fallbacks live
+in `src/config/supabasePublic.ts` (anon key only) so builds still work if env is
+unset; rotate keys there if you change the Supabase project.
+
 ### Frontend hardening (2026-07)
 
 - CMS CTA links must be relative paths (`/…`); rendered via `sanitizeInternalPath`
