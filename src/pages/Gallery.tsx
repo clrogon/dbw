@@ -1,8 +1,8 @@
-import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useCmsGallery } from "@/hooks/useCms";
 import { normaliseGalleryImage } from "@/utils/normaliseCms";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -45,10 +45,11 @@ const Gallery = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Galeria | DBW Fitness Luanda</title>
-        <meta name="description" content="Veja a galeria de fotos da DBW Fitness em Luanda. Actividades aquáticas, treinos personalizados e aulas em grupo." />
-      </Helmet>
+      <SiteSeo
+        title="Galeria"
+        description="Veja a galeria de fotos da DBW Fitness em Luanda. Actividades aquáticas, treinos personalizados e aulas em grupo."
+        path="/galeria"
+      />
       <main>
         <Navbar />
 

@@ -1,5 +1,15 @@
+# Production site: https://www.dbwfitness.ao
+# Preview hosts (Vercel, etc.) should not be the indexed origin.
+
 User-agent: *
 Allow: /
+
+# Utility / private surfaces
 Disallow: /obrigado
+Disallow: /admin
+Disallow: /admin/
+Disallow: /offline
+Disallow: /erro-500
+Disallow: /acesso-negado
 
 Sitemap: https://www.dbwfitness.ao/sitemap.xml

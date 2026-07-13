@@ -1,7 +1,7 @@
-import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -16,10 +16,11 @@ const phones = [
 const Contact = () => {
   return (
     <>
-      <Helmet>
-        <title>Contacto | DBW Fitness Luanda</title>
-        <meta name="description" content="Contacte a DBW Fitness em Luanda. Telefone, email, localização e WhatsApp. Estamos prontos para ajudar." />
-      </Helmet>
+      <SiteSeo
+        title="Contacto"
+        description="Contacte a DBW Fitness em Luanda. Telefone, email, localização e WhatsApp. Estamos prontos para ajudar."
+        path="/contacto"
+      />
       <main>
         <Navbar />
 

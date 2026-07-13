@@ -1,9 +1,9 @@
-import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { useCmsServices } from "@/hooks/useCms";
 import { services as fallbackServices } from "@/data/services";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -37,10 +37,11 @@ const Services = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Serviços | DBW Fitness Luanda</title>
-        <meta name="description" content="Conheça os serviços da DBW: actividades aquáticas, treinos personalizados, ginástica laboral e aulas em grupo em Luanda." />
-      </Helmet>
+      <SiteSeo
+        title="Serviços"
+        description="Conheça os serviços da DBW: actividades aquáticas, treinos personalizados, ginástica laboral e aulas em grupo em Luanda."
+        path="/servicos"
+      />
       <main>
         <Navbar />
 

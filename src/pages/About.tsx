@@ -1,8 +1,8 @@
-import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Shield, Heart, Users, Award, Target, Dumbbell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -20,10 +20,11 @@ const values = [
 const About = () => {
   return (
     <>
-      <Helmet>
-        <title>Sobre Nós | DBW Fitness Luanda</title>
-        <meta name="description" content="Conheça a DBW — Domingos, Baltazar & William. Empresa de fitness e bem-estar em Luanda com profissionais certificados." />
-      </Helmet>
+      <SiteSeo
+        title="Sobre Nós"
+        description="Conheça a DBW — Domingos, Baltazar & William. Empresa de fitness e bem-estar em Luanda com profissionais certificados."
+        path="/sobre"
+      />
       <main>
         <Navbar />
 

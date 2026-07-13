@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Download, Smartphone, CheckCircle, Share, MoreVertical } from "lucide-react";
@@ -44,6 +45,11 @@ const Install = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SiteSeo
+        title="Instalar App"
+        description="Instale a app DBW Fitness no telemóvel para acesso rápido — sem App Store."
+        path="/instalar"
+      />
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-20 max-w-2xl">
         <div className="text-center mb-10">

@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useCmsService, useCmsServices } from "@/hooks/useCms";
 import { normaliseServiceRow, type NormalisedService } from "@/utils/normaliseCms";
 import { services as fallbackServices } from "@/data/services";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -67,10 +67,11 @@ const ServiceDetail = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{service.seoTitle} | DBW Fitness Luanda</title>
-        <meta name="description" content={service.seoDescription} />
-      </Helmet>
+      <SiteSeo
+        title={service.seoTitle || service.title}
+        description={service.seoDescription || service.shortDesc}
+        path={`/servicos/${service.slug}`}
+      />
       <main>
         <Navbar />
 

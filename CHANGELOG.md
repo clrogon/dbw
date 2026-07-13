@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Production site config (`src/config/site.ts`) and shared `SiteSeo` (canonical always `www.dbwfitness.ao`; `noindex` on Vercel/localhost/admin).
+- cPanel production runbook: `docs/cpanel-production.md`.
+- `public/sitemap.xml`; hardened `robots.txt` and `.htaccess` (HTTPS/www, CSP, cache rules).
+- CI provides dummy `VITE_*` so builds never rely on empty env alone.
+
 ### Security
 - Stop tracking `.env`; expand `.gitignore` for env files (keep `.env.example` only).
 - Remove committed project id from `supabase/config.toml`.

@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import TrustSection from "@/components/TrustSection";
@@ -12,10 +12,11 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 const Index = () => {
   return (
     <>
-      <Helmet>
-        <title>DBW — Mente Activa, Vida Saudável | Fitness em Luanda, Angola</title>
-        <meta name="description" content="DBW oferece natação, treinos personalizados, ginástica laboral e aulas em grupo em Luanda, Angola. Profissionais certificados." />
-      </Helmet>
+      <SiteSeo
+        title="DBW — Mente Activa, Vida Saudável | Fitness em Luanda, Angola"
+        description="DBW oferece natação, treinos personalizados, ginástica laboral e aulas em grupo em Luanda, Angola. Profissionais certificados."
+        path="/"
+      />
       <main>
         <Navbar />
         <HeroSection />

@@ -9,6 +9,12 @@ on:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    env:
+      # Build-time placeholders so Vite never ships empty config in CI.
+      # Production cPanel builds must use real values (see docs/cpanel-production.md).
+      VITE_SUPABASE_URL: https://example.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.ci-placeholder
+      VITE_SUPABASE_PROJECT_ID: example
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

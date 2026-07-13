@@ -1,9 +1,9 @@
-import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Award, Heart, Users } from "lucide-react";
 import { useCmsInstructors } from "@/hooks/useCms";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -46,10 +46,11 @@ const Instructors = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Instrutores — DBW Fitness Luanda</title>
-        <meta name="description" content="Conheça os profissionais certificados da DBW. Domingos, Baltazar e William — licenciados em Educação Física dedicados à sua saúde em Luanda." />
-      </Helmet>
+      <SiteSeo
+        title="Instrutores"
+        description="Conheça os profissionais certificados da DBW. Domingos, Baltazar e William — licenciados em Educação Física dedicados à sua saúde em Luanda."
+        path="/instrutores"
+      />
       <main>
         <Navbar />
 

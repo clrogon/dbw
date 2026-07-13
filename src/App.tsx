@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import CookieConsent from "@/components/CookieConsent";
+import SiteSeo from "@/components/SiteSeo";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -56,6 +57,8 @@ const App = () => {
             <CookieConsent />
             <BrowserRouter>
               <ScrollToTop />
+              {/* Global canonical + robots: production host only is indexable */}
+              <SiteSeo />
               <Routes>
               {/* Public */}
               <Route path="/" element={<Index />} />

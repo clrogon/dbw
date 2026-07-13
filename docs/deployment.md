@@ -2,6 +2,17 @@
 
 This document covers deployment strategies and configurations for the DBW Fitness application.
 
+## Production vs preview
+
+| | **Production** | **Preview** |
+|--|----------------|-------------|
+| Host | **cPanel / Apache** | Vercel (optional) |
+| Domain | **`https://www.dbwfitness.ao`** | `*.vercel.app` |
+| Config | `public/.htaccess` | `vercel.json` |
+| SEO | Indexed | `noindex` automatically |
+
+**Authoritative production runbook:** [`docs/cpanel-production.md`](./cpanel-production.md)
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
@@ -67,41 +78,22 @@ dist/
 
 Automatic — preview URL is generated on every push.
 
-### Vercel
+### cPanel (production)
 
-1. Connect repository to Vercel
-2. Configure:
-   - Framework Preset: Vite
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-3. SPA routing is handled by `vercel.json`:
-   ```json
-   { "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
-   ```
-4. Add environment variables in Vercel dashboard.
+**Use this for the live site.** See:
 
-### cPanel
+- **[cPanel production runbook](./cpanel-production.md)** — build, upload, smoke test, rollback  
+- **[Full Migration Wizard](./cpanel-full-migration-wizard.md)** — greenfield DB/auth/storage  
 
-See the **[Full Migration Wizard](./cpanel-full-migration-wizard.md)** for a complete 14-step procedure including:
-- Database schema creation
-- Auth functions and triggers
-- PERMISSIVE RLS policies
-- Storage bucket setup
-- Admin user provisioning
-- `.htaccess` configuration
-- Post-deploy validation checklist
+SPA + security headers live in `public/.htaccess` (copied into `dist/` on build).
 
-Quick `.htaccess` for SPA routing:
-```apache
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
-</IfModule>
-```
+### Vercel (preview only — not production)
+
+1. Connect repository to Vercel for PR/demo previews
+2. Framework Preset: Vite · Build: `npm run build` · Output: `dist`
+3. SPA + headers: `vercel.json`
+4. Optional env vars for a staging Supabase project
+5. Do **not** use `*.vercel.app` for SEO, ads, or customer links — app serves `noindex` off production hosts
 
 ### Netlify
 

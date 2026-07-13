@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -6,10 +6,11 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 const PrivacyPolicy = () => {
   return (
     <>
-      <Helmet>
-        <title>Política de Privacidade | DBW Fitness</title>
-        <meta name="description" content="Política de privacidade e cookies da DBW — Domingos, Baltazar & William. Saiba como protegemos os seus dados." />
-      </Helmet>
+      <SiteSeo
+        title="Política de Privacidade"
+        description="Política de privacidade e cookies da DBW — Domingos, Baltazar & William. Saiba como protegemos os seus dados."
+        path="/politica-de-privacidade"
+      />
       <Navbar />
       <main className="pt-24 pb-16 px-6">
         <div className="container mx-auto max-w-3xl prose prose-lg dark:prose-invert">

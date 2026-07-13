@@ -1,9 +1,9 @@
-import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, MessageCircle } from "lucide-react";
 import { Link, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -24,10 +24,7 @@ const ThankYou = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Obrigado | DBW Fitness Luanda</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      <SiteSeo title="Obrigado" path="/obrigado" noIndex />
       <main>
         <Navbar />
 

@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -91,10 +91,11 @@ const Booking = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Reservar Vaga — DBW Fitness Luanda</title>
-        <meta name="description" content="Reserve a sua vaga nos programas de fitness da DBW em Luanda. Resposta garantida em 24 horas." />
-      </Helmet>
+      <SiteSeo
+        title="Reservar Vaga"
+        description="Reserve a sua vaga nos programas de fitness da DBW em Luanda. Resposta garantida em 24 horas."
+        path="/reservar"
+      />
       <main>
         <Navbar />
 
