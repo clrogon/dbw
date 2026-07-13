@@ -133,7 +133,7 @@ Floating WhatsApp contact button (bottom-right) with pulse animation and pre-fil
 **File**: `src/pages/Booking.tsx`
 
 Multi-step wizard: Service Selection → Personal Info → Review → WhatsApp redirect.
-Zod validation. WhatsApp URL saved to `localStorage` for resilience.
+Zod validation. WhatsApp URL is passed via React Router location state (not localStorage).
 
 ---
 

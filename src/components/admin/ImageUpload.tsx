@@ -5,13 +5,14 @@ import { Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"];
+const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"] as const;
 const ALLOWED_MIME_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/gif",
 ];
+const ALLOWED_FOLDERS = new Set(["general", "hero", "services", "instructors", "gallery"]);
 
 interface ImageUploadProps {
   value: string | null;
@@ -41,15 +42,20 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
 
     // Validate extension
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
-    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+    if (!(ALLOWED_EXTENSIONS as readonly string[]).includes(ext)) {
       toast({ title: "Extensão inválida", description: `Extensões permitidas: ${ALLOWED_EXTENSIONS.join(", ")}`, variant: "destructive" });
       return;
     }
 
-    setUploading(true);
-    const path = `${folder}/${Date.now()}.${ext}`;
+    const safeFolder = ALLOWED_FOLDERS.has(folder) ? folder : "general";
 
-    const { error } = await supabase.storage.from("cms-images").upload(path, file);
+    setUploading(true);
+    const path = `${safeFolder}/${Date.now()}.${ext}`;
+
+    const { error } = await supabase.storage.from("cms-images").upload(path, file, {
+      contentType: file.type,
+      upsert: false,
+    });
     if (error) {
       console.error("Upload error");
       toast({ title: "Erro no upload", description: error.message, variant: "destructive" });

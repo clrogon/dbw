@@ -62,14 +62,28 @@ The admin check in the frontend (`useAuth.tsx`) queries the `user_roles` table c
 
 | Variable | Sensitivity | Location |
 |----------|-------------|----------|
-| `VITE_SUPABASE_URL` | Public | `.env` |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Public | `.env` |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Secret** | Server-side only (never in frontend) |
+| `VITE_SUPABASE_URL` | Public (anon) | Local `.env` only — never commit real values |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Public (anon) | Local `.env` only — never commit real values |
+| `VITE_SUPABASE_PROJECT_ID` | Public identifier | Local `.env` only |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Secret** | Server-side only (never in frontend or Git) |
+
+Use `.env.example` as the committed template. `.env` is gitignored.
+
+### Frontend hardening (2026-07)
+
+- CMS CTA links must be relative paths (`/…`); rendered via `sanitizeInternalPath`
+- Non-admin successful auth is signed out immediately (no leftover JWT)
+- Admin CMS forms validated with Zod before write
+- Vercel `headers` mirror CSP / frame denial from `.htaccess`
+- Storage bucket should enforce 5 MB + image MIME allowlist (see latest migration)
 
 ### Recommendations
 
 - ⚠️ Enable **leaked password protection** in your backend auth settings (Cloud → Authentication → Settings)
-- Use HTTPS in production (enforced via `.htaccess` on cPanel)
+- Disable public sign-ups if only a handful of admins need accounts
+- Use HTTPS in production (Vercel headers + `.htaccess` on cPanel)
+- Apply `supabase/migrations/20260713000000_rls_and_storage_hardening.sql` on the live project
+- If `.env` was ever committed, rotate the anon key and scrub git history (`git filter-repo`)
 - Regularly review RLS policies after schema changes
 - Never store `service_role` key in frontend code or Git
 - Keep dependencies up to date — run `npm audit` regularly

@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useHeroContent } from "@/hooks/useCms";
+import { sanitizeInternalPath } from "@/lib/cmsValidation";
 
 const CTABanner = () => {
   const [dismissed, setDismissed] = useState(false);
@@ -24,7 +25,10 @@ const CTABanner = () => {
   // Prefer CMS content if available
   const bannerText = !isLoading && hero?.subtitle ? hero.subtitle : "Vagas disponíveis para Julho · Garanta já o seu lugar";
   const ctaText = !isLoading && hero?.cta_primary_text ? hero.cta_primary_text : "Reservar Agora →";
-  const ctaLink = !isLoading && hero?.cta_primary_link ? hero.cta_primary_link : "/reservar";
+  const ctaLink = sanitizeInternalPath(
+    !isLoading && !isError ? hero?.cta_primary_link : undefined,
+    "/reservar"
+  );
 
   return (
     <div className="bg-primary text-primary-foreground py-3 px-6">

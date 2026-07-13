@@ -14,6 +14,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
+import { firstZodError, galleryImageSchema } from "@/lib/cmsValidation";
 
 type GalleryImage = Database["public"]["Tables"]["gallery_images"]["Row"];
 
@@ -47,9 +48,15 @@ const AdminGallery = () => {
   };
 
   const save = async () => {
-    if (!editing || !editing.image_url) return;
+    if (!editing) return;
+    const { id, created_at, ...raw } = editing;
+    const parsed = galleryImageSchema.safeParse(raw);
+    if (!parsed.success) {
+      toast({ title: "Validação", description: firstZodError(parsed.error), variant: "destructive" });
+      return;
+    }
     setSaving(true);
-    const { id, created_at, ...payload } = editing;
+    const payload = parsed.data;
     
     let error;
     if (isNew) {

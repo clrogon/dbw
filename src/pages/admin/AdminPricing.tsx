@@ -13,6 +13,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { firstZodError, pricingPlanSchema } from "@/lib/cmsValidation";
 
 type Plan = Database["public"]["Tables"]["pricing_plans"]["Row"];
 
@@ -46,8 +47,14 @@ const AdminPricing = () => {
 
   const save = async () => {
     if (!editing) return;
+    const { id, created_at, updated_at, ...raw } = editing;
+    const parsed = pricingPlanSchema.safeParse(raw);
+    if (!parsed.success) {
+      toast({ title: "Validação", description: firstZodError(parsed.error), variant: "destructive" });
+      return;
+    }
     setSaving(true);
-    const { id, created_at, updated_at, ...payload } = editing;
+    const payload = parsed.data;
     
     let error;
     if (isNew) {

@@ -5,27 +5,36 @@ export type NormalisedService = {
   shortDesc?: string;
 };
 
+type ServiceLike = {
+  slug?: string;
+  icon?: string;
+  title?: string;
+  short_desc?: string;
+  shortDesc?: string;
+};
+
 // Normalises a CMS Service row or a fallback object to a stable internal shape
-export const normaliseServiceRow = (s: any): NormalisedService => {
-  if (!s) return { slug: "" } as NormalisedService;
+export const normaliseServiceRow = (s: unknown): NormalisedService => {
+  if (!s) return { slug: "" };
   if (typeof s === "object" && s !== null) {
-    const slug = s.slug ?? "";
-    if ("short_desc" in s) {
+    const row = s as ServiceLike;
+    const slug = row.slug ?? "";
+    if ("short_desc" in row) {
       return {
         slug,
-        icon: s.icon,
-        title: s.title,
-        shortDesc: s.short_desc,
-      } as NormalisedService;
+        icon: row.icon,
+        title: row.title,
+        shortDesc: row.short_desc,
+      };
     }
     return {
       slug,
-      icon: s.icon,
-      title: s.title,
-      shortDesc: s.shortDesc,
-    } as NormalisedService;
+      icon: row.icon,
+      title: row.title,
+      shortDesc: row.shortDesc,
+    };
   }
-  return { slug: String(s) } as NormalisedService;
+  return { slug: String(s) };
 };
 
 // Normalise a gallery image from CMS into a stable UI-friendly shape
@@ -36,12 +45,21 @@ export type NormalisedGalleryImage = {
   category: string;
 };
 
-export const normaliseGalleryImage = (img: any): NormalisedGalleryImage => {
-  const id = img?.id ?? undefined;
-  const src = img?.image_url ?? "";
-  const alt = img?.alt ?? "";
-  const category = img?.category ?? "";
-  return { id, src, alt, category };
+type GalleryLike = {
+  id?: string;
+  image_url?: string;
+  alt?: string;
+  category?: string;
+};
+
+export const normaliseGalleryImage = (img: unknown): NormalisedGalleryImage => {
+  const row = (img ?? {}) as GalleryLike;
+  return {
+    id: row.id ?? undefined,
+    src: row.image_url ?? "",
+    alt: row.alt ?? "",
+    category: row.category ?? "",
+  };
 };
 
 export type NormalisedInstructor = {
@@ -56,7 +74,19 @@ export type NormalisedInstructor = {
   updated_at?: string;
 };
 
-export const normaliseInstructorRow = (instructor: any): NormalisedInstructor => {
+type InstructorLike = {
+  id?: string;
+  name?: string;
+  role?: string;
+  specialties?: unknown;
+  bio?: string;
+  image_url?: string | null;
+  sort_order?: number;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export const normaliseInstructorRow = (instructor: unknown): NormalisedInstructor => {
   if (!instructor || typeof instructor !== "object") {
     return {
       id: "",
@@ -70,15 +100,16 @@ export const normaliseInstructorRow = (instructor: any): NormalisedInstructor =>
       updated_at: "",
     };
   }
+  const row = instructor as InstructorLike;
   return {
-    id: instructor.id ?? "",
-    name: instructor.name ?? "",
-    role: instructor.role ?? "",
-    specialties: Array.isArray(instructor.specialties) ? instructor.specialties : [],
-    bio: instructor.bio ?? "",
-    image_url: instructor.image_url ?? null,
-    sort_order: typeof instructor.sort_order === "number" ? instructor.sort_order : 0,
-    created_at: instructor.created_at ?? "",
-    updated_at: instructor.updated_at ?? "",
+    id: row.id ?? "",
+    name: row.name ?? "",
+    role: row.role ?? "",
+    specialties: Array.isArray(row.specialties) ? (row.specialties as string[]) : [],
+    bio: row.bio ?? "",
+    image_url: row.image_url ?? null,
+    sort_order: typeof row.sort_order === "number" ? row.sort_order : 0,
+    created_at: row.created_at ?? "",
+    updated_at: row.updated_at ?? "",
   };
 };

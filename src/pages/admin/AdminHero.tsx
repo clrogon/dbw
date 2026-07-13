@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import ImageUpload from "@/components/admin/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Plus, Trash2 } from "lucide-react";
+import { firstZodError, heroContentSchema } from "@/lib/cmsValidation";
 
 interface Stat {
   value: string;
@@ -61,8 +62,16 @@ const AdminHero = () => {
   }, [authLoading, user, toast]);
 
   const save = async () => {
+    const parsed = heroContentSchema.safeParse(form);
+    if (!parsed.success) {
+      toast({ title: "Validação", description: firstZodError(parsed.error), variant: "destructive" });
+      return;
+    }
     setSaving(true);
-    const payload = { ...form, stats: form.stats as unknown as import("@/integrations/supabase/types").Json };
+    const payload = {
+      ...parsed.data,
+      stats: parsed.data.stats as unknown as import("@/integrations/supabase/types").Json,
+    };
     
     let error;
     if (heroId) {

@@ -216,7 +216,7 @@ Install page: `/instalar`
 
 ## License
 
-Proprietary — © DBW Fitness Luanda
+MIT License — © DBW Fitness Luanda. See [LICENSE](./LICENSE).
 
 ## Contact
 
