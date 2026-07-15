@@ -12,11 +12,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cPanel production runbook: `docs/cpanel-production.md`.
 - `public/sitemap.xml`; hardened `robots.txt` and `.htaccess` (HTTPS/www, CSP, cache rules).
 - CI provides dummy `VITE_*` so builds never rely on empty env alone.
+- `src/lib/safeUrls.ts` — CMS image host allowlist, WhatsApp digits sanitizer, safe `wa.me` URL builder.
 
 ### Security
 - Stop tracking `.env`; expand `.gitignore` for env files (keep `.env.example` only).
 - Remove committed project id from `supabase/config.toml`.
 - Vercel security headers (CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy).
+- **HSTS** (`Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`) on Vercel + cPanel `.htaccess`.
+- CSP: `frame-src` for Google Maps embed; `upgrade-insecure-requests`.
+- CMS image URLs restricted to HTTPS allowlisted hosts (Supabase Storage, Unsplash) on admin write **and** public render.
+- WhatsApp number from env is digits-only (8–15); invalid values fall back to default.
+- Thank-you page validates `whatsappUrl` router state with `isSafeWhatsAppUrl`; caps `nome` query length.
+- ErrorBoundary shows generic message in production (no exception text leak).
 - Sign out non-admin users immediately after a successful password auth.
 - CMS CTA links sanitized to internal relative paths (`sanitizeInternalPath`).
 - Zod validation on all admin CMS write forms.

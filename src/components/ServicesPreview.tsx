@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCmsServices } from "@/hooks/useCms";
 import { ArrowRight } from "lucide-react";
 import { services as fallbackServices } from "@/data/services";
+import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
 
 const ServicesPreview = () => {
   const { data: cmsServices, isLoading, isError } = useCmsServices();
@@ -25,7 +26,7 @@ const ServicesPreview = () => {
         title: s.title,
         shortDesc: s.short_desc,
         ctaText: s.cta_text,
-        image: s.image_url || "",
+        image: sanitizeCmsImageUrl(s.image_url) || "",
       }))
     : fallbackServices.map((s) => ({
         slug: s.slug,

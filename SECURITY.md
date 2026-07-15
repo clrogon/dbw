@@ -47,12 +47,14 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE**. Write
 | Concern | Mitigation |
 |---------|------------|
 | XSS | React auto-escaping; no `dangerouslySetInnerHTML` |
-| URL injection | `encodeURIComponent` for WhatsApp URLs |
+| URL injection | `encodeURIComponent` for WhatsApp URLs; `buildWhatsAppUrl` / digits-only phone |
+| Open redirect / malicious CMS links | `sanitizeInternalPath` for CTAs; `sanitizeCmsImageUrl` host allowlist for media |
 | External links | `rel="noopener noreferrer"` on all external anchors |
 | Secrets | Only `anon` (publishable) key in frontend code |
 | CSRF | Supabase JWT-based auth (no cookies) |
 | PII in logs | Client logs only emit safe metadata (`code`, `status`, `name`) with no raw error payloads |
 | File uploads | Size, MIME, and extension validation before upload |
+| Error disclosure | Production `ErrorBoundary` shows a generic message only |
 
 ### Admin Authorization — Security Note
 
@@ -78,18 +80,22 @@ unset; rotate keys there if you change the Supabase project.
 ### Frontend hardening (2026-07)
 
 - CMS CTA links must be relative paths (`/…`); rendered via `sanitizeInternalPath`
+- CMS image URLs: HTTPS only, hosts limited to `*.supabase.co` and `images.unsplash.com` (`src/lib/safeUrls.ts` + Zod schemas)
+- WhatsApp: `VITE_WHATSAPP_NUMBER` must be 8–15 digits; otherwise default `244922569283`
 - Non-admin successful auth is signed out immediately (no leftover JWT)
 - Admin CMS forms validated with Zod before write
-- Vercel `headers` mirror CSP / frame denial from `.htaccess`
+- Vercel + `.htaccess`: CSP, `X-Frame-Options: DENY`, **HSTS**, `upgrade-insecure-requests`, Maps `frame-src`
 - Storage bucket should enforce 5 MB + image MIME allowlist (see latest migration)
 
 ### Recommendations
 
 - ⚠️ Enable **leaked password protection** in your backend auth settings (Cloud → Authentication → Settings)
+- Enable **MFA** for admin accounts (Supabase Auth → MFA)
 - Disable public sign-ups if only a handful of admins need accounts
-- Use HTTPS in production (Vercel headers + `.htaccess` on cPanel)
+- Use HTTPS in production (HSTS + `.htaccess` / Vercel headers)
 - Apply `supabase/migrations/20260713000000_rls_and_storage_hardening.sql` on the live project
 - If `.env` was ever committed, rotate the anon key and scrub git history (`git filter-repo`)
 - Regularly review RLS policies after schema changes
 - Never store `service_role` key in frontend code or Git
 - Keep dependencies up to date — run `npm audit` regularly
+- Longer-term: replace CSP `script-src 'unsafe-inline'` with nonces/hashes when the build pipeline supports it

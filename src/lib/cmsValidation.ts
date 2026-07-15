@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isSafeCmsImageUrl } from "@/lib/safeUrls";
 
 /**
  * Safe internal path for React Router <Link to=...>.
@@ -23,6 +24,25 @@ export function sanitizeInternalPath(raw: string | null | undefined, fallback = 
   return result.success ? result.data : fallback;
 }
 
+const CMS_IMAGE_MSG =
+  "URL de imagem inválida: use HTTPS de hosts permitidos (Supabase Storage ou images.unsplash.com).";
+
+/** Required CMS image URL (gallery). */
+export const safeCmsImageUrlSchema = z
+  .string()
+  .trim()
+  .min(1, "Imagem é obrigatória")
+  .max(2000)
+  .refine((v) => isSafeCmsImageUrl(v), CMS_IMAGE_MSG);
+
+/**
+ * Optional CMS image URL: empty string / null → null; otherwise must be allowlisted HTTPS.
+ */
+export const optionalCmsImageUrlSchema = z
+  .union([safeCmsImageUrlSchema, z.literal(""), z.null()])
+  .optional()
+  .transform((v) => (v === "" || v === undefined ? null : v));
+
 export const heroContentSchema = z.object({
   title: z.string().trim().min(1, "Título é obrigatório").max(200),
   title_highlight: z.string().trim().max(200),
@@ -31,10 +51,7 @@ export const heroContentSchema = z.object({
   cta_primary_link: safeInternalPathSchema,
   cta_secondary_text: z.string().trim().max(100),
   cta_secondary_link: safeInternalPathSchema,
-  background_image_url: z
-    .union([z.string().url(), z.literal(""), z.null()])
-    .optional()
-    .transform((v) => (v === "" || v === undefined ? null : v)),
+  background_image_url: optionalCmsImageUrlSchema,
   stats: z
     .array(
       z.object({
@@ -58,7 +75,7 @@ export const serviceSchema = z.object({
   full_desc: z.string().trim().max(5000),
   sub_services: z.array(z.string().trim().max(200)).max(50),
   cta_text: z.string().trim().max(100),
-  image_url: z.string().nullable().optional(),
+  image_url: optionalCmsImageUrlSchema,
   seo_title: z.string().trim().max(200),
   seo_description: z.string().trim().max(500),
   sort_order: z.number().int().min(0).max(9999),
@@ -78,12 +95,12 @@ export const instructorSchema = z.object({
   role: z.string().trim().max(100),
   specialties: z.array(z.string().trim().max(100)).max(30),
   bio: z.string().trim().max(2000),
-  image_url: z.string().nullable().optional(),
+  image_url: optionalCmsImageUrlSchema,
   sort_order: z.number().int().min(0).max(9999),
 });
 
 export const galleryImageSchema = z.object({
-  image_url: z.string().trim().min(1, "Imagem é obrigatória").max(2000),
+  image_url: safeCmsImageUrlSchema,
   alt: z.string().trim().max(300),
   category: z.string().trim().min(1).max(100),
   sort_order: z.number().int().min(0).max(9999),

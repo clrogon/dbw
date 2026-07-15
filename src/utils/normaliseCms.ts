@@ -1,3 +1,5 @@
+import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
+
 export type NormalisedService = {
   slug: string;
   icon?: string;
@@ -56,7 +58,8 @@ export const normaliseGalleryImage = (img: unknown): NormalisedGalleryImage => {
   const row = (img ?? {}) as GalleryLike;
   return {
     id: row.id ?? undefined,
-    src: row.image_url ?? "",
+    // Drop untrusted hosts / http / javascript: URLs before render
+    src: sanitizeCmsImageUrl(row.image_url) ?? "",
     alt: row.alt ?? "",
     category: row.category ?? "",
   };
@@ -107,7 +110,7 @@ export const normaliseInstructorRow = (instructor: unknown): NormalisedInstructo
     role: row.role ?? "",
     specialties: Array.isArray(row.specialties) ? (row.specialties as string[]) : [],
     bio: row.bio ?? "",
-    image_url: row.image_url ?? null,
+    image_url: sanitizeCmsImageUrl(row.image_url),
     sort_order: typeof row.sort_order === "number" ? row.sort_order : 0,
     created_at: row.created_at ?? "",
     updated_at: row.updated_at ?? "",

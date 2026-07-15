@@ -10,6 +10,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
+import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
 
 const ServiceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -26,7 +27,7 @@ const ServiceDetail = () => {
         shortDesc: cmsService.short_desc,
         fullDesc: cmsService.full_desc,
         subServices: cmsService.sub_services,
-        image: cmsService.image_url || "",
+        image: sanitizeCmsImageUrl(cmsService.image_url) || "",
         seoTitle: cmsService.seo_title,
         seoDescription: cmsService.seo_description,
         ctaText: cmsService.cta_text,

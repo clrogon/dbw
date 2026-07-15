@@ -24,22 +24,31 @@ describe("normaliseCms service normalization", () => {
 });
 
 describe("normaliseCms gallery image", () => {
-  it("converts CMS gallery image to NormalisedGalleryImage shape", () => {
-    const input = { id: "g1", image_url: "http://example.com/a.jpg", alt: "A", category: "Cat" };
+  it("converts CMS gallery image and keeps allowlisted HTTPS src", () => {
+    const url =
+      "https://ikwotysmjlqqurucxepf.supabase.co/storage/v1/object/public/cms-images/a.jpg";
+    const input = { id: "g1", image_url: url, alt: "A", category: "Cat" };
     const out = normaliseGalleryImage(input);
-    expect(out).toEqual({ id: "g1", src: "http://example.com/a.jpg", alt: "A", category: "Cat" });
+    expect(out).toEqual({ id: "g1", src: url, alt: "A", category: "Cat" });
+  });
+
+  it("strips untrusted gallery image hosts", () => {
+    const input = { id: "g1", image_url: "http://example.com/a.jpg", alt: "A", category: "Cat" };
+    expect(normaliseGalleryImage(input).src).toBe("");
   });
 });
 
 describe("normaliseCms instructor", () => {
-  it("normalises instructor row to stable shape", () => {
+  it("normalises instructor row and sanitizes image_url", () => {
+    const url =
+      "https://ikwotysmjlqqurucxepf.supabase.co/storage/v1/object/public/cms-images/pic.jpg";
     const input = {
       id: "i1",
       name: "John",
       role: "Coach",
       specialties: ["A"],
       bio: "bio",
-      image_url: "http://img.url/pic.jpg",
+      image_url: url,
       sort_order: 1,
       created_at: "2020-01-01",
       updated_at: "2020-01-02",
@@ -51,10 +60,19 @@ describe("normaliseCms instructor", () => {
       role: "Coach",
       specialties: ["A"],
       bio: "bio",
-      image_url: "http://img.url/pic.jpg",
+      image_url: url,
       sort_order: 1,
       created_at: "2020-01-01",
       updated_at: "2020-01-02",
     });
   });
+
+  it("nulls untrusted instructor image hosts", () => {
+    const out = normaliseInstructorRow({
+      name: "X",
+      image_url: "https://evil.example/x.jpg",
+    });
+    expect(out.image_url).toBeNull();
+  });
 });
+

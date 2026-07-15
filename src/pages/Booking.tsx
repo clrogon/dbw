@@ -12,6 +12,7 @@ import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { buildWhatsAppUrl } from "@/lib/safeUrls";
 import { Shield, Clock } from "lucide-react";
 
 const bookingSchema = z.object({
@@ -82,8 +83,8 @@ const Booking = () => {
     if (data.mensagem) lines.push(`*Mensagem:* ${data.mensagem}`);
     const msg = lines.join("\n");
 
-    const phone = import.meta.env.VITE_WHATSAPP_NUMBER || "244922569283";
-    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    // Digits-only wa.me number (env validated); message body is encodeURIComponent'd
+    const whatsappUrl = buildWhatsAppUrl(msg);
     // Do not persist URL in localStorage; pass via router state
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     navigate(`/obrigado?nome=${encodeURIComponent(data.nome)}`, { state: { whatsappUrl } });

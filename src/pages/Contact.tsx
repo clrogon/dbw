@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
+import { buildWhatsAppUrl } from "@/lib/safeUrls";
 
 const phones = [
   { number: "922 569 283", href: "tel:+244922569283" },
@@ -99,7 +100,7 @@ const Contact = () => {
 
                   <Button asChild size="lg" className="w-full text-base mt-4 uppercase font-display font-bold tracking-wider">
                     <a
-                      href="https://wa.me/244922569283?text=Ol%C3%A1!%20Tenho%20interesse%20nos%20servi%C3%A7os%20da%20DBW."
+                      href={buildWhatsAppUrl("Olá! Tenho interesse nos serviços da DBW.")}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

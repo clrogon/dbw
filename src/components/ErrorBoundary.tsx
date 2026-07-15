@@ -10,8 +10,13 @@ class ErrorBoundary extends React.Component<Props, State> {
     this.state = { hasError: false };
   }
   static getDerivedStateFromError(error: unknown): State {
+    // Never surface internal exception text in production (info disclosure).
     const message =
-      error instanceof Error ? error.message : "Please refresh the page or try again later.";
+      import.meta.env.PROD
+        ? "Ocorreu um erro. Por favor, recarregue a página."
+        : error instanceof Error
+          ? error.message
+          : "Please refresh the page or try again later.";
     return { hasError: true, message };
   }
   componentDidCatch(error: unknown, _info: React.ErrorInfo) {

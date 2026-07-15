@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
+import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
 
 const Services = () => {
   const { data: cmsServices, isLoading, isError } = useCmsServices();
@@ -27,7 +28,7 @@ const Services = () => {
     ? cmsServices.map((s) => ({
         slug: s.slug, icon: s.icon, title: s.title,
         shortDesc: s.short_desc, subServices: s.sub_services,
-        image: s.image_url || "", ctaText: s.cta_text,
+        image: sanitizeCmsImageUrl(s.image_url) || "", ctaText: s.cta_text,
       }))
     : fallbackServices.map((s) => ({
         slug: s.slug, icon: s.icon, title: s.title,

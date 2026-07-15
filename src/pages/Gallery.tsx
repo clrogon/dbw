@@ -36,9 +36,13 @@ const Gallery = () => {
     );
   }
 
-  const photos = !isError && cmsGallery && cmsGallery.length > 0
-    ? cmsGallery.map((img) => normaliseGalleryImage(img))
-    : fallbackPhotos;
+  const cmsPhotos =
+    !isError && cmsGallery && cmsGallery.length > 0
+      ? cmsGallery
+          .map((img) => normaliseGalleryImage(img))
+          .filter((p) => p.src.length > 0)
+      : [];
+  const photos = cmsPhotos.length > 0 ? cmsPhotos : fallbackPhotos;
 
   const allCategories = ["Todas", ...Array.from(new Set(photos.map((p) => p.category)))];
   const filtered = active === "Todas" ? photos : photos.filter((p) => p.category === active);

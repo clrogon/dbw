@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useHeroContent } from "@/hooks/useCms";
 import { sanitizeInternalPath } from "@/lib/cmsValidation";
+import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
 import heroBg from "@/assets/hero-bg.jpg";
 
 interface Stat {
@@ -28,7 +29,8 @@ const HeroSection = () => {
   const ctaPrimaryLink = sanitizeInternalPath(hero?.cta_primary_link, "/reservar");
   const ctaSecondaryText = hero?.cta_secondary_text || "Ver Os Nossos Serviços";
   const ctaSecondaryLink = sanitizeInternalPath(hero?.cta_secondary_link, "/servicos");
-  const bgImage = !isError && hero?.background_image_url ? hero.background_image_url : heroBg;
+  const safeBg = !isError ? sanitizeCmsImageUrl(hero?.background_image_url) : null;
+  const bgImage = safeBg ?? heroBg;
   function isStatArray(val: unknown): val is Stat[] {
     return Array.isArray(val) && val.every((s) => typeof s === 'object' && s !== null && 'value' in s && 'label' in s);
   }

@@ -10,6 +10,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import imgDomingos from "@/assets/instructor-domingos.jpg";
 import imgBaltazar from "@/assets/instructor-baltazar.jpg";
 import imgWilliam from "@/assets/instructor-william.jpg";
+import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
 
 const fallbackInstructors = [
   { name: "Domingos", role: "Co-Fundador & Instrutor Principal", specialties: ["Treino Personalizado", "Musculação", "Kickboxing"], bio: "Licenciado em Educação Física com vasta experiência em gestão desportiva e treino personalizado.", image: imgDomingos },
@@ -40,7 +41,7 @@ const Instructors = () => {
   const instructors = !isError && cmsInstructors && cmsInstructors.length > 0
     ? cmsInstructors.map((i) => ({
         name: i.name, role: i.role, specialties: i.specialties,
-        bio: i.bio, image: i.image_url || "",
+        bio: i.bio, image: sanitizeCmsImageUrl(i.image_url) || "",
       }))
     : fallbackInstructors;
 

@@ -4,6 +4,8 @@ import {
   safeInternalPathSchema,
   serviceSchema,
   heroContentSchema,
+  galleryImageSchema,
+  safeCmsImageUrlSchema,
 } from "../src/lib/cmsValidation";
 
 describe("safeInternalPathSchema", () => {
@@ -64,4 +66,37 @@ describe("heroContentSchema", () => {
       heroContentSchema.safeParse({ ...base, cta_primary_link: "//phish.example" }).success
     ).toBe(false);
   });
+
+  it("rejects non-allowlisted background images", () => {
+    const base = {
+      title: "Title",
+      title_highlight: "",
+      subtitle: "",
+      cta_primary_text: "Go",
+      cta_primary_link: "/reservar",
+      cta_secondary_text: "More",
+      cta_secondary_link: "/servicos",
+      background_image_url: "https://evil.com/bg.jpg",
+      stats: [],
+    };
+    expect(heroContentSchema.safeParse(base).success).toBe(false);
+  });
 });
+
+describe("safeCmsImageUrlSchema / galleryImageSchema", () => {
+  it("accepts Supabase HTTPS image URLs only", () => {
+    const good =
+      "https://ikwotysmjlqqurucxepf.supabase.co/storage/v1/object/public/cms-images/x.jpg";
+    expect(safeCmsImageUrlSchema.safeParse(good).success).toBe(true);
+    expect(safeCmsImageUrlSchema.safeParse("https://evil.com/x.jpg").success).toBe(false);
+    expect(
+      galleryImageSchema.safeParse({
+        image_url: good,
+        alt: "x",
+        category: "Treinos",
+        sort_order: 0,
+      }).success
+    ).toBe(true);
+  });
+});
+

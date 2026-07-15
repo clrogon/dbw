@@ -6,17 +6,20 @@ import { Button } from "@/components/ui/button";
 import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { isSafeWhatsAppUrl } from "@/lib/safeUrls";
 
 const ThankYou = () => {
   const [params] = useSearchParams();
-  const nome = params.get("nome") || "Cliente";
+  // Reflect only as React text (escaped); cap length to limit abuse via query string
+  const rawNome = params.get("nome") || "Cliente";
+  const nome = rawNome.slice(0, 100);
   const location = useLocation();
   const stateWhatsappUrl =
     location.state && typeof location.state === "object" && "whatsappUrl" in location.state
       ? (location.state as { whatsappUrl?: unknown }).whatsappUrl
       : undefined;
   const [whatsappUrl] = useState<string | null>(() => {
-    if (typeof stateWhatsappUrl === "string" && stateWhatsappUrl.startsWith("https://wa.me/")) {
+    if (typeof stateWhatsappUrl === "string" && isSafeWhatsAppUrl(stateWhatsappUrl)) {
       return stateWhatsappUrl;
     }
     return null;
