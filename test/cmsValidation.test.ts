@@ -19,6 +19,12 @@ describe("safeInternalPathSchema", () => {
     expect(safeInternalPathSchema.safeParse("https://evil.com").success).toBe(false);
     expect(safeInternalPathSchema.safeParse("javascript:alert(1)").success).toBe(false);
   });
+
+  it("rejects backslash open-redirect bypass", () => {
+    expect(safeInternalPathSchema.safeParse("/\\evil.com").success).toBe(false);
+    expect(safeInternalPathSchema.safeParse("/\\/evil.com").success).toBe(false);
+    expect(safeInternalPathSchema.safeParse("/foo\\bar").success).toBe(false);
+  });
 });
 
 describe("sanitizeInternalPath", () => {

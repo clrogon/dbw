@@ -97,5 +97,4 @@ unset; rotate keys there if you change the Supabase project.
 - If `.env` was ever committed, rotate the anon key and scrub git history (`git filter-repo`)
 - Regularly review RLS policies after schema changes
 - Never store `service_role` key in frontend code or Git
-- Keep dependencies up to date — run `npm audit` regularly
-- Longer-term: replace CSP `script-src 'unsafe-inline'` with nonces/hashes when the build pipeline supports it
+- Keep dependencies up to date — run `npm audit` regularly (also enforced in CI via `npm audit --audit-level=high`)

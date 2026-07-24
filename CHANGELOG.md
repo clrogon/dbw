@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `npm audit --audit-level=high` enforced as a CI step (`.github/workflows/ci.yml`), catching high/critical dependency vulnerabilities without blocking on low/moderate noise.
+- `ROADMAP.md` — canonical roadmap (Shipped / Planned), replacing the checklist previously embedded in `ARCHITECTURE.md`.
+
+### Security
+- CSP: removed `'unsafe-inline'` from `script-src` in `vercel.json`, `public/.htaccess`, and `index.html`. Verified via build-output inspection that no inline script actually required it — the JSON-LD block isn't script-src-gated and the PWA service-worker registration is emitted as an external file, not inline.
+- Independent fresh security audit performed (auth flow, RLS policies vs. documented model, upload validation, CSP consistency, dependency scan). No critical or launch-blocking issues found; RLS policies and server-side upload validation were confirmed to genuinely match `SECURITY.md`'s claims. See `tasks/todo.md` for the resulting action items.
+- `safeInternalPathSchema` (`src/lib/cmsValidation.ts`) now rejects paths containing a backslash, closing an open-redirect bypass (e.g. `/\evil.com`) that combined with a known `react-router-dom` advisory could send users off-domain via a CMS-controlled link.
+- `useAuth.tsx`: `isAdmin` is now reset synchronously on every auth-state change before the async admin-role check resolves, removing a brief window where stale admin state from a previous session could persist client-side. Defense-in-depth only — RLS `is_admin()` remains the actual authorization boundary.
+- Resolved high-severity `fast-uri` dependency advisory (GHSA-v2hh-gcrm-f6hx) via `npm audit fix` (transitive, build-tooling only, not shipped to the browser). `npm audit --audit-level=high` now exits clean.
+- **Known, deliberately deferred:** `react-router-dom@6.30.4` (exact installed version) carries an open-redirect/XSS advisory (GHSA-jjmj-jmhj-qwj2) with no non-breaking fix — resolving it requires a major bump to `react-router[-dom]@7+`. Held back for a dedicated QA-reviewed pass rather than an automated bump on a live booking site; the backslash-bypass vector is independently closed above.
+
+### Fixed
+- `README.md` tech-stack badge and table corrected from Vite 5.4 to the actually-pinned Vite 6.4.3.
+
+### Docs
+- Reconciled the three overlapping cPanel deployment docs: `docs/cpanel-deployment-wizard.md` converted to a pointer stub, `docs/cpanel-full-migration-wizard.md`'s outdated `.htaccess` step brought in line with the current production config, and `docs/deployment.md` updated to clarify which cPanel doc applies to which scenario.
+
+## [1.0.0] - 2026-07-24
+
+### Added
 - Production site config (`src/config/site.ts`) and shared `SiteSeo` (canonical always `www.dbwfitness.ao`; `noindex` on Vercel/localhost/admin).
 - cPanel production runbook: `docs/cpanel-production.md`.
 - `public/sitemap.xml`; hardened `robots.txt` and `.htaccess` (HTTPS/www, CSP, cache rules).
@@ -84,3 +104,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session tokens stored in `sessionStorage` instead of `localStorage`.
 - Admin roles stored in separate `user_roles` table (not on profile).
 - `service_role` key excluded from all frontend code.
+- (Investigated) `.env` was committed in an early history (`aaca205`) and removed in the audit-remediation commit (`27c44e9`). Contents were only `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (anon), and `VITE_SUPABASE_PROJECT_ID` — the same anon key already intentionally public in `src/config/supabasePublic.ts` and shipped in every build. No key rotation required.
+- (Investigated) Audit findings F-04, F-06, and F-07 referenced in earlier changelog entries have no surviving record anywhere in this repo, its commits, or its PRs — the original audit report was never committed. Rather than guess at their content, a fresh security audit should supersede the old numbering (see `tasks/todo.md`).

@@ -122,7 +122,18 @@ curl -sI https://www.dbwfitness.ao/servicos | head -10
 # or re-upload last known good tarball
 ```
 
-## 8. Vercel (preview only)
+## 8. Optional: GitHub Auto-Deploy
+
+If your cPanel host supports Git version control:
+
+1. **Connect repo**: Use cPanel **Git Version Control** to clone/connect your GitHub repository
+2. **Pull latest**: Manually or via cron job, pull the latest `main` branch
+3. **Build on server** (if Node.js available): Run `npm ci && npm run build` on the server
+4. **Publish `dist/`**: Copy/symlink built `dist/` contents to `public_html/`
+
+This is optional and more complex than file manager upload. Use only if your hosting provider supports Git deployments and you want continuous deployment.
+
+## 9. Vercel (preview only)
 
 - Use for PR demos; do not point marketing ads at `*.vercel.app`
 - Optional: set the same or a **staging** Supabase project

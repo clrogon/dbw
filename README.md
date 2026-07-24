@@ -2,7 +2,7 @@
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb.svg)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.4-646cff.svg)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.4-646cff.svg)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8.svg)](https://tailwindcss.com/)
 [![PWA](https://img.shields.io/badge/PWA-Enabled-brightgreen.svg)]()
 
@@ -24,7 +24,7 @@ Frontend SPA for **DBW Fitness Luanda** — a fitness and wellness company in An
 | Category | Technology |
 |----------|------------|
 | Framework | React 18 + TypeScript |
-| Build Tool | Vite 5 |
+| Build Tool | Vite 6 |
 | Styling | Tailwind CSS + shadcn/ui |
 | Routing | React Router 6 |
 | State | TanStack Query (React Query) |
