@@ -40,7 +40,8 @@ All database tables have RLS **enabled**. All policies are **PERMISSIVE**. Write
 
 - `cms-images` bucket: public read, admin-only write
 - Storage policies enforce `is_admin()` for upload/update/delete
-- **Upload validation**: Client-side enforcement of 5 MB max size, MIME-type whitelist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`), and extension whitelist (SVG intentionally excluded to prevent stored XSS)
+- **Upload validation**: enforced on both client (immediate feedback) and server (authoritative) — 5 MB max size and MIME-type allowlist (`image/jpeg`, `image/png`, `image/webp`, `image/gif`) via bucket config, extension allowlist via storage RLS policy `WITH CHECK` (SVG intentionally excluded to prevent stored XSS)
+- **Accepted risk (2026-07-24):** validation trusts the declared MIME type/extension, not actual file-content bytes (no magic-byte/content-sniffing check). Exploiting this requires an already-compromised admin account — the highest-impact variant of this class (SVG stored XSS) is already closed by the extension allowlist above. Not worth the added complexity of a content-inspection Edge Function while the admin pool stays small and fully trusted; revisit if that changes.
 
 ### Frontend Security
 

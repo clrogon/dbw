@@ -32,14 +32,13 @@ or Management API credentials that no agent in this session has. **Owner action 
 
 ### P1 — High: dependency/security follow-ups
 
-- [ ] **Decide on the react-router-dom major-version upgrade.**
-      Fresh audit confirmed a real advisory: installed `react-router-dom@6.30.4` (exact version) has GHSA-jjmj-jmhj-qwj2 (open-redirect/XSS) and a backslash open-redirect bug in `<Link>`/`useNavigate`. Non-breaking fix doesn't exist — requires `react-router[-dom]@7.18.1+`, a breaking major bump. Held back intentionally from this pass: a major router upgrade on a live booking site needs a staging deploy + manual route QA, not a silent automated bump. The backslash-bypass vector specifically is already closed independently (see Done, below).
+- [x] **react-router-dom major-version upgrade** — done. Upgraded `react-router`/`react-router-dom` `6.30.4` → `7.18.1` with full QA (lint/typecheck/test/build all green, 28/28 tests incl. new router-specific regression coverage in `src/test/router-migration.test.tsx`, routes manually walked). Both GHSA-jjmj-jmhj-qwj2 and the backslash open-redirect advisory confirmed gone via `npm audit --audit-level=high`.
 - [x] **fast-uri high-severity npm audit finding** — resolved via `npm audit fix` (bumped transitive `fast-uri` 3.1.3 → 3.1.4). `npm audit --audit-level=high` now exits 0.
 
-### P2 — Medium: low-priority hardening (post-launch acceptable)
+### P2 — Medium: accepted risk, documented not implemented
 
-- [ ] **Consider server-side magic-byte validation for CMS image uploads.**
-      Current validation (extension allowlist via RLS + bucket MIME/size limits) is genuinely server-side, not just client-side as originally worried — but still trusts declared MIME/extension, not actual file bytes. Requires an already-compromised admin account to exploit. Not launch-blocking; revisit if the admin pool grows beyond fully-trusted staff.
+- [x] **Server-side magic-byte validation for CMS image uploads — accepted as documented risk.**
+      Current validation (extension allowlist via RLS + bucket MIME/size limits) is genuinely server-side already, not client-side-only. Exploiting the remaining gap (no true file-content inspection) requires an already-compromised admin account, and the highest-impact variant (SVG stored XSS) is already closed. Decision recorded in `SECURITY.md` → Storage Security rather than building an Edge Function for a small, fully-trusted admin pool.
 
 ---
 
@@ -61,23 +60,22 @@ or Management API credentials that no agent in this session has. **Owner action 
 
 ## Review
 
-**Status as of 2026-07-24 (production-readiness execution pass):**
+**Status as of 2026-07-24 (production-readiness execution pass, all closeable items closed):**
 
-All code/doc-fixable items from the original PM backlog plus every actionable finding from
-the fresh security audit are resolved: CI now gates on `npm audit --audit-level=high` (clean),
-CSP no longer needs `'unsafe-inline'` in `script-src`, the CMS path sanitizer closes the
-backslash open-redirect bypass, the `isAdmin` race condition is fixed, docs are reconciled,
-`ROADMAP.md` exists, and a dated `1.0.0` release was cut. Full build + test suite verified
-green after every change (25/25 tests passing).
+Every code/doc-fixable item from the original PM backlog, every actionable finding from the
+fresh security audit, and the react-router major-version upgrade are resolved: CI gates on
+`npm audit --audit-level=high` (clean, 0 vulnerabilities), CSP no longer needs `'unsafe-inline'`
+in `script-src`, the CMS path sanitizer closes the backslash open-redirect bypass, the `isAdmin`
+race condition is fixed, `react-router-dom` is upgraded to `7.18.1` with full QA, docs are
+reconciled, `ROADMAP.md` exists, a dated `1.0.0` release was cut, and the upload-validation
+gap is accepted and documented as a risk rather than left ambiguous. Full build + test suite
+verified green after every change (28/28 tests passing).
 
-Four items remain open and **cannot be closed from this repo**:
-- Three require live Supabase dashboard access (leaked-password protection, MFA, public-signup
-  toggle, confirming the RLS/storage migration applied to prod) — owner action needed.
-- One (react-router major-version bump, `6.30.4` → `7.18.1+`) is deliberately deferred pending
-  a staged QA pass rather than an automated production dependency bump on a live booking site.
+**Only the 3 Supabase-dashboard-only items remain open** — they cannot be closed from this repo
+without live project credentials: confirm the RLS/storage migration is applied to the live
+project, enable leaked-password protection, and enable admin MFA + confirm public sign-up is
+disabled. Owner is authenticating via `supabase login` to close these via CLI.
 
 **What's done:** see "Done this pass" above, plus everything from the original PM pass
 (CMS admin CRUD, role-based auth, RLS on all 6 tables, PWA/offline support, F-01/02/03/05/08/09/10/11
 closed, `npm audit` clean at time of last dependency bump).
-
-**What's still open and needs the owner:** the four P0/P1 items above.
