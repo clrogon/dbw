@@ -168,15 +168,4 @@ See [Deployment Guide](./docs/deployment.md) and [cPanel Migration Wizard](./doc
 
 ## Roadmap
 
-### Completed ✅
-- [x] CMS admin dashboard
-- [x] Role-based auth with PERMISSIVE RLS
-- [x] Image upload to storage
-- [x] PWA with offline support
-- [x] Error boundary components
-
-### Planned
-- [ ] Lazy loading for routes
-- [ ] Analytics integration
-- [ ] Internationalization (i18n)
-- [ ] Email notifications for bookings
+See [ROADMAP.md](./ROADMAP.md) for the canonical product roadmap, including shipped features and planned backlog items.

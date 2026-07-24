@@ -17,6 +17,10 @@ export const safeInternalPathSchema = z
   .refine(
     (v) => !/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(v),
     "Esquemas de URL (http:, javascript:, etc.) não são permitidos."
+  )
+  .refine(
+    (v) => !v.includes("\\"),
+    "Caracteres inválidos (\\) não são permitidos no caminho."
   );
 
 export function sanitizeInternalPath(raw: string | null | undefined, fallback = "/"): string {

@@ -47,11 +47,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        // Reset synchronously before the async admin check resolves so that
+        // isAdmin never briefly retains the previous session's value during
+        // the network round-trip (client-side defense-in-depth only; actual
+        // authorization is enforced server-side via RLS is_admin() checks).
+        setIsAdmin(false);
         if (session?.user) {
           const admin = await checkAdmin(session.user.id);
           setIsAdmin(admin);
-        } else {
-          setIsAdmin(false);
         }
         setLoading(false);
       }

@@ -11,7 +11,7 @@ This document covers deployment strategies and configurations for the DBW Fitnes
 | Config | `public/.htaccess` | `vercel.json` |
 | SEO | Indexed | `noindex` automatically |
 
-**Authoritative production runbook:** [`docs/cpanel-production.md`](./cpanel-production.md)
+**Production deployment:** See [`cpanel-production.md`](./cpanel-production.md) for the standard runbook (recommended for most deploys with existing Supabase setup). For greenfield migration from scratch, see [`cpanel-full-migration-wizard.md`](./cpanel-full-migration-wizard.md).
 
 ## Table of Contents
 
@@ -80,12 +80,13 @@ Automatic — preview URL is generated on every push.
 
 ### cPanel (production)
 
-**Use this for the live site.** See:
+**Use this for the live site.** Choose one of two docs based on your scenario:
 
-- **[cPanel production runbook](./cpanel-production.md)** — build, upload, smoke test, rollback  
-- **[Full Migration Wizard](./cpanel-full-migration-wizard.md)** — greenfield DB/auth/storage  
+- **[cPanel production runbook](./cpanel-production.md)** — **Recommended for most deploys**: Build, upload, smoke test, and rollback steps. Assumes your Supabase project, auth, and database already exist and are configured.
 
-SPA + security headers live in `public/.htaccess` (copied into `dist/` on build).
+- **[Full Migration Wizard](./cpanel-full-migration-wizard.md)** — **Greenfield setup only**: Complete 14-step walkthrough covering Supabase project creation, database schema & functions & RLS policies, admin auth, storage bucket, frontend build, and cPanel configuration. Use this if starting from scratch or migrating from Lovable Cloud to standalone.
+
+SPA routing + security headers live in `public/.htaccess` (copied into `dist/` on build). Both docs reference the same production `.htaccess` configuration.
 
 ### Vercel (preview only — not production)
 
