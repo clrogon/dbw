@@ -16,10 +16,15 @@ reflect what's actually done vs. still open.
 
 ## Backlog
 
-### P0 — Critical: production-readiness gaps requiring live Supabase dashboard access
+### P0 — On hold: production-readiness gaps requiring live Supabase dashboard access
 
-None of these are fixable from the repo — they require the Supabase project dashboard
-or Management API credentials that no agent in this session has. **Owner action required.**
+**On hold at owner's request (2026-07-24).** None of these are fixable from the repo —
+they require the Supabase project dashboard or Management API credentials that no agent
+in this session has. A CLI login attempt failed (non-TTY environment can't complete the
+browser OAuth flow), and the owner declined to paste a personal access token into the
+chat transcript. A manual dashboard checklist (exact menu paths/URLs, plus a verification
+SQL query for the migration check) was provided in chat. No active follow-up until the
+owner resumes this.
 
 - [ ] **Confirm the RLS + storage hardening migration is applied to the LIVE production Supabase project.**
       Migration file exists at `supabase/migrations/20260713000000_rls_and_storage_hardening.sql`. Repo state cannot prove it has been run against production — check via Supabase dashboard → Database → Migrations, or `supabase db push` / `supabase migration list --linked`.
