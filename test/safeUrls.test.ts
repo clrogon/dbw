@@ -44,11 +44,36 @@ describe("WhatsApp helpers", () => {
     expect(sanitizeWhatsAppDigits("123")).toBe(DEFAULT_WHATSAPP_NUMBER);
   });
 
+  it("does NOT ship a real business number when env is missing (anti-harvesting)", () => {
+    // The DEFAULT must be a non-numeric sentinel so the real business number
+    // is not recoverable from the bundle. Anything left after stripping
+    // non-digits must be empty so the resulting wa.me URL is visibly broken
+    // to the deployer rather than silently posting to a stale/harvested number.
+    expect(DEFAULT_WHATSAPP_NUMBER).toMatch(/missing.*whatsapp.*number/i);
+    expect(DEFAULT_WHATSAPP_NUMBER.replace(/\D/g, "")).toBe("");
+    // sanitizeWhatsAppDigits without a usable number returns the sentinel as-is
+    expect(sanitizeWhatsAppDigits(null)).toBe(DEFAULT_WHATSAPP_NUMBER);
+  });
+
   it("builds encodeURIComponent message URLs", () => {
     const url = buildWhatsAppUrl("Hello *world*", "244922569283");
     expect(url).toBe(
       `https://wa.me/244922569283?text=${encodeURIComponent("Hello *world*")}`
     );
+  });
+
+  it("caps prefilled WhatsApp text to ~1000 chars to stay under the platform's accepted length", () => {
+    const long = "x".repeat(1500);
+    const url = buildWhatsAppUrl(long, "244922569283");
+    expect(url.length).toBeLessThan(`https://wa.me/244922569283?text=${encodeURIComponent(long)}`.length);
+    // The text param must be the truncated string.
+    const encoded = encodeURIComponent(long.slice(0, 1000));
+    expect(url).toBe(`https://wa.me/244922569283?text=${encoded}`);
+  });
+
+  it("omits the text query entirely for empty/undefined messages", () => {
+    expect(buildWhatsAppUrl(undefined, "244922569283")).toBe("https://wa.me/244922569283");
+    expect(buildWhatsAppUrl("", "244922569283")).toBe("https://wa.me/244922569283");
   });
 
   it("validates wa.me reopen URLs", () => {

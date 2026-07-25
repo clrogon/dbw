@@ -82,7 +82,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await supabase.auth.signOut();
     } catch {
-      // API call may fail due to network/proxy issues — clear state regardless
+      // API call may fail due to network/proxy issues — clear state regardless.
+      // SECURITY: a failed signOut must NOT leave a usable JWT in sessionStorage.
+      // Scrub the Supabase auth storage key(s) so a transient signOut endpoint
+      // failure cannot keep an admin logged in until JWT expiry.
+      try {
+        if (typeof window !== "undefined") {
+          // `sb-<projectRef>-auth-token` lives on either `client.storageKey`
+          // or `client.auth.storageKey` depending on SDK version.
+          const keys = new Set<string>();
+          const sk =
+            (supabase as unknown as { storageKey?: string }).storageKey ??
+            supabase.auth?.storageKey;
+          if (sk) keys.add(sk);
+          // Belt-and-braces: scrub any remaining Supabase auth-related keys.
+          for (let i = window.sessionStorage.length - 1; i >= 0; i--) {
+            const key = window.sessionStorage.key(i);
+            if (key && /supabase|sb-.*-auth/i.test(key) && /auth/i.test(key)) {
+              keys.add(key);
+            }
+          }
+          keys.forEach((k) => window.sessionStorage.removeItem(k));
+        }
+      } catch {
+        // sessionStorage may be unavailable (private mode / blocked); nothing more to do.
+      }
     } finally {
       setIsAdmin(false);
       setUser(null);

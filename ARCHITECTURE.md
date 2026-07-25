@@ -134,7 +134,7 @@ All RLS policies are **PERMISSIVE**. Write policies target `TO authenticated`.
 ### 7. PWA / Service Worker
 
 - **Plugin**: `vite-plugin-pwa` with `autoUpdate` register type
-- **Caching**: Workbox precaches static assets; `NetworkFirst` for Supabase API calls
+- **Caching**: Workbox precaches static assets. `CacheFirst` for Supabase Storage public images with a **1-day TTL** (was 30 days; shortened to ensure admin image updates are visible to returning PWA users within a day, paired with `Date.now()` URL-versioning on every `ImageUpload` write).
 - **Install**: `/instalar` page with native prompt (Android) and manual instructions (iOS)
 - **Exclusions**: `~oauth` routes excluded from SW interception
 

@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,21 +12,14 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { buildWhatsAppUrl } from "@/lib/safeUrls";
+import {
+  bookingSchema,
+  SERVICE_LABELS,
+  type BookingForm,
+  BOOKING_THROTTLE_MS,
+  BOOKING_THROTTLE_STORAGE_KEY,
+} from "@/lib/bookingSchema";
 import { Shield, Clock } from "lucide-react";
-
-const bookingSchema = z.object({
-  servico: z.enum(["aquaticas", "personalizado", "laboral", "grupo"], { required_error: "Seleccione um serviço" }),
-  nome: z.string().trim().min(3, "Nome deve ter pelo menos 3 caracteres").max(100),
-  email: z.string().trim().email("Email inválido").max(255),
-  telefone: z.string().trim().min(9, "Número de telefone inválido").max(20),
-  empresa: z.string().trim().max(100).optional(),
-  tipoCliente: z.enum(["adulto", "crianca"]).optional(),
-  experienciaNatacao: z.enum(["sim", "nao"]).optional(),
-  numColaboradores: z.string().trim().max(10).optional(),
-  mensagem: z.string().trim().max(500).optional(),
-});
-
-type BookingForm = z.infer<typeof bookingSchema>;
 
 const serviceOptions = [
   { value: "aquaticas" as const, icon: "🏊", label: "Actividades Aquáticas" },
@@ -36,12 +28,7 @@ const serviceOptions = [
   { value: "grupo" as const, icon: "⚡", label: "Aulas em Grupo" },
 ];
 
-const serviceLabels: Record<string, string> = {
-  aquaticas: "Actividades Aquáticas",
-  personalizado: "Treino Personalizado",
-  laboral: "Ginástica Laboral",
-  grupo: "Aulas em Grupo",
-};
+const serviceLabels = SERVICE_LABELS;
 
 const Booking = () => {
   const [step, setStep] = useState(1);
@@ -49,7 +36,16 @@ const Booking = () => {
 
   const form = useForm<BookingForm>({
     resolver: zodResolver(bookingSchema),
-    defaultValues: { servico: undefined, nome: "", email: "", telefone: "", empresa: "", mensagem: "" },
+    defaultValues: {
+      servico: undefined,
+      nome: "",
+      email: "",
+      telefone: "",
+      empresa: "",
+      mensagem: "",
+      // Honeypot — must remain empty on real submissions.
+      website: "",
+    },
   });
 
   const servico = form.watch("servico");
@@ -67,6 +63,31 @@ const Booking = () => {
   };
 
   const onSubmit = (data: BookingForm) => {
+    // Honeypot: a real user cannot fill this invisible field. If it has any
+    // value, treat the submission as a bot and silently discard without
+    // opening WhatsApp or Chungking the throttle window. We still navigate
+    // to the thank-you page so the bot does not learn it was caught.
+    if (data.website && data.website.trim() !== "") {
+      navigate(`/obrigado?nome=${encodeURIComponent(data.nome)}`);
+      return;
+    }
+
+    // Client-side submission throttle. Reduces scripted WhatsApp deep-link
+    // flooding against the business number (pre-mortem risk C5). We persist
+    // only an opaque timestamp; no PII is stored.
+    try {
+      const now = Date.now();
+      const last = Number(window.sessionStorage.getItem(BOOKING_THROTTLE_STORAGE_KEY) ?? 0);
+      if (last && now - last < BOOKING_THROTTLE_MS) {
+        // Throttled — pretend success to bots; humans rarely submit twice in 30s.
+        navigate(`/obrigado?nome=${encodeURIComponent(data.nome)}`);
+        return;
+      }
+      window.sessionStorage.setItem(BOOKING_THROTTLE_STORAGE_KEY, String(now));
+    } catch {
+      // sessionStorage may be unavailable (private mode / blocked); carry on.
+    }
+
     // Build WhatsApp message with all captured form data
     const lines = [
       `Olá! Gostaria de me inscrever:`,
@@ -84,6 +105,7 @@ const Booking = () => {
     const msg = lines.join("\n");
 
     // Digits-only wa.me number (env validated); message body is encodeURIComponent'd
+    // and capped at ~1000 chars by buildWhatsAppUrl to stay under WhatsApp's limit.
     const whatsappUrl = buildWhatsAppUrl(msg);
     // Do not persist URL in localStorage; pass via router state
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
@@ -270,6 +292,35 @@ const Booking = () => {
                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground font-sans mb-8">
                       <Clock className="w-4 h-4 text-primary" /> Resposta em até 24h úteis
+                    </div>
+
+                    {/*
+                      Honeypot field — invisible to humans, autofilled by spam
+                      bots that populate every named input. Submit-time code in
+                      onSubmit discards any submission with a non-empty
+                      `website` value. The field is rendered off-screen with
+                      aria-hidden and negative tab-index so it never traps
+                      keyboard or screen-reader users.
+                    */}
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        position: "absolute",
+                        left: "-9999px",
+                        width: "1px",
+                        height: "1px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <label htmlFor="website">Website (deixe vazio)</label>
+                      <input
+                        id="website"
+                        type="text"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        aria-hidden="true"
+                        {...form.register("website")}
+                      />
                     </div>
 
                     <div className="flex justify-between">
