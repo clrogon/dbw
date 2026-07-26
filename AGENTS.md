@@ -20,12 +20,14 @@
 
 ## Commands
 
+> **First run on a fresh checkout:** `npm install` — **mandatory**. Without `node_modules/`, `npm test`, `npm run lint`, and `npm run build` all fail with "command not found" and agents cannot verify their own work.
+
 ```bash
-npm install          # install dependencies
-npm run dev              # start dev server
-npm run build            # production build
+npm install          # mandatory first step on any fresh checkout — without it npm test/lint/build fail
+npm run dev              # start dev server (http://localhost:8080)
+npm run build            # production build (also type-checks)
 npm run lint              # linting
-npm test              # testing
+npm test              # testing — must exit 0 before any PR
 ```
 
 ---
@@ -68,9 +70,10 @@ Title: `[scope] Short imperative description` (Following Conventional Commits)
 Examples: `feat(ui): add responsive nav`, `fix(api): handle token expiry`
 
 Every PR must confirm:
-- [ ] Linter passes
-- [ ] Type checks pass
-- [ ] Relevant tests pass
+- [ ] `npm install` was run (so `node_modules/` exists; otherwise the steps below cannot run)
+- [ ] Linter passes (`npm run lint`)
+- [ ] Type checks pass (`npx tsc --noEmit` or `npm run build`)
+- [ ] Tests pass (`npm test` must **exit 0**; currently covers `safeUrls`, `normaliseCms`, `cmsValidation`, `site`, `error-logging`)
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
 - [ ] Docs updated if any public behavior changed
 

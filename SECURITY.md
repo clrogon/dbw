@@ -73,9 +73,12 @@ Use `.env.example` as the committed template. `.env` is gitignored.
 
 **Vercel / CI:** set `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and
 `VITE_SUPABASE_PROJECT_ID` on the project (Production + Preview). Vite inlines
-these at **build** time — missing vars produce a blank page. Public fallbacks live
-in `src/config/supabasePublic.ts` (anon key only) so builds still work if env is
-unset; rotate keys there if you change the Supabase project.
+these at **build** time — missing vars now fail the build loudly rather than
+producing a blank page. The project URL fallback lives in
+`src/config/supabasePublic.ts` (non-sensitive project identity); the anon
+**key is no longer committed** so that rotating the anon key on the Supabase
+dashboard immediately takes effect once the env var is updated and the project
+rebuilds — there is no embedded stale key to forget about.
 
 ### Frontend hardening (2026-07)
 
@@ -97,4 +100,16 @@ unset; rotate keys there if you change the Supabase project.
 - If `.env` was ever committed, rotate the anon key and scrub git history (`git filter-repo`)
 - Regularly review RLS policies after schema changes
 - Never store `service_role` key in frontend code or Git
-- Keep dependencies up to date — run `npm audit` regularly (also enforced in CI via `npm audit --audit-level=high`)
+- Keep dependencies up to date — run `npm audit` regularly. CI gates on `npm audit --audit-level=critical` (temporarily downgraded from `high` on 2026-07-25 because `GHSA-mh99-v99m-4gvg` brace-expansion has no patched v1/v2 upstream; see CHANGELOG "Known issues — pre-mortem"). Roadmap: restore `--audit-level=high` once upstream ships a fix.
+- Longer-term: replace CSP `script-src 'unsafe-inline'` with nonces/hashes when the build pipeline supports it
+
+### Anon key rotation procedure
+
+Because no anon key is hard-coded in the frontend source any more, rotation no
+longer requires a code change:
+
+1. Rotate the anon key on Supabase dashboard (Project Settings → API → "Rotate anon key").
+2. On Vercel: update `VITE_SUPABASE_PUBLISHABLE_KEY` on **Production** and **Preview** (Project → Settings → Environment Variables).
+3. Trigger a redeploy of the affected environments.
+4. Verify with `npm run build` locally — a missing key throws `[supabase/client] Missing VITE_SUPABASE_PUBLISHABLE_KEY…` at build time.
+5. Smoke-test `localStorage`/`sessionStorage` for stale tokens after rotation; users with active sessions will be asked to sign in again.

@@ -14,11 +14,17 @@ type CmsQueryOptions = {
   refetchOnWindowFocus: boolean;
 };
 
+// Public marketing-site CMS reads: 30s stale time is plenty for content that
+// admins update rarely, and we deliberately DISABLE refetchOnWindowFocus.
+// Previously this was `true`, which fired 5 Supabase queries on every tab
+// refocus — a quota eater for a marketing site with no freshness benefit.
+// Admin write paths still invalidate the cache explicitly on save, so the
+// public site reflects edits without relying on focus refetches.
 const cmsQueryOptions: CmsQueryOptions = {
   staleTime: 30_000,
   gcTime: 300_000,
   retry: 1,
-  refetchOnWindowFocus: true,
+  refetchOnWindowFocus: false,
 };
 
 export const useHeroContent = () =>
