@@ -1,5 +1,17 @@
 {
   "rewrites": [
+    { "source": "/sobre", "destination": "/sobre.html" },
+    { "source": "/servicos", "destination": "/servicos.html" },
+    { "source": "/servicos/actividades-aquaticas", "destination": "/servicos/actividades-aquaticas.html" },
+    { "source": "/servicos/treinos-personalizados", "destination": "/servicos/treinos-personalizados.html" },
+    { "source": "/servicos/ginastica-laboral", "destination": "/servicos/ginastica-laboral.html" },
+    { "source": "/servicos/aulas-em-grupo", "destination": "/servicos/aulas-em-grupo.html" },
+    { "source": "/instrutores", "destination": "/instrutores.html" },
+    { "source": "/galeria", "destination": "/galeria.html" },
+    { "source": "/reservar", "destination": "/reservar.html" },
+    { "source": "/contacto", "destination": "/contacto.html" },
+    { "source": "/instalar", "destination": "/instalar.html" },
+    { "source": "/politica-de-privacidade", "destination": "/politica-de-privacidade.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

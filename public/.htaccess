@@ -17,6 +17,16 @@
   RewriteCond %{HTTP_HOST} ^dbwfitness\.ao$ [NC]
   RewriteRule ^ https://www.dbwfitness.ao%{REQUEST_URI} [L,R=301]
 
+  # Prerendered marketing-page shells: serve <route>.html directly when it
+  # exists, so non-JS crawlers (WhatsApp/Facebook/X/LinkedIn link previews)
+  # get that route's own title/description/OG tags instead of the SPA
+  # fallback's homepage tags. Falls through automatically (next block) for
+  # any route without a prerendered file — e.g. a CMS-added service slug —
+  # since the second RewriteCond only matches if the file actually exists.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.*)$ $1.html [L]
+
   # SPA: real files win; everything else → index.html
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
