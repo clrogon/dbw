@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
+import { buildBreadcrumbSchema } from "@/lib/structuredData";
 import servicesSwim from "@/assets/services-swim.jpg";
 import servicesAquatic from "@/assets/services-aquatic.jpg";
 import servicesWellness from "@/assets/services-wellness.jpg";
@@ -52,6 +53,10 @@ const Gallery = () => {
         title="Galeria"
         description="Veja a galeria de fotos da DBW Fitness em Luanda. Actividades aquáticas, treinos personalizados e aulas em grupo."
         path="/galeria"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Início", path: "/" },
+          { name: "Galeria", path: "/galeria" },
+        ])}
       />
       <main>
         <Navbar />

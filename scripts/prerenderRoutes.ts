@@ -21,6 +21,51 @@ interface RouteSeo {
   route: string;
   title: string;
   description: string;
+  /** Mirrors the jsonLd prop each page passes to <SiteSeo> — duplicated here
+   * for the same @/-alias reason as everything else in this file. Keep in
+   * sync by hand. */
+  jsonLd?: Record<string, unknown>[];
+}
+
+/** Mirrors src/lib/structuredData.ts's buildBreadcrumbSchema — duplicated,
+ * not imported, see the file-level comment above. */
+function breadcrumb(items: { name: string; path: string }[]): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: `${PRODUCTION_ORIGIN}${item.path === "/" ? "" : item.path}`,
+    })),
+  };
+}
+
+/** Mirrors buildServiceSchema. */
+function service(name: string, description: string, route: string): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name,
+    description,
+    url: `${PRODUCTION_ORIGIN}${route}`,
+    provider: { "@id": PRODUCTION_ORIGIN },
+    areaServed: { "@type": "City", name: "Luanda" },
+  };
+}
+
+/** Mirrors buildPersonSchema. Names/roles/bios match the fallbackInstructors
+ * list in src/pages/Instructors.tsx — keep in sync by hand if that changes. */
+function person(name: string, role: string, bio: string): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name,
+    jobTitle: role,
+    description: bio,
+    worksFor: { "@id": PRODUCTION_ORIGIN },
+  };
 }
 
 const ROUTES: RouteSeo[] = [
@@ -29,60 +74,131 @@ const ROUTES: RouteSeo[] = [
     title: "Sobre Nós",
     description:
       "Conheça a DBW — Domingos, Baltazar & William. Empresa de fitness e bem-estar em Luanda com profissionais certificados.",
+    jsonLd: [breadcrumb([{ name: "Início", path: "/" }, { name: "Sobre Nós", path: "/sobre" }])],
   },
   {
     route: "/servicos",
     title: "Serviços",
     description:
       "Conheça os serviços da DBW: actividades aquáticas, treinos personalizados, ginástica laboral e aulas em grupo em Luanda.",
+    jsonLd: [breadcrumb([{ name: "Início", path: "/" }, { name: "Serviços", path: "/servicos" }])],
   },
   {
     route: "/servicos/actividades-aquaticas",
     title: "Aulas de Natação em Luanda — Crianças e Adultos",
     description:
       "DBW oferece aulas de natação para crianças e adultos em Luanda, Angola. Professores certificados, turmas reduzidas, horários flexíveis. Inscreva-se hoje.",
+    jsonLd: [
+      service(
+        "Actividades Aquáticas",
+        "DBW oferece aulas de natação para crianças e adultos em Luanda, Angola. Professores certificados, turmas reduzidas, horários flexíveis. Inscreva-se hoje.",
+        "/servicos/actividades-aquaticas"
+      ),
+      breadcrumb([
+        { name: "Início", path: "/" },
+        { name: "Serviços", path: "/servicos" },
+        { name: "Actividades Aquáticas", path: "/servicos/actividades-aquaticas" },
+      ]),
+    ],
   },
   {
     route: "/servicos/treinos-personalizados",
     title: "Personal Trainer em Luanda — Treino Personalizado",
     description:
       "Treinos personalizados com personal trainer certificado em Luanda. Avaliação gratuita, plano à medida e resultados comprovados. Marque já.",
+    jsonLd: [
+      service(
+        "Treinos Personalizados",
+        "Treinos personalizados com personal trainer certificado em Luanda. Avaliação gratuita, plano à medida e resultados comprovados. Marque já.",
+        "/servicos/treinos-personalizados"
+      ),
+      breadcrumb([
+        { name: "Início", path: "/" },
+        { name: "Serviços", path: "/servicos" },
+        { name: "Treinos Personalizados", path: "/servicos/treinos-personalizados" },
+      ]),
+    ],
   },
   {
     route: "/servicos/ginastica-laboral",
     title: "Ginástica Laboral em Luanda — Saúde Corporativa",
     description:
       "Programas de ginástica laboral para empresas em Luanda. Reduza o absentismo, aumente a produtividade. Peça uma proposta à DBW.",
+    jsonLd: [
+      service(
+        "Ginástica Laboral",
+        "Programas de ginástica laboral para empresas em Luanda. Reduza o absentismo, aumente a produtividade. Peça uma proposta à DBW.",
+        "/servicos/ginastica-laboral"
+      ),
+      breadcrumb([
+        { name: "Início", path: "/" },
+        { name: "Serviços", path: "/servicos" },
+        { name: "Ginástica Laboral", path: "/servicos/ginastica-laboral" },
+      ]),
+    ],
   },
   {
     route: "/servicos/aulas-em-grupo",
     title: "Aulas de Grupo em Luanda — Fitness Colectivo",
     description:
       "Aulas de grupo em Luanda: spinning, funcional, aeróbica e mais. Turmas reduzidas, horários flexíveis. Venha treinar com a DBW.",
+    jsonLd: [
+      service(
+        "Aulas em Grupo",
+        "Aulas de grupo em Luanda: spinning, funcional, aeróbica e mais. Turmas reduzidas, horários flexíveis. Venha treinar com a DBW.",
+        "/servicos/aulas-em-grupo"
+      ),
+      breadcrumb([
+        { name: "Início", path: "/" },
+        { name: "Serviços", path: "/servicos" },
+        { name: "Aulas em Grupo", path: "/servicos/aulas-em-grupo" },
+      ]),
+    ],
   },
   {
     route: "/instrutores",
     title: "Instrutores",
     description:
       "Conheça os profissionais certificados da DBW. Domingos, Baltazar e William — licenciados em Educação Física dedicados à sua saúde em Luanda.",
+    jsonLd: [
+      breadcrumb([{ name: "Início", path: "/" }, { name: "Instrutores", path: "/instrutores" }]),
+      person(
+        "Domingos",
+        "Co-Fundador & Instrutor Principal",
+        "Licenciado em Educação Física com vasta experiência em gestão desportiva e treino personalizado."
+      ),
+      person(
+        "Baltazar",
+        "Co-Fundador & Instrutor de Natação",
+        "Especialista em actividades aquáticas com foco na segurança e desenvolvimento técnico."
+      ),
+      person(
+        "William",
+        "Co-Fundador & Instrutor de Grupo",
+        "Profissional certificado em Educação Física, especialista em aulas dinâmicas e motivadoras."
+      ),
+    ],
   },
   {
     route: "/galeria",
     title: "Galeria",
     description:
       "Veja a galeria de fotos da DBW Fitness em Luanda. Actividades aquáticas, treinos personalizados e aulas em grupo.",
+    jsonLd: [breadcrumb([{ name: "Início", path: "/" }, { name: "Galeria", path: "/galeria" }])],
   },
   {
     route: "/reservar",
     title: "Reservar Vaga",
     description:
       "Reserve a sua vaga nos programas de fitness da DBW em Luanda. Resposta garantida em 24 horas.",
+    jsonLd: [breadcrumb([{ name: "Início", path: "/" }, { name: "Reservar Vaga", path: "/reservar" }])],
   },
   {
     route: "/contacto",
     title: "Contacto",
     description:
       "Contacte a DBW Fitness em Luanda. Telefone, email, localização e WhatsApp. Estamos prontos para ajudar.",
+    jsonLd: [breadcrumb([{ name: "Início", path: "/" }, { name: "Contacto", path: "/contacto" }])],
   },
   {
     route: "/instalar",
@@ -153,6 +269,14 @@ function renderRoute(template: string, seo: RouteSeo): string {
   // DEFAULT_OG_IMAGE is identical across every route today (no page passes a
   // custom ogImage), so og:image / twitter:image are left untouched.
   void DEFAULT_OG_IMAGE;
+
+  if (seo.jsonLd && seo.jsonLd.length > 0) {
+    const scripts = seo.jsonLd
+      .map((block) => `<script type="application/ld+json">${JSON.stringify(block)}</script>`)
+      .join("\n    ");
+    html = setTagContent(html, /<\/head>/, `    ${scripts}\n  </head>`);
+  }
+
   return html;
 }
 

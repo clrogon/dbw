@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
+import { buildBreadcrumbSchema } from "@/lib/structuredData";
 
 const values = [
   { icon: Shield, title: "Segurança", desc: "Protocolos rigorosos e supervisão profissional em todas as actividades." },
@@ -24,6 +25,10 @@ const About = () => {
         title="Sobre Nós"
         description="Conheça a DBW — Domingos, Baltazar & William. Empresa de fitness e bem-estar em Luanda com profissionais certificados."
         path="/sobre"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Início", path: "/" },
+          { name: "Sobre Nós", path: "/sobre" },
+        ])}
       />
       <main>
         <Navbar />

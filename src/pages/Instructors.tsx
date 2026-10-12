@@ -11,6 +11,7 @@ import imgDomingos from "@/assets/instructor-domingos.jpg";
 import imgBaltazar from "@/assets/instructor-baltazar.jpg";
 import imgWilliam from "@/assets/instructor-william.jpg";
 import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
+import { buildBreadcrumbSchema, buildPersonSchema } from "@/lib/structuredData";
 
 const fallbackInstructors = [
   { name: "Domingos", role: "Co-Fundador & Instrutor Principal", specialties: ["Treino Personalizado", "Musculação", "Kickboxing"], bio: "Licenciado em Educação Física com vasta experiência em gestão desportiva e treino personalizado.", image: imgDomingos },
@@ -51,6 +52,15 @@ const Instructors = () => {
         title="Instrutores"
         description="Conheça os profissionais certificados da DBW. Domingos, Baltazar e William — licenciados em Educação Física dedicados à sua saúde em Luanda."
         path="/instrutores"
+        jsonLd={[
+          buildBreadcrumbSchema([
+            { name: "Início", path: "/" },
+            { name: "Instrutores", path: "/instrutores" },
+          ]),
+          ...instructors.map((i) =>
+            buildPersonSchema({ name: i.name, role: i.role, bio: i.bio })
+          ),
+        ]}
       />
       <main>
         <Navbar />

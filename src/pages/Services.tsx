@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
 import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
+import { buildBreadcrumbSchema } from "@/lib/structuredData";
 
 const Services = () => {
   const { data: cmsServices, isLoading, isError } = useCmsServices();
@@ -42,6 +43,10 @@ const Services = () => {
         title="Serviços"
         description="Conheça os serviços da DBW: actividades aquáticas, treinos personalizados, ginástica laboral e aulas em grupo em Luanda."
         path="/servicos"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Início", path: "/" },
+          { name: "Serviços", path: "/servicos" },
+        ])}
       />
       <main>
         <Navbar />

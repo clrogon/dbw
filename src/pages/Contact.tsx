@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
 import { buildWhatsAppUrl } from "@/lib/safeUrls";
+import { buildBreadcrumbSchema } from "@/lib/structuredData";
 
 const phones = [
   { number: "922 569 283", href: "tel:+244922569283" },
@@ -21,6 +22,10 @@ const Contact = () => {
         title="Contacto"
         description="Contacte a DBW Fitness em Luanda. Telefone, email, localização e WhatsApp. Estamos prontos para ajudar."
         path="/contacto"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Início", path: "/" },
+          { name: "Contacto", path: "/contacto" },
+        ])}
       />
       <main>
         <Navbar />

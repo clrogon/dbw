@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { buildWhatsAppUrl } from "@/lib/safeUrls";
+import { buildBreadcrumbSchema } from "@/lib/structuredData";
 import {
   bookingSchema,
   SERVICE_LABELS,
@@ -118,6 +119,10 @@ const Booking = () => {
         title="Reservar Vaga"
         description="Reserve a sua vaga nos programas de fitness da DBW em Luanda. Resposta garantida em 24 horas."
         path="/reservar"
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Início", path: "/" },
+          { name: "Reservar Vaga", path: "/reservar" },
+        ])}
       />
       <main>
         <Navbar />
