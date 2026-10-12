@@ -209,6 +209,7 @@ Install page: `/instalar`
 
 - [Architecture](./ARCHITECTURE.md) — Technical architecture overview
 - [Components](./docs/components.md) — Component documentation
+- [Image Briefs](./docs/image-briefs.md) — Replacement specs/prompts for every AI-placeholder image on the site
 - [Deployment](./docs/deployment.md) — Deployment strategies
 - [cPanel Migration](./docs/cpanel-full-migration-wizard.md) — Full migration wizard
 - [Contributing](./CONTRIBUTING.md) — Contribution guidelines

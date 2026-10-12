@@ -17,6 +17,8 @@ type SiteSeoProps = {
   /** Override path used for canonical (defaults to current location). */
   path?: string;
   ogImage?: string;
+  /** Optional JSON-LD structured data block(s) for this page (e.g. Service, Person, BreadcrumbList). */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 };
 
 /**
@@ -29,8 +31,10 @@ const SiteSeo = ({
   noIndex = false,
   path,
   ogImage = DEFAULT_OG_IMAGE,
+  jsonLd,
 }: SiteSeoProps) => {
   const { pathname } = useLocation();
+  const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
   const pagePath = path ?? pathname;
   const canonical = absoluteUrl(pagePath);
   const fullTitle = title
@@ -69,6 +73,12 @@ const SiteSeo = ({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+
+      {jsonLdBlocks.map((block, index) => (
+        <script key={index} type="application/ld+json">
+          {JSON.stringify(block)}
+        </script>
+      ))}
     </Helmet>
   );
 };

@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
 import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
+import { buildBreadcrumbSchema, buildServiceSchema } from "@/lib/structuredData";
 
 const ServiceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -72,6 +73,18 @@ const ServiceDetail = () => {
         title={service.seoTitle || service.title}
         description={service.seoDescription || service.shortDesc}
         path={`/servicos/${service.slug}`}
+        jsonLd={[
+          buildServiceSchema({
+            name: service.title,
+            description: service.seoDescription || service.shortDesc,
+            path: `/servicos/${service.slug}`,
+          }),
+          buildBreadcrumbSchema([
+            { name: "Início", path: "/" },
+            { name: "Serviços", path: "/servicos" },
+            { name: service.title, path: `/servicos/${service.slug}` },
+          ]),
+        ]}
       />
       <main>
         <Navbar />

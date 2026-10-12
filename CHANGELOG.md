@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — image/service mismatch + replacement briefs
+- `src/data/services.ts` reassigned images so the most jarring mismatch is fixed: the group aquatic-class photo was wired to "Treinos Personalizados" instead of "Actividades Aquáticas". Still only 3 placeholder photos shared across 4 services (unavoidable without new images) — see `docs/image-briefs.md` for a dedicated brief/prompt per service so each can get its own image.
+- Added `docs/image-briefs.md`: a replacement spec (dimensions, brief, AI-generation prompt) for every AI-placeholder image on the site — hero, all 4 service images, and the 3 instructor portraits. The instructor section explicitly recommends real photography instead of AI regeneration: the site names these three people with real credentials and feeds their photos into structured data, so a synthetic face standing in for a named real person is a trust problem a better prompt doesn't fix.
+
+### Added — structured data (schema.org / JSON-LD)
+- The homepage already had a `LocalBusiness` JSON-LD block in `index.html`, but no inner page carried any structured data at all — flagged as a gap in the earlier brand/SEO audit and left unfixed at the time. Added `src/lib/structuredData.ts` (`buildBreadcrumbSchema`, `buildServiceSchema`, `buildPersonSchema`) and a new `jsonLd` prop on `SiteSeo.tsx` that renders one or more `<script type="application/ld+json">` blocks via `react-helmet-async`.
+- `BreadcrumbList` added to every inner marketing page (`/sobre`, `/servicos`, `/servicos/:slug`, `/instrutores`, `/galeria`, `/reservar`, `/contacto`).
+- `Service` schema added to each of the 4 service detail pages, linking `provider` back to the homepage's `LocalBusiness` via its existing `@id` rather than duplicating it.
+- `Person` schema added for each of the 3 instructors on `/instrutores`, linking `worksFor` the same way.
+- `scripts/prerenderRoutes.ts` updated with matching (hand-duplicated, same reasoning as the title/description duplication already documented there) JSON-LD per route, so the static crawler shells carry the same structured data as the client-rendered page — otherwise non-JS crawlers would still see nothing, same problem the prerendering itself exists to solve.
+- Verified by building and parsing every emitted `<script type="application/ld+json">` block as JSON; all valid, correctly nested, `@id` references resolve.
+
 ### Security — vitest critical advisory
 - **`vitest` bumped `3.2.6` → `5.0.3`** (exact-pinned, matching this project's convention for `vite`/`vite-plugin-pwa`). Resolves a freshly-published critical advisory in the transitive `tinypool` dependency (prototype pollution → RCE: [GHSA-5gmw-xhrv-c9v3](https://github.com/advisories/GHSA-5gmw-xhrv-c9v3), [GHSA-85c8-ppgw-ccpr](https://github.com/advisories/GHSA-85c8-ppgw-ccpr)), which had no non-breaking fix on the 3.x line and was failing CI's `npm audit --audit-level=critical` gate on every PR regardless of its own changes. Dev/test-tooling only — never shipped to the production bundle — but a real critical nonetheless.
 - No test or config changes were needed for the vitest API itself — the existing `vitest.config.ts` and all 55 tests pass unmodified under v5.
