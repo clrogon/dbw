@@ -100,7 +100,7 @@ rebuilds — there is no embedded stale key to forget about.
 - If `.env` was ever committed, rotate the anon key and scrub git history (`git filter-repo`)
 - Regularly review RLS policies after schema changes
 - Never store `service_role` key in frontend code or Git
-- Keep dependencies up to date — run `npm audit` regularly. CI gates on `npm audit --audit-level=critical` (temporarily downgraded from `high` on 2026-07-25 because `GHSA-mh99-v99m-4gvg` brace-expansion has no patched v1/v2 upstream; see CHANGELOG "Known issues — pre-mortem"). Roadmap: restore `--audit-level=high` once upstream ships a fix.
+- Keep dependencies up to date — run `npm audit` regularly. CI gates on `npm audit --audit-level=critical` (downgraded from `high` on 2026-07-25 over `GHSA-mh99-v99m-4gvg` brace-expansion, which is now fixed — see CHANGELOG). The gate is still at `critical` because a *different* high-severity, build-time-only DoS advisory (`GHSA-vfj7-8cjw-p6xm`, `braces`) took its place in the same `tailwindcss@3.x → chokidar` dependency subtree, with the same "no non-breaking fix" status; see CHANGELOG for the current full list of deferred findings. Roadmap: restore `--audit-level=high` once `tailwindcss@4` (or an upstream chokidar/braces fix) lands.
 - Longer-term: replace CSP `script-src 'unsafe-inline'` with nonces/hashes when the build pipeline supports it
 
 ### Anon key rotation procedure
