@@ -51,7 +51,7 @@ const ServiceDetail = () => {
 
   if (isLoading) {
     return (
-      <main>
+      <main id="main-content">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -86,7 +86,7 @@ const ServiceDetail = () => {
           ]),
         ]}
       />
-      <main>
+      <main id="main-content">
         <Navbar />
 
         <section className="relative pt-28 pb-20 px-6 overflow-hidden">

@@ -73,7 +73,9 @@ describe("useAuth — checkAdmin resilience", () => {
   it("returns isAdmin=false when user_roles lookup returns no row", async () => {
     mockFrom.mockReturnValue(chainReturning({ data: null, error: null }));
     const { result } = renderHook(() => useAuth(), { wrapper });
-    emitAuthState("SIGNED_IN", { user: { id: "u1" } });
+    await act(async () => {
+      await emitAuthState("SIGNED_IN", { user: { id: "u1" } });
+    });
     await waitFor(() => expect(result.current.isAdmin).toBe(false));
     expect(result.current.user).not.toBeNull();
   });
@@ -83,7 +85,9 @@ describe("useAuth — checkAdmin resilience", () => {
       chainReturning({ data: { role: "admin" }, error: null })
     );
     const { result } = renderHook(() => useAuth(), { wrapper });
-    emitAuthState("SIGNED_IN", { user: { id: "u1" } });
+    await act(async () => {
+      await emitAuthState("SIGNED_IN", { user: { id: "u1" } });
+    });
     await waitFor(() => expect(result.current.isAdmin).toBe(true));
   });
 
@@ -94,7 +98,9 @@ describe("useAuth — checkAdmin resilience", () => {
       chainReturning({ data: null, error: { code: "429", message: "Too many" } })
     );
     const { result } = renderHook(() => useAuth(), { wrapper });
-    emitAuthState("SIGNED_IN", { user: { id: "u1" } });
+    await act(async () => {
+      await emitAuthState("SIGNED_IN", { user: { id: "u1" } });
+    });
     await waitFor(() => expect(result.current.isAdmin).toBe(false));
     // User session is preserved; only the role check fails.
     expect(result.current.user).not.toBeNull();
@@ -121,7 +127,9 @@ describe("useAuth — checkAdmin resilience", () => {
     mockFrom.mockReturnValue(
       chainReturning({ data: { role: "admin" }, error: null })
     );
-    emitAuthState("SIGNED_IN", { user: { id: "u1" } });
+    await act(async () => {
+      await emitAuthState("SIGNED_IN", { user: { id: "u1" } });
+    });
     await waitFor(() => expect(result.current.user).not.toBeNull());
 
     // Seed sessionStorage with the actual Supabase auth token key so we can

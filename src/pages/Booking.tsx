@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -50,6 +50,34 @@ const Booking = () => {
   });
 
   const servico = form.watch("servico");
+
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    // Move focus to the new step's heading so screen-reader users get an
+    // announcement of the step change instead of silently staying put.
+    // AnimatePresence (mode="wait") keeps the outgoing step's heading mounted
+    // until its exit transition finishes, so a shared ref can transiently
+    // still point at the OLD heading when this effect first runs. Look up
+    // the heading by its step-specific data attribute instead, polling a
+    // few frames until the incoming one actually exists in the DOM.
+    let frame: number;
+    let attempts = 0;
+    const tryFocus = () => {
+      const heading = document.querySelector<HTMLHeadingElement>(`[data-step-heading="${step}"]`);
+      if (heading) {
+        heading.focus();
+        return;
+      }
+      attempts += 1;
+      if (attempts < 60) frame = requestAnimationFrame(tryFocus);
+    };
+    frame = requestAnimationFrame(tryFocus);
+    return () => cancelAnimationFrame(frame);
+  }, [step]);
 
   const goNext = async () => {
     if (step === 1) {
@@ -124,7 +152,7 @@ const Booking = () => {
           { name: "Reservar Vaga", path: "/reservar" },
         ])}
       />
-      <main>
+      <main id="main-content">
         <Navbar />
 
         <section className="bg-foreground text-primary-foreground pt-28 pb-16 px-6">
@@ -141,10 +169,13 @@ const Booking = () => {
         <section className="section-padding bg-background">
           <div className="container mx-auto max-w-2xl">
             {/* Progress */}
-            <div className="flex items-center justify-center gap-3 mb-12">
+            <div className="flex items-center justify-center gap-3 mb-12" role="list" aria-label="Progresso da reserva">
               {[1, 2, 3].map((s) => (
-                <div key={s} className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-display font-bold ${step >= s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                <div key={s} className="flex items-center gap-3" role="listitem">
+                  <div
+                    aria-current={step === s ? "step" : undefined}
+                    aria-label={`Passo ${s} de 3`}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-display font-bold ${step >= s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
                     }`}>
                     {s}
                   </div>
@@ -158,12 +189,13 @@ const Booking = () => {
                 {/* Step 1 */}
                 {step === 1 && (
                   <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                    <h2 className="text-2xl font-bold text-foreground mb-6">Qual serviço lhe interessa?</h2>
+                    <h2 data-step-heading={1} tabIndex={-1} className="text-2xl font-bold text-foreground mb-6 focus:outline-none">Qual serviço lhe interessa?</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {serviceOptions.map((opt) => (
                         <button
                           key={opt.value}
                           type="button"
+                          aria-pressed={servico === opt.value}
                           onClick={() => form.setValue("servico", opt.value, { shouldValidate: true })}
                           className={`p-6 rounded-lg border-2 text-left transition-colors ${servico === opt.value
                               ? "border-primary bg-primary/5"
@@ -189,7 +221,7 @@ const Booking = () => {
                 {/* Step 2 */}
                 {step === 2 && (
                   <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                    <h2 className="text-2xl font-bold text-foreground mb-6">Sobre si</h2>
+                    <h2 data-step-heading={2} tabIndex={-1} className="text-2xl font-bold text-foreground mb-6 focus:outline-none">Sobre si</h2>
                     <div className="space-y-5">
                       <div>
                         <Label htmlFor="nome" className="font-sans">Nome completo *</Label>
@@ -209,13 +241,14 @@ const Booking = () => {
 
                       {servico === "aquaticas" && (
                         <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label className="font-sans">Para quem é?</Label>
+                          <fieldset>
+                            <legend className="font-sans text-sm font-medium mb-1.5">Para quem é?</legend>
                             <div className="flex gap-3 mt-2">
                               {["adulto", "crianca"].map((v) => (
                                 <button
                                   key={v}
                                   type="button"
+                                  aria-pressed={form.watch("tipoCliente") === v}
                                   onClick={() => form.setValue("tipoCliente", v as "adulto" | "crianca")}
                                   className={`px-4 py-2 rounded-lg border text-sm font-sans ${form.watch("tipoCliente") === v ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground"
                                     }`}
@@ -224,14 +257,15 @@ const Booking = () => {
                                 </button>
                               ))}
                             </div>
-                          </div>
-                          <div>
-                            <Label className="font-sans">Experiência em natação?</Label>
+                          </fieldset>
+                          <fieldset>
+                            <legend className="font-sans text-sm font-medium mb-1.5">Experiência em natação?</legend>
                             <div className="flex gap-3 mt-2">
                               {["sim", "nao"].map((v) => (
                                 <button
                                   key={v}
                                   type="button"
+                                  aria-pressed={form.watch("experienciaNatacao") === v}
                                   onClick={() => form.setValue("experienciaNatacao", v as "sim" | "nao")}
                                   className={`px-4 py-2 rounded-lg border text-sm font-sans ${form.watch("experienciaNatacao") === v ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground"
                                     }`}
@@ -240,7 +274,7 @@ const Booking = () => {
                                 </button>
                               ))}
                             </div>
-                          </div>
+                          </fieldset>
                         </div>
                       )}
 
@@ -278,7 +312,7 @@ const Booking = () => {
                 {/* Step 3 */}
                 {step === 3 && (
                   <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                    <h2 className="text-2xl font-bold text-foreground mb-6">Reveja os seus dados</h2>
+                    <h2 data-step-heading={3} tabIndex={-1} className="text-2xl font-bold text-foreground mb-6 focus:outline-none">Reveja os seus dados</h2>
                     <div className="bg-secondary rounded-lg p-6 space-y-3 font-sans mb-8">
                       <div className="flex justify-between"><span className="text-muted-foreground">Serviço</span><span className="font-medium text-foreground">{serviceLabels[servico]}</span></div>
                       <div className="flex justify-between"><span className="text-muted-foreground">Nome</span><span className="font-medium text-foreground">{form.getValues("nome")}</span></div>

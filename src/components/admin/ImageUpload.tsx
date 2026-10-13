@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
@@ -24,6 +24,7 @@ interface ImageUploadProps {
 const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,10 +74,11 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
     <div className="space-y-2">
       {value && (
         <div className="relative inline-block">
-          <img src={value} alt="Preview" className="h-32 w-auto rounded-md object-cover" />
+          <img src={value} alt="Pré-visualização da imagem carregada" className="h-32 w-auto rounded-md object-cover" />
           <button
             type="button"
             onClick={() => onChange(null)}
+            aria-label="Remover imagem"
             className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
           >
             <X className="w-3 h-3" />
@@ -84,13 +86,17 @@ const ImageUpload = ({ value, onChange, folder = "general" }: ImageUploadProps) 
         </div>
       )}
       <div>
-        <Button type="button" variant="outline" size="sm" disabled={uploading} asChild>
-          <label className="cursor-pointer">
-            <Upload className="w-4 h-4 mr-2" />
-            {uploading ? "A carregar..." : "Carregar imagem"}
-            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleUpload} className="hidden" />
-          </label>
+        <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => inputRef.current?.click()}>
+          <Upload className="w-4 h-4 mr-2" />
+          {uploading ? "A carregar..." : "Carregar imagem"}
         </Button>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          onChange={handleUpload}
+          className="hidden"
+        />
         <p className="text-xs text-muted-foreground mt-1">Máx. 5 MB · JPG, PNG, WebP, GIF</p>
       </div>
     </div>

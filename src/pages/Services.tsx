@@ -16,7 +16,7 @@ const Services = () => {
 
   if (isLoading) {
     return (
-      <main>
+      <main id="main-content">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center bg-background">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -48,12 +48,12 @@ const Services = () => {
           { name: "Serviços", path: "/servicos" },
         ])}
       />
-      <main>
+      <main id="main-content">
         <Navbar />
 
         <section className="bg-foreground text-primary-foreground pt-28 pb-20 px-6">
           <div className="container mx-auto text-center">
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-primary font-display font-bold tracking-widest uppercase text-sm mb-3">Serviços</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[hsl(358_82%_58%)] font-display font-bold tracking-widest uppercase text-sm mb-3">Serviços</motion.p>
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-6xl font-bold">
               O Que <span className="text-primary">Oferecemos</span>
             </motion.h1>

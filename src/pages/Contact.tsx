@@ -27,7 +27,7 @@ const Contact = () => {
           { name: "Contacto", path: "/contacto" },
         ])}
       />
-      <main>
+      <main id="main-content">
         <Navbar />
 
         <section className="bg-foreground text-primary-foreground pt-28 pb-20 px-6">

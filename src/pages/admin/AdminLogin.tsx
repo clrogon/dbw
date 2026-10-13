@@ -46,13 +46,13 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-foreground flex items-center justify-center px-4">
+    <main className="min-h-screen bg-foreground flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <img src={dbwLogo} alt="DBW" className="h-12 mx-auto mb-4 brightness-0 invert" />
           <div className="flex items-center justify-center gap-2 text-primary-foreground/60">
             <Lock className="w-4 h-4" />
-            <span className="text-sm font-display uppercase tracking-wider">Área Administrativa</span>
+            <h1 className="text-sm font-display uppercase tracking-wider">Área Administrativa</h1>
           </div>
         </div>
 
@@ -85,7 +85,7 @@ const AdminLogin = () => {
           </Button>
         </form>
       </div>
-    </div>
+    </main>
   );
 };
 
