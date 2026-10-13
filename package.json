@@ -9,6 +9,7 @@
     "build:dev": "vite build --mode development",
     "build:prod": "vite build --mode production",
     "lint": "eslint .",
+    "typecheck": "tsc --build --noEmit",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"

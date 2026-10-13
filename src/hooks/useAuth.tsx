@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const keys = new Set<string>();
           const sk =
             (supabase as unknown as { storageKey?: string }).storageKey ??
-            supabase.auth?.storageKey;
+            (supabase.auth as unknown as { storageKey?: string } | undefined)?.storageKey;
           if (sk) keys.add(sk);
           // Belt-and-braces: scrub any remaining Supabase auth-related keys.
           for (let i = window.sessionStorage.length - 1; i >= 0; i--) {

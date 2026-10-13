@@ -49,7 +49,7 @@ npm run dev
 npm run lint
 
 # Run type checking
-npx tsc --noEmit
+npm run typecheck
 
 # Run tests
 npm test
@@ -202,6 +202,7 @@ Install page: `/instalar`
 | `npm run build:dev` | Development build |
 | `npm run preview` | Preview production build |
 | `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run the real TypeScript check (`tsc --build`) |
 | `npm test` | Run tests once |
 | `npm run test:watch` | Run tests in watch mode |
 

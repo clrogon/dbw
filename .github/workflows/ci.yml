@@ -33,6 +33,11 @@ jobs:
         # See CHANGELOG.md "Known issues — pre-mortem" for the full write-up.
       - run: npm audit --audit-level=critical
       - run: npm run lint
-      - run: npx tsc --noEmit
+        # `npm run typecheck` runs `tsc --build`. Build-mode is required: plain
+        # `tsc --noEmit` is a silent no-op here (root tsconfig.json has no
+        # include/files, only project references), so it always exits 0
+        # without checking a single file. See CHANGELOG.md for the full
+        # history of this gap.
+      - run: npm run typecheck
       - run: npm test
       - run: npm run build
