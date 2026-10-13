@@ -72,7 +72,7 @@ Examples: `feat(ui): add responsive nav`, `fix(api): handle token expiry`
 Every PR must confirm:
 - [ ] `npm install` was run (so `node_modules/` exists; otherwise the steps below cannot run)
 - [ ] Linter passes (`npm run lint`)
-- [ ] Type checks pass (`npx tsc --noEmit` or `npm run build`)
+- [ ] Type checks pass (`npm run typecheck` — note `npx tsc --noEmit` alone and `npm run build` do **not** type-check; see CHANGELOG.md)
 - [ ] Tests pass (`npm test` must **exit 0**; currently covers `safeUrls`, `normaliseCms`, `cmsValidation`, `site`, `error-logging`)
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
 - [ ] Docs updated if any public behavior changed
