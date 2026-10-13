@@ -5,37 +5,49 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import CookieConsent from "@/components/CookieConsent";
 import SiteSeo from "@/components/SiteSeo";
-import Index from "./pages/Index";
-import About from "./pages/About";
-import Services from "./pages/Services";
-import ServiceDetail from "./pages/ServiceDetail";
-import Gallery from "./pages/Gallery";
-import Booking from "./pages/Booking";
-import Instructors from "./pages/Instructors";
-import Contact from "./pages/Contact";
-import ThankYou from "./pages/ThankYou";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import NotFound from "./pages/NotFound";
-import ServerError from "./pages/ServerError";
-import Forbidden from "./pages/Forbidden";
-import Offline from "./pages/Offline";
-import Install from "./pages/Install";
+
+// Route-level code splitting: every page below is its own chunk, loaded on
+// navigation rather than bundled into the single ~900KB initial download.
+// The /admin/* pages in particular (react-hook-form + Zod-heavy CRUD forms)
+// are never needed by a public site visitor, so splitting them out shrinks
+// what every real customer downloads, not just what admins do.
+const Index = lazy(() => import("./pages/Index"));
+const About = lazy(() => import("./pages/About"));
+const Services = lazy(() => import("./pages/Services"));
+const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
+const Gallery = lazy(() => import("./pages/Gallery"));
+const Booking = lazy(() => import("./pages/Booking"));
+const Instructors = lazy(() => import("./pages/Instructors"));
+const Contact = lazy(() => import("./pages/Contact"));
+const ThankYou = lazy(() => import("./pages/ThankYou"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const ServerError = lazy(() => import("./pages/ServerError"));
+const Forbidden = lazy(() => import("./pages/Forbidden"));
+const Offline = lazy(() => import("./pages/Offline"));
+const Install = lazy(() => import("./pages/Install"));
 
 // Admin
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminLayout from "./components/admin/AdminLayout";
-import ProtectedRoute from "./components/admin/ProtectedRoute";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminHero from "./pages/admin/AdminHero";
-import AdminServices from "./pages/admin/AdminServices";
-import AdminPricing from "./pages/admin/AdminPricing";
-import AdminInstructors from "./pages/admin/AdminInstructors";
-import AdminGallery from "./pages/admin/AdminGallery";
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const ProtectedRoute = lazy(() => import("./components/admin/ProtectedRoute"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminHero = lazy(() => import("./pages/admin/AdminHero"));
+const AdminServices = lazy(() => import("./pages/admin/AdminServices"));
+const AdminPricing = lazy(() => import("./pages/admin/AdminPricing"));
+const AdminInstructors = lazy(() => import("./pages/admin/AdminInstructors"));
+const AdminGallery = lazy(() => import("./pages/admin/AdminGallery"));
+
+const RouteFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+  </div>
+);
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -59,6 +71,7 @@ const App = () => {
               <ScrollToTop />
               {/* Global canonical + robots: production host only is indexable */}
               <SiteSeo />
+              <Suspense fallback={<RouteFallback />}>
               <Routes>
               {/* Public */}
               <Route path="/" element={<Index />} />
@@ -89,6 +102,7 @@ const App = () => {
 
               <Route path="*" element={<NotFound />} />
               </Routes>
+              </Suspense>
             </BrowserRouter>
           </AuthProvider>
         </TooltipProvider>

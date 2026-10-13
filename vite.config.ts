@@ -100,5 +100,27 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // Split the large, slow-changing third-party libraries out of the
+          // per-route chunks (see scripts/ and src/App.tsx's lazy() routes)
+          // into their own stable vendor chunks. These rarely change between
+          // deploys, so browsers can cache them across releases instead of
+          // re-downloading framework code every time app code changes.
+          manualChunks(id) {
+            if (!id.includes("node_modules")) return undefined;
+            if (/[\\/]react(-dom)?[\\/]|[\\/]scheduler[\\/]/.test(id)) return "vendor-react";
+            if (/[\\/]react-router(-dom)?[\\/]/.test(id)) return "vendor-router";
+            if (/[\\/]framer-motion[\\/]/.test(id)) return "vendor-motion";
+            if (/[\\/]@supabase[\\/]/.test(id)) return "vendor-supabase";
+            if (/[\\/]@tanstack[\\/]/.test(id)) return "vendor-query";
+            if (/[\\/]@radix-ui[\\/]/.test(id)) return "vendor-radix";
+            if (/[\\/](react-hook-form|@hookform|zod)[\\/]/.test(id)) return "vendor-forms";
+            return "vendor";
+          },
+        },
+      },
+    },
   };
 });

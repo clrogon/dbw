@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Performance — route-level code splitting
+- The entire SPA (all 22 routes, admin CRUD forms included) shipped as a single JS chunk — `vite build` warned on every build ("Some chunks are larger than 500 kB after minification") because that chunk was 911KB raw / 267KB gzip, downloaded in full before a single pixel renders, regardless of which page a visitor actually requested.
+- `src/App.tsx`: every route component converted to `React.lazy(() => import(...))`, wrapped in one `<Suspense>` boundary around `<Routes>` (fallback reuses the same spinner pattern already used for each page's own CMS-loading state, so it's visually consistent). The `/admin/*` routes — react-hook-form/Zod-heavy CRUD pages a public site visitor never touches — are now entirely excluded from the public bundle instead of shipping to every visitor.
+- `vite.config.ts`: added `build.rollupOptions.output.manualChunks` to split the shared third-party code (React, React Router, Framer Motion, TanStack Query, Supabase client, Radix UI, react-hook-form/Zod) into separate, independently-cacheable vendor chunks instead of one undifferentiated blob — these change far less often than app code, so a deploy that only touches app code no longer invalidates the browser's cache of React itself.
+- Result: the `vite build` chunk-size warning is gone entirely — largest chunk is now 230KB (was 911KB). Verified `npm run lint` / `npm run typecheck` / `npm test` (55/55) all pass unmodified, and the production build's prerendered route shells (`scripts/prerenderRoutes.ts`) still reference the correct entry bundle and carry their structured data correctly after the chunking change.
+
 ### Fixed — the type-check gate was a no-op, and so was Zod's type safety
 - `npx tsc --noEmit` — what `README.md` and `AGENTS.md`'s PR checklist documented as "type checks pass", and what CI's `quality` job ran — is a **silent no-op**: the root `tsconfig.json` has `"files": []` and no `include`, only `references` to `tsconfig.app.json`/`tsconfig.node.json`, so plain (non-build-mode) `tsc` type-checks zero files and trivially exits 0. No type error has ever actually been caught by CI. Fixed by adding `npm run typecheck` (`tsc --build --noEmit`, which follows the project references) and switching CI, `README.md`, and `AGENTS.md`'s checklist to use it.
 - Running the real check surfaced 5 pre-existing errors, now fixed:
