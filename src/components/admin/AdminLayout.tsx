@@ -6,7 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import {
   LayoutDashboard, Image, Dumbbell, DollarSign, Users, Images, LogOut, Home, Menu,
 } from "lucide-react";
-import dbwLogo from "@/assets/dbw-logo.jpeg";
+import dbwLogo from "@/assets/dbw-logo.webp";
 import { useState } from "react";
 
 const navItems = [

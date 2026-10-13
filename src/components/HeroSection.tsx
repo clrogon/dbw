@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useHeroContent } from "@/hooks/useCms";
 import { sanitizeInternalPath } from "@/lib/cmsValidation";
 import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
-import heroBg from "@/assets/services-aquatic.jpg";
+import heroBg from "@/assets/services-aquatic.webp";
 
 interface Stat {
   value: string;

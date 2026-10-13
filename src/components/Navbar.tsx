@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
-import dbwLogo from "@/assets/dbw-logo.jpeg";
+import dbwLogo from "@/assets/dbw-logo.webp";
 
 const navLinks = [
   { label: "Início", href: "/" },

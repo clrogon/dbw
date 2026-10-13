@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Performance — image format conversion + fixed PWA icon/favicon sizes
+- All 7 site-content images (`src/assets/`: hero/service placeholders, 3 instructor portraits, the logo) converted from JPEG/JPEG-in-a-`.jpeg` to WebP (quality 82) — same pixels, same crop, just a smaller encoding. Combined source size dropped from 384,578 bytes to 277,774 bytes (~28% smaller). All 14 import sites updated to the new `.webp` paths; the now-unused original `.jpg`/`.jpeg` files were deleted (nothing imports them, confirmed via repo-wide grep; still recoverable from git history if ever needed).
+- `public/pwa-192x192.png` and `public/pwa-512x512.png` were both wrong: filenames and the PWA manifest declared 192×192 and 512×512, but the actual files were much larger (721KB/759KB), i.e. undersized icons being upscaled by the OS/browser instead of being served at their real declared resolution. Re-exported both at their true declared pixel dimensions: 192×192 (721,086 → 29,078 bytes) and 512×512 (759,151 → 187,061 bytes).
+- `public/favicon.ico` was a non-square 256×181 PNG-in-an-.ico wrapper (191,198 bytes) instead of a real multi-resolution ICO. Regenerated as a proper 16/32/48px multi-resolution ICO from the logo source (191,198 → 5,889 bytes).
+- Net effect on the production build: total precache size dropped from 3081.88 KiB to 1562.02 KiB.
+- This is a format/size fix only — no responsive `srcset`/multiple-size variants or `<picture>` wiring were added; `docs/image-briefs.md` is updated to reflect the WebP switch and still flags the `srcset` gap as a separate future pass.
+
 ### Performance — route-level code splitting
 - The entire SPA (all 22 routes, admin CRUD forms included) shipped as a single JS chunk — `vite build` warned on every build ("Some chunks are larger than 500 kB after minification") because that chunk was 911KB raw / 267KB gzip, downloaded in full before a single pixel renders, regardless of which page a visitor actually requested.
 - `src/App.tsx`: every route component converted to `React.lazy(() => import(...))`, wrapped in one `<Suspense>` boundary around `<Routes>` (fallback reuses the same spinner pattern already used for each page's own CMS-loading state, so it's visually consistent). The `/admin/*` routes — react-hook-form/Zod-heavy CRUD pages a public site visitor never touches — are now entirely excluded from the public bundle instead of shipping to every visitor.

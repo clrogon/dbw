@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock } from "lucide-react";
-import dbwLogo from "@/assets/dbw-logo.jpeg";
+import dbwLogo from "@/assets/dbw-logo.webp";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");

@@ -7,9 +7,9 @@ import SiteSeo from "@/components/SiteSeo";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import imgDomingos from "@/assets/instructor-domingos.jpg";
-import imgBaltazar from "@/assets/instructor-baltazar.jpg";
-import imgWilliam from "@/assets/instructor-william.jpg";
+import imgDomingos from "@/assets/instructor-domingos.webp";
+import imgBaltazar from "@/assets/instructor-baltazar.webp";
+import imgWilliam from "@/assets/instructor-william.webp";
 import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
 import { buildBreadcrumbSchema, buildPersonSchema } from "@/lib/structuredData";
 
