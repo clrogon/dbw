@@ -4,8 +4,8 @@ This doc started as a replacement brief for every AI-generated placeholder image
 on the site. Status as of this update:
 
 - **Done** — hero background, "Treinos Personalizados", and "Aulas em Grupo" are
-  now real, licensed stock photography (Unsplash License, free for commercial
-  use). See each section below for the source/credit.
+  now real, licensed stock photography (Unsplash License / Pexels License, both
+  free for commercial use). See each section below for the source/credit.
 - **Still AI-generated placeholder, not yet replaced** — "Actividades Aquáticas"
   and "Ginástica Laboral" service images (both judged an acceptable-enough fit
   to not force a weaker stock substitute — see their sections).
@@ -140,12 +140,17 @@ old mismatched `services-swim.webp` (an overhead swim-coaching photo, wrong
 theme entirely for personal training — it's now correctly used only for its
 one accurate role, the "Natação" gallery caption).
 
-**Source:** Unsplash License, free for commercial use. Photo by TSquared Lab
-on Unsplash:
-https://unsplash.com/photos/woman-performs-exercise-with-trainer-at-gym-cCJQzTPkoFg
+**Source (updated):** Pexels License, free for commercial use, no attribution
+required. Photo by Julia Larson on Pexels:
+https://www.pexels.com/photo/6455920/ — a Black personal trainer actively
+coaching a Black client through a dumbbell exercise, genuine effort and
+engagement visible, gym interior.
 
-A trainer actively coaching one client through a sled-push exercise, genuine
-effort visible, modern gym interior — matches the original brief below closely.
+This replaces a first stock pick (Unsplash, photo by TSquared Lab) that was
+sourced without checking it against this doc's own brief, which explicitly
+calls for Black subjects (see the AI prompt below, written for the original
+AI-placeholder era) — the original pick did not reflect that, or Angola's
+population. Re-sourced to match.
 
 **Original brief:** One-on-one personal training session, NOT in a pool — a
 gym floor or functional training space, trainer actively spotting/coaching one
@@ -179,11 +184,21 @@ the old reused `services-aquatic.webp` (a pool photo for an explicitly
 non-aquatic service — same reuse was also wrong in `Gallery.tsx`'s "Aula de
 grupo" caption, fixed there too).
 
-**Source:** Unsplash License, free for commercial use. Photo by Trust "Tru"
-Katsande on Unsplash:
-https://unsplash.com/photos/women-taking-exercise-on-black-stationary-bikes-in-front-of-gray-concrete-wall-A_ftsTh53lM
-— a row of women on stationary bikes, engaged and in focus, clean concrete-wall
-background, no visible branding.
+**Source (updated):** Pexels License, free for commercial use, no attribution
+required. Photo by Edmond Dantès on Pexels:
+https://www.pexels.com/photo/8556495/ — a group outdoor stretching/warm-up
+session, four Black African participants (mixed age and gender, one wearing
+a hijab), candid, no visible branding. Square-cropped from the original
+6720×4480 to keep four of the five people in frame.
+
+This replaces a first stock pick (Unsplash, photo by Trust "Tru" Katsande)
+for the same reason as the personal-training image above: it did not reflect
+Black/African subjects as this doc's own brief specifies, or Angola's
+population. Re-sourced to match. (Indoor "spin bikes" framing from the
+original brief below was dropped in favor of this group-warm-up composition,
+since no free, logo-free stock photo combining spin bikes with predominantly
+Black participants was found — functionally still "Aulas em Grupo", just a
+different exercise format.)
 
 **Original brief:** Energetic group fitness class, NOT water-based — spinning
 bikes or a functional/aerobics studio, multiple participants mid-movement,

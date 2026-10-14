@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — stock photos for "Treinos Personalizados" and "Aulas em Grupo" didn't reflect Angola's population
+The first stock-photo pass (below, "replaced 3 AI-placeholder images") sourced
+generic licensed stock without re-applying a criterion the *original*
+AI-generation briefs in `docs/image-briefs.md` already stated explicitly for
+every service image: Black/African subjects, appropriate for a Luanda,
+Angola business. That criterion got dropped somewhere between "write the AI
+prompt" and "pick a stock replacement" — a real miss, not a style choice.
+- **"Treinos Personalizados"** (`services-training.webp`): replaced the
+  TSquared Lab/Unsplash photo (trainer and client not reflecting Angola's
+  population) with a photo by Julia Larson on Pexels
+  (https://www.pexels.com/photo/6455920/) — a Black personal trainer
+  coaching a Black client through a dumbbell exercise.
+- **"Aulas em Grupo"** (`services-group-fitness.webp`): replaced the Trust
+  "Tru" Katsande/Unsplash spin-bike photo (same issue) with a photo by
+  Edmond Dantès on Pexels (https://www.pexels.com/photo/8556495/) — four
+  Black African adults (mixed age and gender, one in a hijab) doing an
+  outdoor group stretching/warm-up session, no visible branding. Square-cropped
+  from the 6720×4480 original to frame 4 of the 5 people in the source photo.
+- Both re-exported at 1200×1200 WebP (quality 82 / 55 respectively — the
+  group photo's dense foliage background compressed much worse at the usual
+  quality 82, so quality was lowered specifically for that file to stay close
+  to the existing ~100–130KB budget for these service images; visually
+  verified the lower quality doesn't introduce visible artifacts at display
+  size).
+- Same filenames kept (no `services.ts` / `Gallery.tsx` changes needed) since
+  only the image content changed, not its role.
+- Verified both are real photographs, not AI/3D renders: both photographers
+  (Julia Larson, Edmond Dantès) have multiple shots from the same continuous
+  session on Pexels with consistent lighting/location/wardrobe across frames
+  (e.g. Julia Larson's photos 6455914/6455920/6455926; Edmond Dantès's
+  8556495/8556497/8556604/8556676/8556677), and natural skin texture, shadow
+  behavior, and motion blur under visual inspection — camera EXIF itself is
+  stripped by Pexels' CDN on both files, so that check (used earlier in this
+  project to reject a "D5 Render"-credited image) wasn't available here.
+  Also verified: Pexels License (free for commercial use, no attribution
+  required), and free of distracting third-party branding.
+- `docs/image-briefs.md` updated in place: both "DONE" sections now credit
+  the new source and explain why the first pick was replaced.
+- Verified: `npm run lint` / `npm run typecheck` / `npm test` / `npm run build`
+  all pass.
+
 ### Fixed — replaced 3 AI-placeholder images with licensed stock photography
 - **Hero background** (`hero-pool.webp`, new): replaces the earlier stopgap of a
   square service photo force-cropped into the widescreen hero. Licensed photo
