@@ -11,13 +11,15 @@ import { buildBreadcrumbSchema } from "@/lib/structuredData";
 import servicesSwim from "@/assets/services-swim.webp";
 import servicesAquatic from "@/assets/services-aquatic.webp";
 import servicesWellness from "@/assets/services-wellness.webp";
+import servicesTraining from "@/assets/services-training.webp";
+import servicesGroupFitness from "@/assets/services-group-fitness.webp";
 
 const fallbackPhotos = [
   { src: servicesSwim, alt: "Natação DBW Luanda", category: "Actividades Aquáticas" },
   { src: servicesAquatic, alt: "Actividades aquáticas DBW", category: "Actividades Aquáticas" },
   { src: servicesWellness, alt: "Bem-estar DBW", category: "Treinos" },
-  { src: servicesWellness, alt: "Treino DBW Luanda", category: "Treinos" },
-  { src: servicesSwim, alt: "Aula de grupo DBW", category: "Aulas em Grupo" },
+  { src: servicesTraining, alt: "Treino DBW Luanda", category: "Treinos" },
+  { src: servicesGroupFitness, alt: "Aula de grupo DBW", category: "Aulas em Grupo" },
   { src: servicesWellness, alt: "Ginástica laboral DBW", category: "Ginástica Laboral" },
 ];
 
