@@ -1,6 +1,7 @@
-import servicesSwim from "@/assets/services-swim.webp";
 import servicesAquatic from "@/assets/services-aquatic.webp";
 import servicesWellness from "@/assets/services-wellness.webp";
+import servicesTraining from "@/assets/services-training.webp";
+import servicesGroupFitness from "@/assets/services-group-fitness.webp";
 
 export interface ServiceData {
   slug: string;
@@ -36,7 +37,7 @@ export const services: ServiceData[] = [
     fullDesc: "Os nossos treinos personalizados são desenhados à medida de cada cliente. Após uma avaliação física completa, criamos um plano de treino que respeita o seu ritmo, os seus objectivos e as suas limitações. Acompanhamento contínuo para resultados reais e sustentáveis.",
     subServices: ["Avaliação física inicial", "Plano de treino personalizado", "Treino funcional", "Kickboxing", "Acompanhamento nutricional básico"],
     ctaText: "Agende a sua avaliação gratuita →",
-    image: servicesSwim,
+    image: servicesTraining,
     seoTitle: "Personal Trainer em Luanda — Treino Personalizado",
     seoDescription: "Treinos personalizados com personal trainer certificado em Luanda. Avaliação gratuita, plano à medida e resultados comprovados. Marque já.",
   },
@@ -60,7 +61,7 @@ export const services: ServiceData[] = [
     fullDesc: "As aulas em grupo da DBW combinam energia, técnica e diversão. Turmas reduzidas para máximo acompanhamento, com modalidades variadas que se adaptam a todos os níveis de condição física. O ambiente de grupo motiva e desafia cada participante.",
     subServices: ["Treino funcional em grupo", "Spinning / Cycling", "Aeróbica", "Circuit training", "Stretching e mobilidade"],
     ctaText: "Ver horários disponíveis →",
-    image: servicesAquatic,
+    image: servicesGroupFitness,
     seoTitle: "Aulas de Grupo em Luanda — Fitness Colectivo",
     seoDescription: "Aulas de grupo em Luanda: spinning, funcional, aeróbica e mais. Turmas reduzidas, horários flexíveis. Venha treinar com a DBW.",
   },

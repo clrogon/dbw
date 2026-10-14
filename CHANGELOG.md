@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — replaced 3 AI-placeholder images with licensed stock photography
+- **Hero background** (`hero-pool.webp`, new): replaces the earlier stopgap of a
+  square service photo force-cropped into the widescreen hero. Licensed photo
+  (Unsplash License, free for commercial use) by Patrick Robert Doyle: an
+  elegant indoor pool, no visible text/logos, reads well under the hero's dark
+  overlay. Doesn't show an active coaching session as the original brief
+  wanted — no free, logo-free, real-photograph match for that specific
+  combination turned up in this pass; documented in `docs/image-briefs.md` as
+  still open if a better one surfaces later.
+- **"Treinos Personalizados" service image** (`services-training.webp`, new):
+  replaces `services-swim.webp` — a swim-coaching photo that had been reused for
+  personal training (wrong theme), the "Natação" gallery caption (correct
+  theme), and the "Aulas em Grupo" service (wrong theme), three different and
+  mostly-wrong jobs for one file. Licensed photo by TSquared Lab: a trainer
+  actively spotting a client through a sled-push exercise.
+- **"Aulas em Grupo" service image** (`services-group-fitness.webp`, new):
+  replaces a reused pool photo on an explicitly non-aquatic service (the
+  service's own copy is spinning/aeróbica/functional). Licensed photo by Trust
+  "Tru" Katsande: a row of women on stationary bikes.
+- Updated every consumer consistently, not just the obvious one: `services.ts`
+  (both affected service entries) and `Gallery.tsx`'s fallback-photo captions
+  (which had the same swim-photo-for-group-class mismatch independently).
+  `services-swim.webp` is now used only for its one accurate role (the
+  "Natação" gallery photo); `services-aquatic.webp` only for its two accurate
+  roles (the Actividades Aquáticas service image and its matching gallery
+  photo).
+- **Deliberately not touched**: the 3 instructor portraits. A stock photo of an
+  actual stranger captioned with a named staff member's real identity and
+  credentials is a worse trust problem than an AI-generated face, not a better
+  one — see `docs/image-briefs.md` section 1. Also not touched: "Actividades
+  Aquáticas" (already an acceptable fit) and "Ginástica Laboral" (no free
+  logo-free multi-person office-wellness photo found; left as the existing
+  reasonable-fit placeholder rather than forcing a weak substitute).
+- All three new images verified for licensing (Unsplash License — free
+  commercial use, no attribution required), genuineness (real photographs with
+  camera EXIF, not 3D renders — one otherwise-strong pool candidate credited to
+  "D5 Render," architectural rendering software, was rejected for this reason),
+  and absence of distracting third-party branding, before use.
+- Verified: `npm run lint` / `npm run typecheck` / `npm test` (55/55) / `npm run build`
+  all pass; visually checked the homepage hero and all 4 service cards in a
+  running dev build via Playwright screenshots (scrolled to trigger the
+  `whileInView` card animations) before and after.
+
+### Fixed — flaky `useAuth` test (Node-version-dependent, not a true flake)
+- `test/useAuth.test.tsx` called `emitAuthState(...)` — which synchronously invokes `useAuth`'s `onAuthStateChange` handler, itself `await`-ing `checkAdmin()` — without wrapping it in `act()`. React 18's automatic batching made this reliably pass under Node 22 locally, but reliably **fail** under CI's Node 24 runner (`expected null not to be null` on `result.current.user` in the "transient Supabase error" test): a real microtask-ordering difference between engine versions, not random flakiness — confirmed by re-running the CI job (failed deterministically twice) while 5 consecutive local runs passed. Fixed by wrapping all 4 `emitAuthState(...)` call sites in `await act(async () => { ... })`, which also silences the pre-existing "not wrapped in act()" console warnings these calls were already producing. No change to `src/hooks/useAuth.tsx` itself — test-only fix.
+
 ### Fixed — accessibility audit (public site + admin CRUD)
 First dedicated a11y pass on this codebase (keyboard navigation, ARIA, color contrast, focus states). Findings and fixes, worst severity first:
 

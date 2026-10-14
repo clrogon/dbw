@@ -1,22 +1,33 @@
 # Image Asset Briefs
 
-Every photographic image currently on the site (`src/assets/*.webp`) is AI-generated
-placeholder stock, not a real photo of DBW's people or facility. This doc is the
-brief for replacing each one: what it's for, what's wrong with the current
-placeholder, the exact spec to match the component it renders in, and a ready
-prompt if you're regenerating with AI rather than commissioning a real shoot.
+This doc started as a replacement brief for every AI-generated placeholder image
+on the site. Status as of this update:
 
-All site images were converted from JPEG to WebP (same pixels, ~28% smaller on
-average) — see the Performance Note at the bottom. Replace the `.webp` files in
-place with whatever comes out of a real shoot or a new AI generation; re-export
-as WebP (quality 80–85) rather than reintroducing JPEG.
+- **Done** — hero background, "Treinos Personalizados", and "Aulas em Grupo" are
+  now real, licensed stock photography (Unsplash License, free for commercial
+  use). See each section below for the source/credit.
+- **Still AI-generated placeholder, not yet replaced** — "Actividades Aquáticas"
+  and "Ginástica Laboral" service images (both judged an acceptable-enough fit
+  to not force a weaker stock substitute — see their sections).
+- **Deliberately NOT swapped for stock photos** — the 3 instructor portraits.
+  Read why in section 1 before touching them.
 
-**Read the recommendation column before generating anything.** Two of these
-(the instructors) should not stay AI-generated — see below.
+All site images are WebP. Replace a file in place with whatever comes out of a
+real shoot, a new AI generation, or a better stock pick; re-export as WebP
+(quality 80–85) rather than reintroducing JPEG.
 
 ---
 
-## 1. Instructor portraits — commission real photos, don't regenerate
+## 1. Instructor portraits — commission real photos, don't regenerate (and don't use stock either)
+
+**A stock photo under these three real names is not a fix — it's arguably worse than
+the AI version.** A random, identifiable stranger's licensed stock photo, captioned
+"Domingos — Co-Fundador & Instrutor Principal" with real stated credentials and fed
+into structured data, misrepresents an actual third party's likeness as a specific
+named staff member. That's a different and more serious problem than an AI-generated
+face: it's not just "synthetic", it's a real person being misidentified. The
+recommendation below is unchanged from when this doc started: real photos of
+Domingos, Baltazar, and William, or pull the credential claims until you have them.
 
 | File | Used in | Real person |
 |---|---|---|
@@ -56,32 +67,41 @@ change not an image change.
 
 ---
 
-## 2. Homepage hero background
+## 2. Homepage hero background — DONE
 
-**File:** was `hero-bg.jpg` (deleted — unrelated hotel pool photo with a visible
-third-party ad banner). Currently repurposing `services-aquatic.webp` as a stopgap
-in `HeroSection.tsx`. That's a placeholder, not the final answer — it's a square
-(640×640) image being force-cropped into a full-bleed widescreen hero, which
-loses people off the edges on wide viewports.
+**File:** `hero-pool.webp` (2400×1350, ~249KB), replacing the earlier stopgap
+(a square `services-aquatic.webp` force-cropped into the widescreen hero).
 
-**Spec:**
+**Source:** licensed stock photo, [Unsplash License](https://unsplash.com/license)
+(free for commercial use, no attribution legally required). Photo by Patrick
+Robert Doyle (@teapowered) on Unsplash:
+https://unsplash.com/photos/a-large-indoor-swimming-pool-with-a-view-of-the-trees-ls2i2Mh0M4Q
+
+**Why this one:** an elegant symmetric indoor pool with a colonnade and tree view,
+no visible text/logos/signage, reads as "serious, premium fitness facility" under
+the hero's dark overlay (`bg-foreground/75`). It doesn't show an active coaching
+session (the original brief below wanted mid-session energy with people) — no
+free, logo-free, real-photograph stock match for that specific combination was
+found in this pass. If a better match turns up later, or real photography becomes
+available, the spec and original brief below still apply.
+
+**Spec (for any future replacement):**
 - 16:9 or wider, minimum 1920×1080 (ideally 2400×1350 for retina/large displays)
 - Rendered with `object-cover` under a dark overlay (`bg-foreground/75` — see
   `HeroSection.tsx`), so the image can and should be visually busier/brighter
   than final — the overlay darkens everything by ~75%, text sits on top
-- Export as WebP, quality 80–85, target under 250KB (the build pipeline now
-  imports `.webp` assets directly — see the Performance Note at the bottom)
+- Export as WebP, quality 80–85, target under 250KB
 - Composition needs breathing room: keep the main subject roughly centered
   with open space top-and-bottom, since mobile crops this tighter vertically
   than desktop
 
-**Brief:** An indoor pool or training space, mid-session energy — an instructor
-actively coaching, water in motion, genuine effort on people's faces, not posed
-smiling-at-camera stock energy. Warm, slightly golden light if possible (plays
-well with the brand's red accent `#C0392B`). Should read as "serious, modern,
-professional fitness facility in Luanda" — not generic stock-photo gym.
+**Original brief** (an instructor-led session, if a better photo or a real shoot
+becomes available): An indoor pool or training space, mid-session energy — an
+instructor actively coaching, water in motion, genuine effort on people's faces,
+not posed smiling-at-camera stock energy. Warm, slightly golden light if possible
+(plays well with the brand's red accent `#C0392B`).
 
-**AI prompt** (if commissioning real photography isn't feasible before launch):
+**AI prompt** (if generating rather than sourcing another stock/real photo):
 
 > Wide-angle photo of a modern indoor swimming pool training session, Luanda
 > Angola, late afternoon warm light through large windows, one Black male
@@ -93,23 +113,20 @@ professional fitness facility in Luanda" — not generic stock-photo gym.
 
 ---
 
-## 3. Service images — one distinct image per service
-
-**Files:** `services-aquatic.webp`, `services-swim.webp`, `services-wellness.webp` —
-only three images shared across four services (`src/data/services.ts`), so one
-service always reuses another's photo. A previous pass fixed the worst mismatch
-(the group pool-class photo was wired to "Treinos Personalizados" instead of
-"Actividades Aquáticas"), but the underlying gap — three photos for four
-services — is still real. Below is a dedicated brief + prompt per service, so a
-future pass can give each one its own image.
+## 3. Service images
 
 **Shared spec for all four:** square or 4:5, minimum 1200×1200, rendered at
 `aspect-square`/`aspect-[3/4]` with `object-cover` depending on the component
 (`ServicesPreview.tsx`, `Services.tsx`, `ServiceDetail.tsx`) — center the main
 subject, avoid putting anything important in the outer 10% on any edge.
 
-### Actividades Aquáticas (swimming / water activities)
-Currently: `services-aquatic.webp` (group pool class — good fit, keep).
+Each service now has its own distinct image (previously only 3 photos were
+shared across 4 services, so one always reused another's — fixed, including the
+same reuse inside `Gallery.tsx`'s fallback photos).
+
+### Actividades Aquáticas (swimming / water activities) — still AI placeholder
+Currently: `services-aquatic.webp` (group pool class — good fit, keep as-is for
+now; no replacement needed, this one already works).
 **Brief:** Small group aquatic class, mixed ages including at least one child,
 instructor in the water actively guiding, bright clean indoor pool.
 **Prompt:** `Indoor swimming pool, small group lesson, Black swim instructor in
@@ -117,21 +134,36 @@ the water guiding two Black children and one adult, bright teal-tiled pool,
 daylight through skylights, candid joyful expressions, water motion, square
 crop, documentary photography, natural light, no text or logos`
 
-### Treinos Personalizados (personal training)
-Currently: `services-swim.webp` (overhead 1-on-1 swim coaching — imperfect
-stopgap, still swim-themed not strength/training-themed).
-**Brief:** One-on-one personal training session, NOT in a pool — a gym floor
-or functional training space, trainer actively spotting/coaching one client
-through a strength or functional movement, visible effort and focus.
-**Prompt:** `Personal training session in a modern gym, Black male personal
-trainer coaching one Black adult client through a kettlebell or functional
-movement exercise, trainer actively spotting, clean minimalist gym interior,
-natural daylight, genuine effort on client's face, square crop, documentary
-photography style, no visible text or logos`
+### Treinos Personalizados (personal training) — DONE
+**File:** `services-training.webp` (1200×1200, licensed stock), replacing the
+old mismatched `services-swim.webp` (an overhead swim-coaching photo, wrong
+theme entirely for personal training — it's now correctly used only for its
+one accurate role, the "Natação" gallery caption).
 
-### Ginástica Laboral (corporate workplace wellness)
+**Source:** Unsplash License, free for commercial use. Photo by TSquared Lab
+on Unsplash:
+https://unsplash.com/photos/woman-performs-exercise-with-trainer-at-gym-cCJQzTPkoFg
+
+A trainer actively coaching one client through a sled-push exercise, genuine
+effort visible, modern gym interior — matches the original brief below closely.
+
+**Original brief:** One-on-one personal training session, NOT in a pool — a
+gym floor or functional training space, trainer actively spotting/coaching one
+client through a strength or functional movement, visible effort and focus.
+**AI prompt** (if a future regeneration is wanted instead): `Personal training
+session in a modern gym, Black male personal trainer coaching one Black adult
+client through a kettlebell or functional movement exercise, trainer actively
+spotting, clean minimalist gym interior, natural daylight, genuine effort on
+client's face, square crop, documentary photography style, no visible text or
+logos`
+
+### Ginástica Laboral (corporate workplace wellness) — still AI placeholder
 Currently: `services-wellness.webp` (yoga/meditation by a pool — reasonable fit,
-though the poolside setting undersells "at your office").
+though the poolside setting undersells "at your office"). No free, logo-free,
+real-photograph stock match for "multiple office workers mid-stretch-break,
+desks and plants visible" was found in this pass (every usable free candidate
+was a single person, not a group) — left as-is rather than forcing a weak
+substitute.
 **Brief:** A short workplace wellness session happening IN an office
 environment — desks or an office common area visible — not a spa/pool
 setting, to make clear this comes to the client's workplace.
@@ -141,28 +173,39 @@ office, desks and plants visible in background, natural window light, relaxed
 genuine smiles, square crop, documentary corporate photography, no visible
 text, logos or screens`
 
-### Aulas em Grupo (group fitness classes — spinning/aerobics/functional)
-Currently: `services-aquatic.webp` (reused group pool photo — placeholder only;
-this service is explicitly non-aquatic per its own copy, spinning/aeróbica).
-**Brief:** Energetic group fitness class, NOT water-based — spinning bikes or
-a functional/aerobics studio, multiple participants mid-movement, motivated
-group energy.
-**Prompt:** `Group fitness class in a modern studio, 5-6 diverse adults on
-spin bikes or doing a functional circuit, mid-motion energy, instructor
-visible leading at the front, dynamic lighting with red accent lighting,
-motivated expressions, square crop, dynamic action photography, no visible
-text or logos`
+### Aulas em Grupo (group fitness classes — spinning/aerobics/functional) — DONE
+**File:** `services-group-fitness.webp` (1200×1200, licensed stock), replacing
+the old reused `services-aquatic.webp` (a pool photo for an explicitly
+non-aquatic service — same reuse was also wrong in `Gallery.tsx`'s "Aula de
+grupo" caption, fixed there too).
+
+**Source:** Unsplash License, free for commercial use. Photo by Trust "Tru"
+Katsande on Unsplash:
+https://unsplash.com/photos/women-taking-exercise-on-black-stationary-bikes-in-front-of-gray-concrete-wall-A_ftsTh53lM
+— a row of women on stationary bikes, engaged and in focus, clean concrete-wall
+background, no visible branding.
+
+**Original brief:** Energetic group fitness class, NOT water-based — spinning
+bikes or a functional/aerobics studio, multiple participants mid-movement,
+motivated group energy.
+**AI prompt** (if a future regeneration is wanted instead): `Group fitness
+class in a modern studio, 5-6 diverse adults on spin bikes or doing a
+functional circuit, mid-motion energy, instructor visible leading at the
+front, dynamic lighting with red accent lighting, motivated expressions,
+square crop, dynamic action photography, no visible text or logos`
 
 ---
 
 ## Performance note (applies to all new images, not just these briefs)
 
-All seven site images were converted from JPEG to WebP (quality 82), a
+The original seven site images were converted from JPEG to WebP (quality 82), a
 straight format swap with no component changes needed beyond the import paths — combined
 source size dropped from 384,578 bytes to 277,774 bytes (~28% smaller) for the
-same pixels. The PWA icons and favicon were separately found to be mis-sized
-(declared as 192×192/512×512 but actually much larger source images) and were
-re-exported at their real declared dimensions.
+same pixels. The 3 new licensed-stock images (hero, personal training, group
+fitness) were exported directly as WebP at quality 74–82. The PWA icons and
+favicon were separately found to be mis-sized (declared as 192×192/512×512 but
+actually much larger source images) and were re-exported at their real declared
+dimensions.
 
 This was a format-only change — there are still no responsive `srcset` variants
 (e.g. 800w/1600w for the hero) and no `<picture>`/multiple-size wiring in any
