@@ -43,7 +43,7 @@ describe("serviceSchema", () => {
       short_desc: "",
       full_desc: "",
       sub_services: [],
-      cta_text: "",
+      cta_text: "Saber Mais →",
       image_url: null,
       seo_title: "",
       seo_description: "",
@@ -51,6 +51,24 @@ describe("serviceSchema", () => {
     };
     expect(serviceSchema.safeParse(base).success).toBe(true);
     expect(serviceSchema.safeParse({ ...base, slug: "Bad Slug" }).success).toBe(false);
+  });
+
+  it("rejects empty or whitespace-only CTA button text", () => {
+    const base = {
+      slug: "treino-personalizado",
+      icon: "🎯",
+      title: "Treino",
+      short_desc: "",
+      full_desc: "",
+      sub_services: [],
+      cta_text: "Saber Mais →",
+      image_url: null,
+      seo_title: "",
+      seo_description: "",
+      sort_order: 0,
+    };
+    expect(serviceSchema.safeParse({ ...base, cta_text: "" }).success).toBe(false);
+    expect(serviceSchema.safeParse({ ...base, cta_text: "   " }).success).toBe(false);
   });
 });
 

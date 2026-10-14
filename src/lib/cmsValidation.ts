@@ -78,7 +78,7 @@ export const serviceSchema = z.object({
   short_desc: z.string().trim().max(500),
   full_desc: z.string().trim().max(5000),
   sub_services: z.array(z.string().trim().max(200)).max(50),
-  cta_text: z.string().trim().max(100),
+  cta_text: z.string().trim().min(1, "Texto do botão é obrigatório").max(100),
   image_url: optionalCmsImageUrlSchema,
   seo_title: z.string().trim().max(200),
   seo_description: z.string().trim().max(500),
