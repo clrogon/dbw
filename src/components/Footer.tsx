@@ -25,7 +25,7 @@ const Footer = () => {
         <div>
           <img src={dbwLogo} alt="DBW — Mente Activa, Vida Saudável" className="h-12 w-auto mb-3 brightness-0 invert" />
           <p className="text-sm leading-relaxed mb-2 font-sans">Mente Activa, Vida Saudável!</p>
-          <p className="text-xs text-primary-foreground/40 font-sans">NIF N° 5001683969</p>
+          <p className="text-xs text-primary-foreground/60 font-sans">NIF N° 5001683969</p>
         </div>
 
         {/* Quick links */}
@@ -77,7 +77,7 @@ const Footer = () => {
       </div>
 
       <div className="container mx-auto border-t border-primary-foreground/10 pt-6">
-        <p className="text-xs text-center font-sans text-primary-foreground/40">
+        <p className="text-xs text-center font-sans text-primary-foreground/60">
           © {new Date().getFullYear()} DBW — Domingos, Baltazar & William. Todos os direitos reservados.
         </p>
       </div>

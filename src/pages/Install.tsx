@@ -51,7 +51,7 @@ const Install = () => {
         path="/instalar"
       />
       <Navbar />
-      <main className="flex-1 container mx-auto px-4 py-20 max-w-2xl">
+      <main id="main-content" className="flex-1 container mx-auto px-4 py-20 max-w-2xl">
         <div className="text-center mb-10">
           <Smartphone className="w-16 h-16 mx-auto mb-4 text-primary" />
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">

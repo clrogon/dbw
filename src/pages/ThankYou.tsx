@@ -28,7 +28,7 @@ const ThankYou = () => {
   return (
     <>
       <SiteSeo title="Obrigado" path="/obrigado" noIndex />
-      <main>
+      <main id="main-content">
         <Navbar />
 
         <section className="min-h-screen flex items-center justify-center px-6 pt-16">

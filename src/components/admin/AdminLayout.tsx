@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   LayoutDashboard, Image, Dumbbell, DollarSign, Users, Images, LogOut, Home, Menu,
@@ -30,7 +30,7 @@ const SidebarContent = ({
   <>
     <div className="p-4 border-b border-primary-foreground/10">
       <img src={dbwLogo} alt="DBW" className="h-8 brightness-0 invert" />
-      <p className="text-xs text-primary-foreground/40 mt-1 font-display uppercase tracking-wider">
+      <p className="text-xs text-primary-foreground/60 mt-1 font-display uppercase tracking-wider">
         Gestão de Conteúdo
       </p>
     </div>
@@ -43,6 +43,7 @@ const SidebarContent = ({
             key={item.href}
             to={item.href}
             onClick={onNavigate}
+            aria-current={active ? "page" : undefined}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
               active
                 ? "bg-primary text-primary-foreground"
@@ -65,6 +66,7 @@ const SidebarContent = ({
       >
         <Home className="w-4 h-4" />
         Ver Site
+        <span className="sr-only"> (abre em novo separador)</span>
       </a>
       <button
         onClick={onSignOut}
@@ -106,11 +108,12 @@ const AdminLayout = () => {
           <div className="sticky top-0 z-40 flex items-center gap-3 bg-foreground text-primary-foreground px-4 h-14">
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10">
+                <Button variant="ghost" size="icon" aria-label="Abrir menu" className="text-primary-foreground hover:bg-primary-foreground/10">
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0 bg-foreground text-primary-foreground border-none flex flex-col">
+                <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
                 <SidebarContent
                   location={location}
                   onNavigate={() => setSheetOpen(false)}

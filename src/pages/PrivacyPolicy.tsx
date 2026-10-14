@@ -12,7 +12,7 @@ const PrivacyPolicy = () => {
         path="/politica-de-privacidade"
       />
       <Navbar />
-      <main className="pt-24 pb-16 px-6">
+      <main id="main-content" className="pt-24 pb-16 px-6">
         <div className="container mx-auto max-w-3xl prose prose-lg dark:prose-invert">
           <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-8">
             Política de Privacidade e Cookies
