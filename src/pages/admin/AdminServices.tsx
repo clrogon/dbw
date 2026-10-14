@@ -117,33 +117,33 @@ const AdminServices = () => {
         <div className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Slug (URL)</Label>
-              <Input value={editing.slug} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} />
+              <Label htmlFor="service-slug">Slug (URL)</Label>
+              <Input id="service-slug" value={editing.slug} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} />
             </div>
             <div>
-              <Label>Ícone (emoji)</Label>
-              <Input value={editing.icon} onChange={(e) => setEditing({ ...editing, icon: e.target.value })} />
+              <Label htmlFor="service-icon">Ícone (emoji)</Label>
+              <Input id="service-icon" value={editing.icon} onChange={(e) => setEditing({ ...editing, icon: e.target.value })} />
             </div>
           </div>
           <div>
-            <Label>Título</Label>
-            <Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} />
+            <Label htmlFor="service-title">Título</Label>
+            <Input id="service-title" value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} />
           </div>
           <div>
-            <Label>Descrição curta</Label>
-            <Textarea value={editing.short_desc} onChange={(e) => setEditing({ ...editing, short_desc: e.target.value })} />
+            <Label htmlFor="service-short-desc">Descrição curta</Label>
+            <Textarea id="service-short-desc" value={editing.short_desc} onChange={(e) => setEditing({ ...editing, short_desc: e.target.value })} />
           </div>
           <div>
-            <Label>Descrição completa</Label>
-            <Textarea value={editing.full_desc} onChange={(e) => setEditing({ ...editing, full_desc: e.target.value })} rows={4} />
+            <Label htmlFor="service-full-desc">Descrição completa</Label>
+            <Textarea id="service-full-desc" value={editing.full_desc} onChange={(e) => setEditing({ ...editing, full_desc: e.target.value })} rows={4} />
           </div>
-          <div>
-            <Label>Sub-serviços</Label>
+          <fieldset>
+            <legend className="text-sm font-medium mb-1.5">Sub-serviços</legend>
             <div className="space-y-2 mb-2">
               {editing.sub_services.map((s, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <span className="text-sm flex-1 bg-secondary px-3 py-1.5 rounded">{s}</span>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setEditing({
+                  <Button type="button" variant="ghost" size="icon" aria-label={`Remover sub-serviço ${s}`} onClick={() => setEditing({
                     ...editing, sub_services: editing.sub_services.filter((_, j) => j !== i),
                   })}>
                     <Trash2 className="w-3 h-3 text-destructive" />
@@ -152,31 +152,32 @@ const AdminServices = () => {
               ))}
             </div>
             <div className="flex gap-2">
-              <Input placeholder="Novo sub-serviço" value={subInput} onChange={(e) => setSubInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSub())} />
-              <Button type="button" variant="outline" size="sm" onClick={addSub}><Plus className="w-4 h-4" /></Button>
+              <Label htmlFor="service-new-sub" className="sr-only">Novo sub-serviço</Label>
+              <Input id="service-new-sub" placeholder="Novo sub-serviço" value={subInput} onChange={(e) => setSubInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSub())} />
+              <Button type="button" variant="outline" size="sm" aria-label="Adicionar sub-serviço" onClick={addSub}><Plus className="w-4 h-4" /></Button>
             </div>
+          </fieldset>
+          <div>
+            <Label htmlFor="service-cta-text">CTA text</Label>
+            <Input id="service-cta-text" value={editing.cta_text} onChange={(e) => setEditing({ ...editing, cta_text: e.target.value })} />
           </div>
           <div>
-            <Label>CTA text</Label>
-            <Input value={editing.cta_text} onChange={(e) => setEditing({ ...editing, cta_text: e.target.value })} />
-          </div>
-          <div>
-            <Label>Imagem</Label>
+            <Label htmlFor="service-image">Imagem</Label>
             <ImageUpload value={editing.image_url} onChange={(url) => setEditing({ ...editing, image_url: url })} folder="services" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>SEO Title</Label>
-              <Input value={editing.seo_title} onChange={(e) => setEditing({ ...editing, seo_title: e.target.value })} />
+              <Label htmlFor="service-seo-title">SEO Title</Label>
+              <Input id="service-seo-title" value={editing.seo_title} onChange={(e) => setEditing({ ...editing, seo_title: e.target.value })} />
             </div>
             <div>
-              <Label>Ordem</Label>
-              <Input type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} />
+              <Label htmlFor="service-sort-order">Ordem</Label>
+              <Input id="service-sort-order" type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} />
             </div>
           </div>
           <div>
-            <Label>SEO Description</Label>
-            <Textarea value={editing.seo_description} onChange={(e) => setEditing({ ...editing, seo_description: e.target.value })} />
+            <Label htmlFor="service-seo-description">SEO Description</Label>
+            <Textarea id="service-seo-description" value={editing.seo_description} onChange={(e) => setEditing({ ...editing, seo_description: e.target.value })} />
           </div>
           <Button onClick={save} disabled={saving} className="uppercase font-display font-bold tracking-wider">
             <Save className="w-4 h-4 mr-2" /> {saving ? "A guardar..." : "Guardar"}
@@ -208,10 +209,10 @@ const AdminServices = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="ghost" size="icon" onClick={() => setEditing(s)}><Edit className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => setEditing(s)}><Edit className="w-4 h-4" /></Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                    <Button variant="ghost" size="icon" aria-label="Eliminar"><Trash2 className="w-4 h-4 text-destructive" /></Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>

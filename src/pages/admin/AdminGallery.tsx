@@ -101,17 +101,17 @@ const AdminGallery = () => {
         <h1 className="text-3xl font-bold font-display uppercase mb-8">{isNew ? "Nova Imagem" : "Editar Imagem"}</h1>
         <div className="space-y-5">
           <div>
-            <Label>Imagem</Label>
+            <Label htmlFor="gallery-image">Imagem</Label>
             <ImageUpload value={editing.image_url || null} onChange={(url) => setEditing({ ...editing, image_url: url || "" })} folder="gallery" />
           </div>
           <div>
-            <Label>Texto alternativo (alt)</Label>
-            <Input value={editing.alt} onChange={(e) => setEditing({ ...editing, alt: e.target.value })} />
+            <Label htmlFor="gallery-alt">Texto alternativo (alt)</Label>
+            <Input id="gallery-alt" value={editing.alt} onChange={(e) => setEditing({ ...editing, alt: e.target.value })} />
           </div>
           <div>
-            <Label>Categoria</Label>
+            <Label htmlFor="gallery-category">Categoria</Label>
             <Select value={editing.category} onValueChange={(v) => setEditing({ ...editing, category: v })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="gallery-category"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
                   <SelectItem key={c} value={c}>{c}</SelectItem>
@@ -120,8 +120,8 @@ const AdminGallery = () => {
             </Select>
           </div>
           <div>
-            <Label>Ordem</Label>
-            <Input type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} />
+            <Label htmlFor="gallery-sort-order">Ordem</Label>
+            <Input id="gallery-sort-order" type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} />
           </div>
           <Button onClick={save} disabled={saving} className="uppercase font-display font-bold tracking-wider">
             <Save className="w-4 h-4 mr-2" /> {saving ? "A guardar..." : "Guardar"}
@@ -145,10 +145,10 @@ const AdminGallery = () => {
               <div key={img.id} className="relative group rounded-lg overflow-hidden border bg-card">
               <img src={img.image_url} alt={img.alt} className="w-full aspect-square object-cover" />
               <div className="absolute inset-0 bg-foreground/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <Button variant="secondary" size="icon" onClick={() => setEditing(img)}><Edit className="w-4 h-4" /></Button>
+                <Button variant="secondary" size="icon" aria-label="Editar" onClick={() => setEditing(img)}><Edit className="w-4 h-4" /></Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="icon"><Trash2 className="w-4 h-4" /></Button>
+                    <Button variant="destructive" size="icon" aria-label="Eliminar"><Trash2 className="w-4 h-4" /></Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>

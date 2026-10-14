@@ -30,7 +30,7 @@ const Instructors = () => {
 
   if (isLoading) {
     return (
-      <main>
+      <main id="main-content">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center bg-background">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -62,7 +62,7 @@ const Instructors = () => {
           ),
         ]}
       />
-      <main>
+      <main id="main-content">
         <Navbar />
 
         <section className="bg-foreground text-primary-foreground pt-28 pb-16 px-6">

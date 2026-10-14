@@ -112,37 +112,38 @@ const AdminInstructors = () => {
         <h1 className="text-3xl font-bold font-display uppercase mb-8">{isNew ? "Novo Instrutor" : "Editar Instrutor"}</h1>
         <div className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
-            <div><Label>Nome</Label><Input value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></div>
-            <div><Label>Função</Label><Input value={editing.role} onChange={(e) => setEditing({ ...editing, role: e.target.value })} /></div>
+            <div><Label htmlFor="instructor-name">Nome</Label><Input id="instructor-name" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></div>
+            <div><Label htmlFor="instructor-role">Função</Label><Input id="instructor-role" value={editing.role} onChange={(e) => setEditing({ ...editing, role: e.target.value })} /></div>
           </div>
           <div>
-            <Label>Bio</Label>
-            <Textarea value={editing.bio} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} rows={3} />
+            <Label htmlFor="instructor-bio">Bio</Label>
+            <Textarea id="instructor-bio" value={editing.bio} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} rows={3} />
           </div>
-          <div>
-            <Label>Especialidades</Label>
+          <fieldset>
+            <legend className="text-sm font-medium mb-1.5">Especialidades</legend>
             <div className="flex flex-wrap gap-2 mb-2">
               {editing.specialties.map((s, i) => (
                 <span key={i} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full flex items-center gap-1">
                   {s}
-                  <button onClick={() => setEditing({ ...editing, specialties: editing.specialties.filter((_, j) => j !== i) })}>
+                  <button type="button" aria-label={`Remover especialidade ${s}`} onClick={() => setEditing({ ...editing, specialties: editing.specialties.filter((_, j) => j !== i) })}>
                     <Trash2 className="w-3 h-3" />
                   </button>
                 </span>
               ))}
             </div>
             <div className="flex gap-2">
-              <Input placeholder="Nova especialidade" value={specInput} onChange={(e) => setSpecInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSpec())} />
-              <Button type="button" variant="outline" size="sm" onClick={addSpec}><Plus className="w-4 h-4" /></Button>
+              <Label htmlFor="instructor-new-spec" className="sr-only">Nova especialidade</Label>
+              <Input id="instructor-new-spec" placeholder="Nova especialidade" value={specInput} onChange={(e) => setSpecInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSpec())} />
+              <Button type="button" variant="outline" size="sm" aria-label="Adicionar especialidade" onClick={addSpec}><Plus className="w-4 h-4" /></Button>
             </div>
-          </div>
+          </fieldset>
           <div>
-            <Label>Foto</Label>
+            <Label htmlFor="instructor-photo">Foto</Label>
             <ImageUpload value={editing.image_url} onChange={(url) => setEditing({ ...editing, image_url: url })} folder="instructors" />
           </div>
           <div>
-            <Label>Ordem</Label>
-            <Input type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} />
+            <Label htmlFor="instructor-sort-order">Ordem</Label>
+            <Input id="instructor-sort-order" type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} />
           </div>
           <Button onClick={save} disabled={saving} className="uppercase font-display font-bold tracking-wider">
             <Save className="w-4 h-4 mr-2" /> {saving ? "A guardar..." : "Guardar"}
@@ -172,10 +173,10 @@ const AdminInstructors = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="ghost" size="icon" onClick={() => setEditing(item)}><Edit className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => setEditing(item)}><Edit className="w-4 h-4" /></Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                    <Button variant="ghost" size="icon" aria-label="Eliminar"><Trash2 className="w-4 h-4 text-destructive" /></Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
