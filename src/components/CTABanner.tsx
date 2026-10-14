@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useHeroContent } from "@/hooks/useCms";
 import { sanitizeInternalPath } from "@/lib/cmsValidation";
+import { cmsTextOr } from "@/utils/normaliseCms";
 
 const CTABanner = () => {
   const [dismissed, setDismissed] = useState(false);
@@ -23,8 +24,10 @@ const CTABanner = () => {
   if (dismissed) return null;
 
   // Prefer CMS content if available
-  const bannerText = !isLoading && hero?.subtitle ? hero.subtitle : "Vagas disponíveis para Julho · Garanta já o seu lugar";
-  const ctaText = !isLoading && hero?.cta_primary_text ? hero.cta_primary_text : "Reservar Agora →";
+  const bannerText = !isLoading
+    ? cmsTextOr(hero?.subtitle, "Vagas disponíveis para Julho · Garanta já o seu lugar")
+    : "Vagas disponíveis para Julho · Garanta já o seu lugar";
+  const ctaText = !isLoading ? cmsTextOr(hero?.cta_primary_text, "Reservar Agora →") : "Reservar Agora →";
   const ctaLink = sanitizeInternalPath(
     !isLoading && !isError ? hero?.cta_primary_link : undefined,
     "/reservar"

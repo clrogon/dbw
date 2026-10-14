@@ -5,6 +5,7 @@ import {
   normaliseGalleryImage,
   normaliseInstructorRow,
   type NormalisedInstructor,
+  cmsTextOr,
 } from "../src/utils/normaliseCms";
 
 describe("normaliseCms service normalization", () => {
@@ -73,6 +74,23 @@ describe("normaliseCms instructor", () => {
       image_url: "https://evil.example/x.jpg",
     });
     expect(out.image_url).toBeNull();
+  });
+});
+
+describe("cmsTextOr", () => {
+  it("keeps a real CMS value", () => {
+    expect(cmsTextOr("Reservar Agora →", "fallback")).toBe("Reservar Agora →");
+  });
+
+  it("falls back on undefined, null, and empty string", () => {
+    expect(cmsTextOr(undefined, "fallback")).toBe("fallback");
+    expect(cmsTextOr(null, "fallback")).toBe("fallback");
+    expect(cmsTextOr("", "fallback")).toBe("fallback");
+  });
+
+  it("falls back on a whitespace-only value instead of rendering blank", () => {
+    expect(cmsTextOr("   ", "fallback")).toBe("fallback");
+    expect(cmsTextOr("\n\t", "fallback")).toBe("fallback");
   });
 });
 

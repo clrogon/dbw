@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useHeroContent } from "@/hooks/useCms";
 import { sanitizeInternalPath } from "@/lib/cmsValidation";
 import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
+import { cmsTextOr } from "@/utils/normaliseCms";
 import heroBg from "@/assets/hero-pool.webp";
 
 interface Stat {
@@ -22,12 +23,12 @@ const HeroSection = () => {
     );
   }
 
-  const title = hero?.title || "TRANSFORME O SEU CORPO.";
-  const highlight = hero?.title_highlight || "LIBERTE A SUA MENTE.";
-  const subtitle = hero?.subtitle || "Programas de fitness personalizados para quem quer resultados reais em Luanda.";
-  const ctaPrimaryText = hero?.cta_primary_text || "Reservar a Minha Vaga →";
+  const title = cmsTextOr(hero?.title, "TRANSFORME O SEU CORPO.");
+  const highlight = cmsTextOr(hero?.title_highlight, "LIBERTE A SUA MENTE.");
+  const subtitle = cmsTextOr(hero?.subtitle, "Programas de fitness personalizados para quem quer resultados reais em Luanda.");
+  const ctaPrimaryText = cmsTextOr(hero?.cta_primary_text, "Reservar a Minha Vaga →");
   const ctaPrimaryLink = sanitizeInternalPath(hero?.cta_primary_link, "/reservar");
-  const ctaSecondaryText = hero?.cta_secondary_text || "Ver Os Nossos Serviços";
+  const ctaSecondaryText = cmsTextOr(hero?.cta_secondary_text, "Ver Os Nossos Serviços");
   const ctaSecondaryLink = sanitizeInternalPath(hero?.cta_secondary_link, "/servicos");
   const safeBg = !isError ? sanitizeCmsImageUrl(hero?.background_image_url) : null;
   const bgImage = safeBg ?? heroBg;

@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — Hero/CTA button could render blank if its CMS text was whitespace-only
+Reported via a screenshot showing the sticky "Reservar Agora" banner button as
+an empty box, while the banner's other text rendered fine. Root cause:
+`CTABanner.tsx` and `HeroSection.tsx` both read `hero_content` CMS fields with
+a plain truthiness check (`hero?.field || fallback`) — in JS, a whitespace-only
+string (`"   "`) is truthy, so it gets used as-is instead of falling back,
+rendering as a blank-looking label (most visibly on a button, which has no
+other content to anchor it). Confirmed with a reproduction: mocking a CMS
+`hero_content` row with `cta_primary_text: "   "` rendered both the Hero's
+primary CTA and the sticky banner's CTA as literal whitespace before this fix,
+and as their correct fallback text ("Reservar a Minha Vaga →" / "Reservar
+Agora →") after it.
+- Added `cmsTextOr(value, fallback)` to `src/utils/normaliseCms.ts` — returns
+  the CMS value only if it has non-whitespace content, else the fallback.
+  Used in place of the bare `||`/ternary checks for all 7 CMS text fields
+  across both components (title, title highlight, subtitle, both CTA texts).
+- Closed the gap at the source too: `heroContentSchema` in `cmsValidation.ts`
+  now requires `cta_primary_text`/`cta_secondary_text` to be non-empty after
+  trimming (matching the existing `title` requirement) — the Admin panel can
+  no longer save a blank CTA button text for the hero in the first place.
+- **Not fixed, flagged instead**: `serviceSchema.cta_text` (the "Saber Mais"
+  button on service cards) has the identical missing-`.min(1)` gap, and
+  `Services.tsx`/`ServiceDetail.tsx`/`ServicesPreview.tsx` render it with no
+  fallback at all (unlike Hero, there's no default copy defined to fall back
+  to). Left alone rather than inventing fallback text for 4 services
+  unprompted — a real gap, but a different, un-asked-for scope.
+- Was not able to directly confirm the exact live CMS value behind the
+  original screenshot (the database-query tool available in this session
+  returned repeated errors when queried), so this fix addresses the
+  confirmed, reproducible code gap that matches the reported symptom, not a
+  confirmed single root-cause incident.
+- Added test coverage: `cmsTextOr` (real value / undefined / null / empty /
+  whitespace-only) in `test/normaliseCms.test.ts`, and the schema rejection
+  of empty/whitespace CTA text in `test/cmsValidation.test.ts`.
+- Verified: `npm run lint` / `npm run typecheck` / `npm test` (59/59) /
+  `npm run build` all pass.
+
 ### Fixed — replaced the last 3 AI-placeholder images (Actividades Aquáticas, Ginástica Laboral, Natação)
 Completes the stock-photo replacement started in two earlier entries below:
 these were the only 3 remaining AI-generated placeholders on the site, all
