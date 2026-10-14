@@ -29,7 +29,7 @@ const Gallery = () => {
 
   if (isLoading) {
     return (
-      <main>
+      <main id="main-content">
         <Navbar />
         <div className="min-h-screen flex items-center justify-center bg-background">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -60,7 +60,7 @@ const Gallery = () => {
           { name: "Galeria", path: "/galeria" },
         ])}
       />
-      <main>
+      <main id="main-content">
         <Navbar />
 
         <section className="bg-foreground text-primary-foreground pt-28 pb-20 px-6">
@@ -81,6 +81,7 @@ const Gallery = () => {
                 <button
                   key={cat}
                   onClick={() => setActive(cat)}
+                  aria-pressed={active === cat}
                   className={`px-5 py-2.5 rounded-full text-sm font-display font-bold uppercase tracking-wide transition-all duration-200 ${
                     active === cat
                       ? "bg-primary text-primary-foreground shadow-[var(--shadow-card)]"

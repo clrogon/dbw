@@ -105,43 +105,44 @@ const AdminPricing = () => {
         <h1 className="text-3xl font-bold font-display uppercase mb-8">{isNew ? "Novo Plano" : "Editar Plano"}</h1>
         <div className="space-y-5">
           <div>
-            <Label>Nome</Label>
-            <Input value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
+            <Label htmlFor="plan-name">Nome</Label>
+            <Input id="plan-name" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Preço</Label>
-              <Input value={editing.price} onChange={(e) => setEditing({ ...editing, price: e.target.value })} />
+              <Label htmlFor="plan-price">Preço</Label>
+              <Input id="plan-price" value={editing.price} onChange={(e) => setEditing({ ...editing, price: e.target.value })} />
             </div>
             <div>
-              <Label>Unidade</Label>
-              <Input value={editing.unit} onChange={(e) => setEditing({ ...editing, unit: e.target.value })} />
+              <Label htmlFor="plan-unit">Unidade</Label>
+              <Input id="plan-unit" value={editing.unit} onChange={(e) => setEditing({ ...editing, unit: e.target.value })} />
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Switch checked={editing.highlighted} onCheckedChange={(v) => setEditing({ ...editing, highlighted: v })} />
-            <Label>Plano destacado</Label>
+            <Switch id="plan-highlighted" checked={editing.highlighted} onCheckedChange={(v) => setEditing({ ...editing, highlighted: v })} />
+            <Label htmlFor="plan-highlighted">Plano destacado</Label>
           </div>
-          <div>
-            <Label>Funcionalidades</Label>
+          <fieldset>
+            <legend className="text-sm font-medium mb-1.5">Funcionalidades</legend>
             <div className="space-y-2 mb-2">
               {editing.features.map((f, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <span className="text-sm flex-1 bg-secondary px-3 py-1.5 rounded">{f}</span>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setEditing({ ...editing, features: editing.features.filter((_, j) => j !== i) })}>
+                  <Button type="button" variant="ghost" size="icon" aria-label={`Remover funcionalidade ${f}`} onClick={() => setEditing({ ...editing, features: editing.features.filter((_, j) => j !== i) })}>
                     <Trash2 className="w-3 h-3 text-destructive" />
                   </Button>
                 </div>
               ))}
             </div>
             <div className="flex gap-2">
-              <Input placeholder="Nova funcionalidade" value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addFeature())} />
-              <Button type="button" variant="outline" size="sm" onClick={addFeature}><Plus className="w-4 h-4" /></Button>
+              <Label htmlFor="plan-new-feature" className="sr-only">Nova funcionalidade</Label>
+              <Input id="plan-new-feature" placeholder="Nova funcionalidade" value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addFeature())} />
+              <Button type="button" variant="outline" size="sm" aria-label="Adicionar funcionalidade" onClick={addFeature}><Plus className="w-4 h-4" /></Button>
             </div>
-          </div>
+          </fieldset>
           <div>
-            <Label>Ordem</Label>
-            <Input type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} />
+            <Label htmlFor="plan-sort-order">Ordem</Label>
+            <Input id="plan-sort-order" type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} />
           </div>
           <Button onClick={save} disabled={saving} className="uppercase font-display font-bold tracking-wider">
             <Save className="w-4 h-4 mr-2" /> {saving ? "A guardar..." : "Guardar"}
@@ -168,10 +169,10 @@ const AdminPricing = () => {
                 <p className="text-sm text-muted-foreground">{p.price} Kz {p.unit}</p>
               </div>
               <div className="flex gap-2">
-                <Button variant="ghost" size="icon" onClick={() => setEditing(p)}><Edit className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => setEditing(p)}><Edit className="w-4 h-4" /></Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                    <Button variant="ghost" size="icon" aria-label="Eliminar"><Trash2 className="w-4 h-4 text-destructive" /></Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>

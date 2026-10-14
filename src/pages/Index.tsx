@@ -17,7 +17,7 @@ const Index = () => {
         description="DBW oferece natação, treinos personalizados, ginástica laboral e aulas em grupo em Luanda, Angola. Profissionais certificados."
         path="/"
       />
-      <main>
+      <main id="main-content">
         <Navbar />
         <HeroSection />
         <TrustSection />

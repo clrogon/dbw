@@ -20,7 +20,7 @@ const ErrorPage = ({ code, title, description, icon, action }: ErrorPageProps) =
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="flex flex-1 flex-col items-center justify-center px-4 py-24">
+      <main id="main-content" className="flex flex-1 flex-col items-center justify-center px-4 py-24">
         <div className="text-center">
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
@@ -30,22 +30,23 @@ const ErrorPage = ({ code, title, description, icon, action }: ErrorPageProps) =
           >
             {icon}
           </motion.div>
-          <motion.h1
+          <motion.p
+            aria-hidden="true"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mb-2 font-display text-8xl font-black uppercase tracking-tight text-primary/20"
           >
             {code}
-          </motion.h1>
-          <motion.h2
+          </motion.p>
+          <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.45 }}
             className="mb-4 font-display text-2xl font-bold uppercase"
           >
             {title}
-          </motion.h2>
+          </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

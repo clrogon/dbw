@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
@@ -18,12 +18,25 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   const navBg = scrolled || !isHome
     ? "bg-foreground/95 backdrop-blur-md border-b border-muted/10"
@@ -42,6 +55,7 @@ const Navbar = () => {
             <Link
               key={link.href}
               to={link.href}
+              aria-current={location.pathname === link.href ? "page" : undefined}
               className="text-sm font-medium text-primary-foreground/70 hover:text-primary-foreground transition-colors uppercase tracking-wide"
             >
               {link.label}
@@ -58,9 +72,12 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <button
+          ref={toggleRef}
           className="lg:hidden text-primary-foreground"
           onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
+          aria-label="Alternar menu"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
         >
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -68,11 +85,12 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden bg-foreground border-t border-muted/10 px-6 pb-6 space-y-4">
+        <div id="mobile-menu" className="lg:hidden bg-foreground border-t border-muted/10 px-6 pb-6 space-y-4">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
+              aria-current={location.pathname === link.href ? "page" : undefined}
               onClick={() => setOpen(false)}
               className="block text-sm font-medium text-primary-foreground/70 hover:text-primary-foreground transition-colors uppercase tracking-wide py-1"
             >

@@ -108,40 +108,40 @@ const AdminHero = () => {
 
       <div className="space-y-6">
         <div>
-          <Label>Título principal</Label>
-          <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <Label htmlFor="hero-title">Título principal</Label>
+          <Input id="hero-title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         </div>
         <div>
-          <Label>Título destaque (cor primária)</Label>
-          <Input value={form.title_highlight} onChange={(e) => setForm({ ...form, title_highlight: e.target.value })} />
+          <Label htmlFor="hero-title-highlight">Título destaque (cor primária)</Label>
+          <Input id="hero-title-highlight" value={form.title_highlight} onChange={(e) => setForm({ ...form, title_highlight: e.target.value })} />
         </div>
         <div>
-          <Label>Subtítulo</Label>
-          <Textarea value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
+          <Label htmlFor="hero-subtitle">Subtítulo</Label>
+          <Textarea id="hero-subtitle" value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label>Texto CTA primário</Label>
-            <Input value={form.cta_primary_text} onChange={(e) => setForm({ ...form, cta_primary_text: e.target.value })} />
+            <Label htmlFor="hero-cta-primary-text">Texto CTA primário</Label>
+            <Input id="hero-cta-primary-text" value={form.cta_primary_text} onChange={(e) => setForm({ ...form, cta_primary_text: e.target.value })} />
           </div>
           <div>
-            <Label>Link CTA primário</Label>
-            <Input value={form.cta_primary_link} onChange={(e) => setForm({ ...form, cta_primary_link: e.target.value })} />
+            <Label htmlFor="hero-cta-primary-link">Link CTA primário</Label>
+            <Input id="hero-cta-primary-link" value={form.cta_primary_link} onChange={(e) => setForm({ ...form, cta_primary_link: e.target.value })} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label>Texto CTA secundário</Label>
-            <Input value={form.cta_secondary_text} onChange={(e) => setForm({ ...form, cta_secondary_text: e.target.value })} />
+            <Label htmlFor="hero-cta-secondary-text">Texto CTA secundário</Label>
+            <Input id="hero-cta-secondary-text" value={form.cta_secondary_text} onChange={(e) => setForm({ ...form, cta_secondary_text: e.target.value })} />
           </div>
           <div>
-            <Label>Link CTA secundário</Label>
-            <Input value={form.cta_secondary_link} onChange={(e) => setForm({ ...form, cta_secondary_link: e.target.value })} />
+            <Label htmlFor="hero-cta-secondary-link">Link CTA secundário</Label>
+            <Input id="hero-cta-secondary-link" value={form.cta_secondary_link} onChange={(e) => setForm({ ...form, cta_secondary_link: e.target.value })} />
           </div>
         </div>
 
         <div>
-          <Label>Imagem de fundo</Label>
+          <Label htmlFor="hero-background-image">Imagem de fundo</Label>
           <ImageUpload
             value={form.background_image_url}
             onChange={(url) => setForm({ ...form, background_image_url: url })}
@@ -149,18 +149,22 @@ const AdminHero = () => {
           />
         </div>
 
-        <div>
-          <Label className="mb-2 block">Estatísticas</Label>
+        <fieldset>
+          <legend className="text-sm font-medium mb-2">Estatísticas</legend>
           <div className="space-y-3">
             {form.stats.map((stat, i) => (
               <div key={i} className="flex gap-2 items-center">
+                <Label htmlFor={`hero-stat-value-${i}`} className="sr-only">{`Valor da estatística ${i + 1}`}</Label>
                 <Input
+                  id={`hero-stat-value-${i}`}
                   placeholder="Valor (ex: 500+)"
                   value={stat.value}
                   onChange={(e) => updateStat(i, "value", e.target.value)}
                   className="w-32"
                 />
+                <Label htmlFor={`hero-stat-label-${i}`} className="sr-only">{`Label da estatística ${i + 1}`}</Label>
                 <Input
+                  id={`hero-stat-label-${i}`}
                   placeholder="Label"
                   value={stat.label}
                   onChange={(e) => updateStat(i, "label", e.target.value)}
@@ -170,6 +174,7 @@ const AdminHero = () => {
                   type="button"
                   variant="ghost"
                   size="icon"
+                  aria-label="Remover estatística"
                   onClick={() => setForm({ ...form, stats: form.stats.filter((_, j) => j !== i) })}
                 >
                   <Trash2 className="w-4 h-4 text-destructive" />
@@ -185,7 +190,7 @@ const AdminHero = () => {
               <Plus className="w-4 h-4 mr-1" /> Adicionar estatística
             </Button>
           </div>
-        </div>
+        </fieldset>
 
         <Button onClick={save} disabled={saving} className="uppercase font-display font-bold tracking-wider">
           <Save className="w-4 h-4 mr-2" />
