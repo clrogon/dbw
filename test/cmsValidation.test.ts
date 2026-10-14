@@ -73,6 +73,23 @@ describe("heroContentSchema", () => {
     ).toBe(false);
   });
 
+  it("rejects empty or whitespace-only CTA button text", () => {
+    const base = {
+      title: "Title",
+      title_highlight: "",
+      subtitle: "",
+      cta_primary_text: "Go",
+      cta_primary_link: "/reservar",
+      cta_secondary_text: "More",
+      cta_secondary_link: "/servicos",
+      background_image_url: null,
+      stats: [],
+    };
+    expect(heroContentSchema.safeParse({ ...base, cta_primary_text: "" }).success).toBe(false);
+    expect(heroContentSchema.safeParse({ ...base, cta_primary_text: "   " }).success).toBe(false);
+    expect(heroContentSchema.safeParse({ ...base, cta_secondary_text: "" }).success).toBe(false);
+  });
+
   it("rejects non-allowlisted background images", () => {
     const base = {
       title: "Title",

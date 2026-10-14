@@ -51,9 +51,9 @@ export const heroContentSchema = z.object({
   title: z.string().trim().min(1, "Título é obrigatório").max(200),
   title_highlight: z.string().trim().max(200),
   subtitle: z.string().trim().max(1000),
-  cta_primary_text: z.string().trim().max(100),
+  cta_primary_text: z.string().trim().min(1, "Texto do botão é obrigatório").max(100),
   cta_primary_link: safeInternalPathSchema,
-  cta_secondary_text: z.string().trim().max(100),
+  cta_secondary_text: z.string().trim().min(1, "Texto do botão é obrigatório").max(100),
   cta_secondary_link: safeInternalPathSchema,
   background_image_url: optionalCmsImageUrlSchema,
   stats: z

@@ -1,5 +1,13 @@
 import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
 
+// A CMS text field saved as "" or whitespace-only is truthy in plain JS
+// (`"  " || fallback` picks the whitespace), which renders as a
+// blank-looking label — most visibly on a button with no other content to
+// anchor it. Use this instead of `value || fallback` wherever a CMS string
+// value backs visible UI text.
+export const cmsTextOr = (value: string | null | undefined, fallback: string): string =>
+  value && value.trim().length > 0 ? value : fallback;
+
 export type NormalisedService = {
   slug: string;
   icon?: string;
