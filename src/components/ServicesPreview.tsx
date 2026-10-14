@@ -5,6 +5,7 @@ import { useCmsServices } from "@/hooks/useCms";
 import { ArrowRight } from "lucide-react";
 import { services as fallbackServices } from "@/data/services";
 import { sanitizeCmsImageUrl } from "@/lib/safeUrls";
+import { cmsTextOr } from "@/utils/normaliseCms";
 
 const ServicesPreview = () => {
   const { data: cmsServices, isLoading, isError } = useCmsServices();
@@ -25,7 +26,7 @@ const ServicesPreview = () => {
         icon: s.icon,
         title: s.title,
         shortDesc: s.short_desc,
-        ctaText: s.cta_text,
+        ctaText: cmsTextOr(s.cta_text, "Saber Mais →"),
         image: sanitizeCmsImageUrl(s.image_url) || "",
       }))
     : fallbackServices.map((s) => ({

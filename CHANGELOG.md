@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — closed the same gap for the service card CTA text ("Saber Mais")
+Follow-up to the Hero/CTA fix below, found during an admin-panel audit: the
+exact same unguarded-CMS-text class of bug existed for `services.cta_text`,
+rendered unguarded at `ServicesPreview.tsx:84` (the "Saber Mais →" link on the
+homepage service cards) — `serviceSchema` had no `.min(1)` on `cta_text`
+either, so the Admin panel could save a blank service CTA. (`Services.tsx`
+and `ServiceDetail.tsx` also compute a `ctaText`/`service.ctaText` value from
+the same field, but never actually render it — their CTA text is a hardcoded
+JSX literal, so only `ServicesPreview.tsx` was at risk.)
+- `ServicesPreview.tsx` now uses `cmsTextOr(s.cta_text, "Saber Mais →")` —
+  reusing both the helper and the exact fallback text already hardcoded
+  elsewhere in this codebase for the same "Saber Mais" CTA.
+- `serviceSchema.cta_text` now requires non-empty text after trimming,
+  matching the Hero fix's pattern.
+- Verified: `npm run lint` / `npm run typecheck` / `npm test` (60/60) /
+  `npm run build` all pass.
+
 ### Fixed — Hero/CTA button could render blank if its CMS text was whitespace-only
 Reported via a screenshot showing the sticky "Reservar Agora" banner button as
 an empty box, while the banner's other text rendered fine. Root cause:
