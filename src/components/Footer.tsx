@@ -1,6 +1,6 @@
 import { Instagram, Phone, Mail, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import dbwLogo from "@/assets/dbw-logo.jpeg";
+import dbwLogo from "@/assets/dbw-logo.webp";
 
 const quickLinks = [
   { label: "Início", href: "/" },

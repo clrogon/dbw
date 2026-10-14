@@ -8,9 +8,9 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CTABanner from "@/components/CTABanner";
 import { buildBreadcrumbSchema } from "@/lib/structuredData";
-import servicesSwim from "@/assets/services-swim.jpg";
-import servicesAquatic from "@/assets/services-aquatic.jpg";
-import servicesWellness from "@/assets/services-wellness.jpg";
+import servicesSwim from "@/assets/services-swim.webp";
+import servicesAquatic from "@/assets/services-aquatic.webp";
+import servicesWellness from "@/assets/services-wellness.webp";
 
 const fallbackPhotos = [
   { src: servicesSwim, alt: "Natação DBW Luanda", category: "Actividades Aquáticas" },

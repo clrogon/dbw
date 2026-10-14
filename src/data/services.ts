@@ -1,6 +1,6 @@
-import servicesSwim from "@/assets/services-swim.jpg";
-import servicesAquatic from "@/assets/services-aquatic.jpg";
-import servicesWellness from "@/assets/services-wellness.jpg";
+import servicesSwim from "@/assets/services-swim.webp";
+import servicesAquatic from "@/assets/services-aquatic.webp";
+import servicesWellness from "@/assets/services-wellness.webp";
 
 export interface ServiceData {
   slug: string;
