@@ -7,46 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed — stock photos for "Treinos Personalizados" and "Aulas em Grupo" didn't reflect Angola's population
-The first stock-photo pass (below, "replaced 3 AI-placeholder images") sourced
-generic licensed stock without re-applying a criterion the *original*
-AI-generation briefs in `docs/image-briefs.md` already stated explicitly for
-every service image: Black/African subjects, appropriate for a Luanda,
-Angola business. That criterion got dropped somewhere between "write the AI
-prompt" and "pick a stock replacement" — a real miss, not a style choice.
-- **"Treinos Personalizados"** (`services-training.webp`): replaced the
-  TSquared Lab/Unsplash photo (trainer and client not reflecting Angola's
-  population) with a photo by Julia Larson on Pexels
-  (https://www.pexels.com/photo/6455920/) — a Black personal trainer
-  coaching a Black client through a dumbbell exercise.
-- **"Aulas em Grupo"** (`services-group-fitness.webp`): replaced the Trust
-  "Tru" Katsande/Unsplash spin-bike photo (same issue) with a photo by
-  Edmond Dantès on Pexels (https://www.pexels.com/photo/8556495/) — four
-  Black African adults (mixed age and gender, one in a hijab) doing an
-  outdoor group stretching/warm-up session, no visible branding. Square-cropped
-  from the 6720×4480 original to frame 4 of the 5 people in the source photo.
-- Both re-exported at 1200×1200 WebP (quality 82 / 55 respectively — the
-  group photo's dense foliage background compressed much worse at the usual
-  quality 82, so quality was lowered specifically for that file to stay close
-  to the existing ~100–130KB budget for these service images; visually
-  verified the lower quality doesn't introduce visible artifacts at display
-  size).
-- Same filenames kept (no `services.ts` / `Gallery.tsx` changes needed) since
-  only the image content changed, not its role.
-- Verified both are real photographs, not AI/3D renders: both photographers
-  (Julia Larson, Edmond Dantès) have multiple shots from the same continuous
-  session on Pexels with consistent lighting/location/wardrobe across frames
-  (e.g. Julia Larson's photos 6455914/6455920/6455926; Edmond Dantès's
-  8556495/8556497/8556604/8556676/8556677), and natural skin texture, shadow
-  behavior, and motion blur under visual inspection — camera EXIF itself is
-  stripped by Pexels' CDN on both files, so that check (used earlier in this
-  project to reject a "D5 Render"-credited image) wasn't available here.
-  Also verified: Pexels License (free for commercial use, no attribution
-  required), and free of distracting third-party branding.
-- `docs/image-briefs.md` updated in place: both "DONE" sections now credit
-  the new source and explain why the first pick was replaced.
-- Verified: `npm run lint` / `npm run typecheck` / `npm test` / `npm run build`
-  all pass.
+### Fixed — critical: entire site was crashing in production (circular vendor chunk)
+Found while diagnosing why the live site (`dbw-fitness.vercel.app`) still showed months-old images right after a Vercel deployment finally succeeded — the previously-missing env vars (see the "pre-mortem" security entries below) had been masking this unrelated bug the whole time, since every production build before today's had failed before this code ever actually ran in a browser.
+
+- **Every route crashed on load** with `TypeError: Cannot read properties of undefined (reading 'forwardRef')`, leaving a blank page. 100% reproducible, not environment-specific — confirmed locally by building `dist/` from this exact commit and serving it statically; `npm run dev` never exercises the production chunk graph at all, which is why this was invisible through this entire session's dev-server-based testing.
+- **Root cause**: `vite.config.ts`'s `build.rollupOptions.output.manualChunks` (added for route-level code splitting) ended every unmatched `node_modules` package in one catch-all `"vendor"` chunk. Some of react-dom's own transitive helper dependencies landed in that catch-all instead of alongside react-dom itself, so Rollup had to emit `vendor-react.js` and `vendor.js` as **mutual imports** — a genuine circular chunk dependency, confirmed by inspecting the built output directly (`vendor-react.js`'s first line imports from `vendor.js`; `vendor.js`'s first line imports React back from `vendor-react.js`). Whichever chunk a browser evaluates first in that cycle sees the other's exports as still-uninitialized bindings — in production, `vendor.js` (containing `lucide-react`, which calls `React.forwardRef` at module scope) ran before `vendor-react.js` had finished assigning its `React` export, so `React` was `undefined` at the point of use.
+- **Fix**: removed the catch-all `return "vendor"` fallback; unmatched packages now get `return undefined`, handing them to Rollup's own automatic chunking, which analyzes the real module graph and does not produce unsafe cycles. The explicit, package-specific buckets (`vendor-react`, `vendor-router`, `vendor-motion`, `vendor-supabase`, `vendor-query`, `vendor-radix`, `vendor-forms`) are unchanged and still provide the caching benefit the original code-splitting pass intended.
+- Verified: built `dist/` from this fix, served it statically, and loaded every public route in a real browser (not just the dev server) with zero console/page errors and visible content rendering correctly, including the images from the pass above. `npm run lint` / `npm run typecheck` / `npm test` (55/55) all pass.
 
 ### Fixed — replaced 3 AI-placeholder images with licensed stock photography
 - **Hero background** (`hero-pool.webp`, new): replaces the earlier stopgap of a

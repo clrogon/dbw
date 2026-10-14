@@ -117,7 +117,22 @@ export default defineConfig(({ mode }) => {
             if (/[\\/]@tanstack[\\/]/.test(id)) return "vendor-query";
             if (/[\\/]@radix-ui[\\/]/.test(id)) return "vendor-radix";
             if (/[\\/](react-hook-form|@hookform|zod)[\\/]/.test(id)) return "vendor-forms";
-            return "vendor";
+            // Deliberately no catch-all "everything else" bucket here. A prior
+            // version returned "vendor" for every remaining node_modules id,
+            // which put some of react-dom's own transitive helper deps in a
+            // DIFFERENT chunk than react-dom itself -- Rollup then had to link
+            // vendor-react.js and vendor.js as mutual imports (a real circular
+            // chunk dependency: vendor-react's first line imported from
+            // vendor.js, and vendor.js's first line imported React back from
+            // vendor-react.js). Whichever side Rollup evaluates first in a
+            // cycle sees the other's exports as still-undefined bindings, so
+            // this broke with "Cannot read properties of undefined (reading
+            // 'forwardRef')" on every route in production (not caught locally
+            // because `npm run dev` never exercises the production chunk
+            // graph at all). Returning undefined here hands anything
+            // unmatched to Rollup's own automatic chunking, which analyzes
+            // the real module graph and does not create unsafe cycles.
+            return undefined;
           },
         },
       },
