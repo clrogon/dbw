@@ -3,12 +3,11 @@
 This doc started as a replacement brief for every AI-generated placeholder image
 on the site. Status as of this update:
 
-- **Done** — hero background, "Treinos Personalizados", and "Aulas em Grupo" are
-  now real, licensed stock photography (Unsplash License / Pexels License, both
-  free for commercial use). See each section below for the source/credit.
-- **Still AI-generated placeholder, not yet replaced** — "Actividades Aquáticas"
-  and "Ginástica Laboral" service images (both judged an acceptable-enough fit
-  to not force a weaker stock substitute — see their sections).
+- **Done** — hero background, and all four service images ("Actividades
+  Aquáticas", "Treinos Personalizados", "Ginástica Laboral", "Aulas em Grupo"),
+  plus the "Natação" gallery-only photo, are now real, licensed stock
+  photography (Unsplash License / Pexels License, both free for commercial
+  use). See each section below for the source/credit.
 - **Deliberately NOT swapped for stock photos** — the 3 instructor portraits.
   Read why in section 1 before touching them.
 
@@ -124,15 +123,35 @@ Each service now has its own distinct image (previously only 3 photos were
 shared across 4 services, so one always reused another's — fixed, including the
 same reuse inside `Gallery.tsx`'s fallback photos).
 
-### Actividades Aquáticas (swimming / water activities) — still AI placeholder
-Currently: `services-aquatic.webp` (group pool class — good fit, keep as-is for
-now; no replacement needed, this one already works).
-**Brief:** Small group aquatic class, mixed ages including at least one child,
-instructor in the water actively guiding, bright clean indoor pool.
-**Prompt:** `Indoor swimming pool, small group lesson, Black swim instructor in
-the water guiding two Black children and one adult, bright teal-tiled pool,
-daylight through skylights, candid joyful expressions, water motion, square
-crop, documentary photography, natural light, no text or logos`
+### Actividades Aquáticas (swimming / water activities) — DONE
+**File:** `services-aquatic.webp` (1200×1200, licensed stock), replacing an
+AI-generated placeholder that had never been swapped for a real photo and
+showed non-Black subjects.
+
+**Source:** Pexels License, free for commercial use, no attribution required.
+Photo by Steward Masweneng on Pexels: https://www.pexels.com/photo/9828146/
+— a Black child mid-swim in a bright outdoor pool, genuine effort and motion,
+close-up action shot.
+
+This doesn't fully match the brief below (an instructor-led small-group
+lesson) — after 10+ search queries across Pexels and Unsplash, no free,
+logo-free, real-photograph match combining an indoor pool, an instructor,
+and Black/African subjects together was found (candidates either had no
+instructor, showed open-water/river play unsuitable for a fitness-brand
+context, or weren't Black-represented). This photo was chosen instead as
+the best available: a genuine active-swimming moment that still reads as
+"aquatic activity/technique", from the same photographer and session as the
+"Natação" gallery photo below, which is a deliberate choice — two different,
+visually-distinct crops from one real family's pool day, rather than forcing
+in an unrelated stock match purely for its instructor framing.
+
+**Original brief:** Small group aquatic class, mixed ages including at least
+one child, instructor in the water actively guiding, bright clean indoor pool.
+**AI prompt** (if a future regeneration is wanted instead): `Indoor swimming
+pool, small group lesson, Black swim instructor in the water guiding two
+Black children and one adult, bright teal-tiled pool, daylight through
+skylights, candid joyful expressions, water motion, square crop, documentary
+photography, natural light, no text or logos`
 
 ### Treinos Personalizados (personal training) — DONE
 **File:** `services-training.webp` (1200×1200, licensed stock), replacing the
@@ -162,21 +181,37 @@ spotting, clean minimalist gym interior, natural daylight, genuine effort on
 client's face, square crop, documentary photography style, no visible text or
 logos`
 
-### Ginástica Laboral (corporate workplace wellness) — still AI placeholder
-Currently: `services-wellness.webp` (yoga/meditation by a pool — reasonable fit,
-though the poolside setting undersells "at your office"). No free, logo-free,
-real-photograph stock match for "multiple office workers mid-stretch-break,
-desks and plants visible" was found in this pass (every usable free candidate
-was a single person, not a group) — left as-is rather than forcing a weak
-substitute.
-**Brief:** A short workplace wellness session happening IN an office
+### Ginástica Laboral (corporate workplace wellness) — DONE
+**File:** `services-wellness.webp` (1200×1200, licensed stock), replacing an
+AI-generated yoga/meditation-by-a-pool placeholder that both undersold "at
+your office" and showed non-Black subjects.
+
+**Source:** Pexels License, free for commercial use, no attribution required.
+Photo by Monstera Production on Pexels: https://www.pexels.com/photo/9489080/
+— 3 of 4 Black African colleagues (cropped from an original 4-person group;
+see below) on a relaxed coffee/snack break in a modern office, bookshelves
+and a framed print visible, no readable text/logos/screens in frame.
+
+This doesn't fully match the brief below (workers actively stretching) —
+after multiple search passes, no free, logo-free, real-photograph match of
+a multi-person office *stretch* break with Black/African participants was
+found (the original AI-placeholder pass already noted this exact gap existed
+even before the ethnicity criterion was applied — "every usable free
+candidate was a single person, not a group"). This photo is the closest
+available compromise: a genuine multi-person office wellness/break moment,
+just not literally mid-stretch. Square-cropped from the original 5760×3840
+to the left 3 of the 4 people shown, dropping the fourth (rightmost) person
+at the frame edge for a cleaner composition rather than cutting through him.
+
+**Original brief:** A short workplace wellness session happening IN an office
 environment — desks or an office common area visible — not a spa/pool
 setting, to make clear this comes to the client's workplace.
-**Prompt:** `Small group office wellness session, 3-4 professionals in business
-casual doing a short stretching or seated exercise break in a modern open-plan
-office, desks and plants visible in background, natural window light, relaxed
-genuine smiles, square crop, documentary corporate photography, no visible
-text, logos or screens`
+**AI prompt** (if a future regeneration is wanted instead): `Small group
+office wellness session, 3-4 Black African professionals in business casual
+doing a short stretching or seated exercise break in a modern open-plan
+office, desks and plants visible in background, natural window light,
+relaxed genuine smiles, square crop, documentary corporate photography, no
+visible text, logos or screens`
 
 ### Aulas em Grupo (group fitness classes — spinning/aerobics/functional) — DONE
 **File:** `services-group-fitness.webp` (1200×1200, licensed stock), replacing
@@ -208,6 +243,23 @@ class in a modern studio, 5-6 diverse adults on spin bikes or doing a
 functional circuit, mid-motion energy, instructor visible leading at the
 front, dynamic lighting with red accent lighting, motivated expressions,
 square crop, dynamic action photography, no visible text or logos`
+
+### Natação (gallery-only photo, not a service card) — DONE
+Not one of the four services above — this file only appears as the
+"Natação DBW Luanda" photo in `Gallery.tsx`'s fallback photos, under the
+"Actividades Aquáticas" filter category.
+
+**File:** `services-swim.webp` (1200×1200, licensed stock), replacing the
+original AI-generated overhead mother-and-baby placeholder, which showed
+non-Black subjects.
+
+**Source:** Pexels License, free for commercial use, no attribution required.
+Photo by Steward Masweneng on Pexels: https://www.pexels.com/photo/9828152/
+— a Black mother helping her daughter at a pool edge, genuine joyful candid
+moment, bright outdoor pool. Same photographer/session as the "Actividades
+Aquáticas" service photo above, but a visually distinct crop and moment
+(poolside interaction vs. mid-swim action) — see that section for why both
+come from one shoot rather than two unrelated stock picks.
 
 ---
 
