@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — replaced the last 3 AI-placeholder images (Actividades Aquáticas, Ginástica Laboral, Natação)
+Completes the stock-photo replacement started in two earlier entries below:
+these were the only 3 remaining AI-generated placeholders on the site, all
+showing non-Black subjects that didn't reflect Angola's population — the
+same gap already fixed for "Treinos Personalizados" and "Aulas em Grupo".
+- **"Actividades Aquáticas"** (`services-aquatic.webp`): replaced with a
+  photo by Steward Masweneng on Pexels
+  (https://www.pexels.com/photo/9828146/) — a Black child mid-swim in a
+  bright outdoor pool. Doesn't fully match the original brief (an
+  instructor-led lesson) — no free, logo-free, real-photograph match
+  combining an indoor pool, an instructor, and Black/African subjects was
+  found after 10+ search queries; documented as an honest compromise in
+  `docs/image-briefs.md` rather than overclaiming a perfect match.
+- **"Ginástica Laboral"** (`services-wellness.webp`): replaced with a photo
+  by Monstera Production on Pexels (https://www.pexels.com/photo/9489080/)
+  — 3 Black African colleagues on an office coffee break, cropped from an
+  original 4-person group to drop the 4th person cleanly at the frame edge.
+  Also doesn't fully match the original brief (workers actively
+  stretching) — this gap in available free stock existed even before the
+  ethnicity criterion was applied, per the original AI-placeholder-era
+  note in `docs/image-briefs.md`.
+- **"Natação"** (`services-swim.webp`, gallery-only — not a service card):
+  replaced with a photo by Steward Masweneng on Pexels
+  (https://www.pexels.com/photo/9828152/) — a Black mother helping her
+  daughter at a pool edge. Same photographer/session as the Actividades
+  Aquáticas photo above (visually distinct crop/moment, not a duplicate),
+  a deliberate choice over forcing in an unrelated stock pick.
+- All three re-exported at 1200×1200 WebP quality 82 (up from the
+  original placeholders' 640×640), same filenames kept so no
+  `services.ts`/`Gallery.tsx` changes were needed.
+- Verified real photographs not AI/3D renders: two of the three source
+  files carry an `Artist` EXIF tag matching the credited photographer name
+  (`Steward`, matching Steward Masweneng); camera Make/Model is stripped by
+  Pexels' CDN on all three, consistent with prior entries in this file.
+  Pexels License confirmed (free for commercial use, no attribution
+  required) on all three.
+- `docs/image-briefs.md` updated: all four service images plus the
+  Natação gallery photo are now marked DONE, with full source credit and
+  an honest note on the two compromises above where no free stock photo
+  matched the original brief's exact framing.
+- Verified: `npm run lint` / `npm run typecheck` / `npm test` / `npm run build`
+  all pass.
+
 ### Fixed — critical: entire site was crashing in production (circular vendor chunk)
 Found while diagnosing why the live site (`dbw-fitness.vercel.app`) still showed months-old images right after a Vercel deployment finally succeeded — the previously-missing env vars (see the "pre-mortem" security entries below) had been masking this unrelated bug the whole time, since every production build before today's had failed before this code ever actually ran in a browser.
 
