@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — instructor `role` could be saved blank in the Admin panel
+Found during a follow-up pass on the admin-panel audit: `instructorSchema`
+required a non-empty `name` but not `role`, even though `role` renders in a
+visually prominent styled identity box directly under the instructor's name
+on `Instructors.tsx` (the public team page) — a blank one looks exactly as
+broken as a blank `name` would.
+- `instructorSchema.role` now requires non-empty text after trimming,
+  matching the existing `name` requirement.
+- Deliberately did **not** add a `cmsTextOr`-style fallback or make `bio`
+  required: `bio` renders as a plain unstyled paragraph (not visually broken
+  if empty), and inventing placeholder text for real, named, credentialed
+  staff (the 3 co-founders) would violate the no-fabricated-content
+  principle already documented in `docs/image-briefs.md`. Requiring the
+  field at save time is the correct fix here, not substituting text.
+- Added test coverage: new `describe("instructorSchema", ...)` block in
+  `test/cmsValidation.test.ts` (previously untested) — accepts a valid
+  instructor, rejects empty/whitespace-only `name`/`role`, allows an empty
+  `bio`.
+- Verified: `npm run lint` / `npm run typecheck` / `npm test` / `npm run
+  build` all pass.
+
 ### Fixed — closed the same gap for the service card CTA text ("Saber Mais")
 Follow-up to the Hero/CTA fix below, found during an admin-panel audit: the
 exact same unguarded-CMS-text class of bug existed for `services.cta_text`,

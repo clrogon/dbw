@@ -96,7 +96,7 @@ export const pricingPlanSchema = z.object({
 
 export const instructorSchema = z.object({
   name: z.string().trim().min(1, "Nome é obrigatório").max(100),
-  role: z.string().trim().max(100),
+  role: z.string().trim().min(1, "Função é obrigatória").max(100),
   specialties: z.array(z.string().trim().max(100)).max(30),
   bio: z.string().trim().max(2000),
   image_url: optionalCmsImageUrlSchema,
