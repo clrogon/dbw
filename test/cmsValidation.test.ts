@@ -4,6 +4,7 @@ import {
   safeInternalPathSchema,
   serviceSchema,
   heroContentSchema,
+  instructorSchema,
   galleryImageSchema,
   safeCmsImageUrlSchema,
 } from "../src/lib/cmsValidation";
@@ -121,6 +122,32 @@ describe("heroContentSchema", () => {
       stats: [],
     };
     expect(heroContentSchema.safeParse(base).success).toBe(false);
+  });
+});
+
+describe("instructorSchema", () => {
+  const base = {
+    name: "Domingos",
+    role: "Co-Fundador & Instrutor Principal",
+    specialties: ["Treino Personalizado", "Musculação"],
+    bio: "",
+    image_url: null,
+    sort_order: 0,
+  };
+
+  it("accepts a valid instructor", () => {
+    expect(instructorSchema.safeParse(base).success).toBe(true);
+  });
+
+  it("rejects empty or whitespace-only name or role", () => {
+    expect(instructorSchema.safeParse({ ...base, name: "" }).success).toBe(false);
+    expect(instructorSchema.safeParse({ ...base, name: "   " }).success).toBe(false);
+    expect(instructorSchema.safeParse({ ...base, role: "" }).success).toBe(false);
+    expect(instructorSchema.safeParse({ ...base, role: "   " }).success).toBe(false);
+  });
+
+  it("allows an empty bio", () => {
+    expect(instructorSchema.safeParse({ ...base, bio: "" }).success).toBe(true);
   });
 });
 
